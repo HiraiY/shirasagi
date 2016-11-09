@@ -39,4 +39,21 @@ module Faq::Node
       conditions.present? ? super : {}
     end
   end
+
+  class Tags
+    include Cms::Model::Node
+    include Cms::Addon::NodeSetting
+    include Cms::Addon::Meta
+    include Event::Addon::PageList
+    include Faq::Addon::Search
+    include Cms::Addon::Release
+    include Cms::Addon::GroupPermission
+    include History::Addon::Backup
+
+    default_scope ->{ where(route: "faq/tags") }
+
+    def condition_hash
+      conditions.present? ? super : {}
+    end
+  end
 end

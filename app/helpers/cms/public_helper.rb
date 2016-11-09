@@ -15,6 +15,9 @@ module Cms::PublicHelper
     prefix = "body-"
     nodes  = path.to_s.sub(/\/[^\/]+\.html$/, "").sub(/^\//, "").split("/")
     nodes  = nodes.map { |node| prefix = "#{prefix}-" + node.gsub(/[^\w-]+/, "-") }
+    if @cur_item.respond_to?(:categories)
+      nodes.concat(@cur_item.categories.pluck(:filename).map { |f| f.tr('/', '-') })
+    end
     nodes.join(" ")
   end
 

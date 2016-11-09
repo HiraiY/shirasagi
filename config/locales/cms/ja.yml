@@ -215,6 +215,7 @@ ja:
         released_1: 公開日時
         approved_1: 承認日時
         order: 指定順
+        access_ranking: ランキング順
       parent_crumb:
         blank: カテゴリーから選択する
       node_target:
@@ -483,6 +484,7 @@ ja:
       cms/column/layout: レイアウト
       cms/column/text_like: 制約条件
       cms/column/select_like: 選択
+      cms/access_count: 閲覧回数
 
   mongoid:
     models:
@@ -915,6 +917,8 @@ ja:
         value: テキスト
       cms/column/value/table:
         value: 表
+      cms/addon/access_count:
+        access_count: 閲覧回数
 
   errors:
     messages:
@@ -2010,3 +2014,4 @@ ja:
       cms/import_files_job: ページ/フォルダー取り込み
       cms/role/import_job: 権限インポート
       cms/all_contents_import_job: 全コンテンツ一括設定
+      cms/access_ranking_job: アクセスランキング

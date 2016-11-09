@@ -26,4 +26,8 @@ namespace :cms do
   task import_files: :environment do
     ::Tasks::Cms.import_files
   end
+
+  task :access_ranking => :environment do
+    with_site(Cms::AccessRankingJob, purge: ENV["purge"])
+  end
 end

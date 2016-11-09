@@ -1,0 +1,11 @@
+<% @aggregation.each do |row_k,row_v| %>
+  <h2><%= row_k %><%= t('faq.row') %></h2>
+  <ul>
+    <% row_v.each do |data| %>
+      <li>
+        <% params = { tag: data["tag"] } %>
+        <%= link_to data["tag"], "#{@search_node.url}?#{params.to_query}" %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

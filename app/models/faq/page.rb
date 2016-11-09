@@ -12,12 +12,15 @@ class Faq::Page
   include Cms::Addon::File
   include Category::Addon::Category
   include Cms::Addon::ParentCrumb
+  include Cms::Addon::Thumb
   include Event::Addon::Date
   include Cms::Addon::Tag
+  include Faq::Addon::Tag
   include Cms::Addon::RelatedPage
   include Contact::Addon::Page
   include Cms::Addon::Release
   include Cms::Addon::ReleasePlan
+  include Cms::Addon::AccessCount
   include Cms::Addon::GroupPermission
   include History::Addon::Backup
   include Faq::Addon::Csv::Page

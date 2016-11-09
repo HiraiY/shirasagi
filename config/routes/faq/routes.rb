@@ -49,6 +49,7 @@ Rails.application.routes.draw do
     get "/" => redirect { |p, req| "#{req.path}/pages" }, as: :main
     resources :pages, concerns: [:deletion, :copy, :move, :lock, :download, :import, :command, :contains_urls, :tag]
     resources :searches, concerns: :deletion
+    resources :tags, concerns: :deletion
   end
 
   content "faq" do
@@ -65,6 +66,8 @@ Rails.application.routes.draw do
     get "page/rss.xml" => "public#rss", cell: "nodes/page", format: "xml"
 
     get "search/(index.:format)" => "public#index", cell: "nodes/search"
+
+    get "tags/(index.:format)" => "public#index", cell: "nodes/tags"
   end
 
   part "faq" do

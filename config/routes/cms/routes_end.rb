@@ -155,6 +155,8 @@ Rails.application.routes.draw do
     delete "search_contents/pages" => "search_contents/pages#destroy_all"
     get "search_contents/:id/download" => "page_search_contents#download", as: "download_page_search_contents"
     delete "search_contents/:id" => "search_contents/pages#destroy_all_pages"
+    get "access_rankings" => "access_rankings#index"
+    post "access_rankings" => "access_rankings#run"
 
     resources :check_links_pages, only: [:show, :index]
     resources :check_links_nodes, only: [:show, :index]

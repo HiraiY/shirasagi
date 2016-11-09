@@ -17,7 +17,8 @@ module Event::Addon
         [I18n.t('event.options.sort.event_dates_today'), 'event_dates_today'],
         [I18n.t('event.options.sort.event_dates_tomorrow'), 'event_dates_tomorrow'],
         [I18n.t('event.options.sort.event_dates_week'), 'event_dates_week'],
-        [I18n.t('event.options.sort.event_deadline'), 'event_deadline']
+        [I18n.t('event.options.sort.event_deadline'), 'event_deadline'],
+        [I18n.t('cms.options.sort.access_ranking'), 'access_ranking']
       ]
     end
 
@@ -46,6 +47,8 @@ module Event::Addon
 
       if sort =~ /event_dates/
         { "event_dates.0" => 1 }
+      elsif sort == 'access_ranking'
+        { access_count: -1 }
       else
         { sort.sub(/ .*/, "") => (/-1$/.match?(sort) ? -1 : 1) }
       end

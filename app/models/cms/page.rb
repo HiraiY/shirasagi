@@ -13,6 +13,7 @@ class Cms::Page
   include Cms::Addon::Form::Page
   include Category::Addon::Category
   include Cms::Addon::ParentCrumb
+  include Cms::Addon::Thumb
   include Event::Addon::Date
   include Map::Addon::Page
   include Cms::Addon::RelatedPage
@@ -20,6 +21,7 @@ class Cms::Page
   include Cms::Addon::Tag
   include Cms::Addon::Release
   include Cms::Addon::ReleasePlan
+  include Cms::Addon::AccessCount
   include Cms::Addon::GroupPermission
   include History::Addon::Backup
   include Cms::Addon::ForMemberPage

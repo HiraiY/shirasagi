@@ -21,6 +21,12 @@ module Cms::Addon
           export :thumb
         end
       end
+
+      if respond_to?(:template_variable_handler)
+        template_variable_handler('thumbnail.name', :template_variable_handler_thumbnail_name)
+        template_variable_handler('thumbnail.url', :template_variable_handler_thumbnail_url)
+        template_variable_handler('thumbnail.thumb_url', :template_variable_handler_thumbnail_thumb_url)
+      end
     end
 
     private
@@ -38,6 +44,28 @@ module Cms::Addon
     def remove_thumb_public_file
       return if thumb.blank?
       thumb.remove_public_file
+    end
+
+    def template_variable_handler_thumbnail_name(name, issuer)
+      file = SS::File.where(_id: thumb_id).first
+      return if file.blank?
+      file.basename
+    end
+
+    def template_variable_handler_thumbnail_url(name, issuer)
+      file = SS::File.where(_id: thumb_id).first
+      return default_img_src if file.blank?
+      file.url
+    end
+
+    def template_variable_handler_thumbnail_thumb_url(name, issuer)
+      file = SS::File.where(_id: thumb_id).first
+      return default_img_src if file.blank?
+      file.thumb_url
+    end
+
+    def default_img_src
+      ERB::Util.html_escape("/assets/img/dummy.png")
     end
   end
 end

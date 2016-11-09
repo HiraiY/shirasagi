@@ -14,6 +14,7 @@ class Article::Page
   include Cms::Addon::Form::Page
   include Category::Addon::Category
   include Cms::Addon::ParentCrumb
+  include Cms::Addon::Thumb
   include Event::Addon::Date
   include Map::Addon::Page
   include Cms::Addon::RelatedPage
@@ -27,6 +28,7 @@ class Article::Page
   include Cms::Addon::OpendataRef::Resource
   include Cms::Addon::Release
   include Cms::Addon::ReleasePlan
+  include Cms::Addon::AccessCount
   include Cms::Addon::GroupPermission
   include History::Addon::Backup
   include Article::Export

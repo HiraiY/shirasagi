@@ -1,0 +1,7 @@
+<div class="tags">
+  <ul>
+  <% @cur_page.kana_tags.map { |h| h['tag'] }.each do |tag| %>
+    <li><%= link_to tag, "#{@cur_page.find_faq_search_node.url}?#{ { tag: tag }.to_query }" %></li>
+  <% end %>
+  </ul>
+</div>

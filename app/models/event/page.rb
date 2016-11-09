@@ -11,6 +11,7 @@ class Event::Page
   include Cms::Addon::File
   include Category::Addon::Category
   include Cms::Addon::ParentCrumb
+  include Cms::Addon::Thumb
   include Event::Addon::Body
   include Event::Addon::IcalLink
   include Cms::Addon::AdditionalInfo
@@ -21,6 +22,7 @@ class Event::Page
   include Cms::Addon::RelatedPage
   include Cms::Addon::Release
   include Cms::Addon::ReleasePlan
+  include Cms::Addon::AccessCount
   include Cms::Addon::GroupPermission
   include History::Addon::Backup
   include Event::Addon::Csv::Page

@@ -5,20 +5,24 @@ ja:
     reset: リセット
     result: 検索結果
     count: 件
+    row: 行
     query:
       category: カテゴリー
       keyword: キーワード
+      tag: タグ
 
   modules:
     faq: FAQ
     addons:
       faq/question: 質問
       faq/search: FAQ記事検索
+      faq/tag: かなタグ
 
   cms:
     nodes:
       faq/page: FAQ記事リスト
       faq/search: FAQ記事検索
+      faq/tags: FAQタグリスト
     parts:
       faq/search: FAQ記事検索
 
@@ -31,6 +35,8 @@ ja:
         answer: 回答
       faq/addon/search:
         search_node_id: 検索フォルダー
+      faq/addon/tag:
+        kana_tags: かなタグ
 
   cms_role:
     read_other_faq_pages: ページの閲覧（全て）
@@ -57,7 +63,11 @@ ja:
     faq/addon/search:
       search_node_id:
         - 検索先のフォルダーを設定します。
-        - 未入力の場合は自フォルダーを対象にします。
+        - 未入力の場合は親フォルダーを対象にします。
+    faq/addon/tag:
+      kana_tags:
+        - タグとそのよみをカンマで区切って入力します。
+        - 複数のタグを入力する場合、改行で区切ります。
 
   job:
     models:

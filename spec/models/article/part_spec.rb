@@ -441,4 +441,28 @@ describe Article::Part::Page, type: :model, dbscope: :example do
       end
     end
   end
+
+  describe '#render_loop_html - thumbnail' do
+    context 'no thumbnail' do
+      let(:page) { create(:article_page) }
+
+      it do
+        expect(item.render_loop_html(page, html: '#{thumbnail.name}')).to eq('')
+        expect(item.render_loop_html(page, html: '#{thumbnail.url}')).to eq('/assets/img/dummy.png')
+        expect(item.render_loop_html(page, html: '#{thumbnail.thumb_url}')).to eq('/assets/img/dummy.png')
+      end
+    end
+
+    context 'contain thumbnail' do
+      let(:site) { cms_site }
+      let(:file) { create :ss_file, site_id: site.id }
+      let(:page) { create(:article_page, thumb_id: file._id) }
+
+      it do
+        expect(item.render_loop_html(page, html: '#{thumbnail.name}')).to eq('logo.png')
+        expect(item.render_loop_html(page, html: '#{thumbnail.url}')).to eq(file.url)
+        expect(item.render_loop_html(page, html: '#{thumbnail.thumb_url}')).to eq(file.thumb_url)
+      end
+    end
+  end
 end

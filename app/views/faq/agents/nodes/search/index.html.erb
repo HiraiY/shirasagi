@@ -20,6 +20,10 @@
       <label for="keyword"><%= t('faq.query.keyword') %></label>
       <%= text_field_tag :keyword, @keyword %>
     </div>
+    <div class="tag">
+      <%= t('faq.query.tag') %>
+      <%= text_field_tag :tag, @tag %>
+    </div>
     <div class="submitters">
       <%= submit_tag t('faq.search'), name: :search %>
       <%= submit_tag t('faq.reset'), name: :reset %>
