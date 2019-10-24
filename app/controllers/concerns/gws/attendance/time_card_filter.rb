@@ -96,10 +96,22 @@ module Gws::Attendance::TimeCardFilter
       location = crud_redirect_url || url_for(action: :index)
       notice = t('ss.notice.saved')
 
-      flash[:notice] = notice
-      render json: { location: location }, status: :ok, content_type: json_content_type
+      respond_to do |format|
+        flash[:notice] = notice
+        format.html do
+          if request.xhr?
+            render json: { location: location }, status: :ok, content_type: json_content_type
+          else
+            redirect_to location
+          end
+        end
+        format.json { render json: { location: location }, status: :ok, content_type: json_content_type }
+      end
     else
-      render file: 'time', layout: false, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render file: 'time', layout: false, status: :unprocessable_entity }
+        format.json { render json: @cell.errors.full_messages, status: :unprocessable_entity, content_type: json_content_type }
+      end
     end
   end
 
