@@ -1,28 +1,32 @@
-class Line::BotController < ApplicationController
+class Chat::LineBot::Service
+  include ActiveModel::Model
+  include ActiveModel::Validations
 
-  require 'line/bot'
+  require "line/bot"
 
-  protect_from_forgery :except => [:callback]
+  attr_accessor :cur_site, :cur_node
+  attr_accessor :request
 
-  EARTH_RADIUS_KM = 6378.137
+  EARTH_RADIUS_KM = 6378.13
+
+  validate do
+    signature = request.env["HTTP_X_LINE_SIGNATURE"]
+    body = request.body.read
+    unless client.validate_signature(body, signature)
+      errors.add(:request, :signature_mismatched)
+    end
+  end
 
   def client
     @client ||= Line::Bot::Client.new { |config|
-      config.channel_secret = Cms::Site.find_by_domain(request_host).line_channel_secret
-      config.channel_token = Cms::Site.find_by_domain(request_host).line_channel_access_token
+      config.channel_secret = @cur_site.line_channel_secret
+      config.channel_token = @cur_site.line_channel_access_token
     }
   end
 
-  def callback
+  def call
     body = request.body.read
-
-    signature = request.env['HTTP_X_LINE_SIGNATURE']
-    unless client.validate_signature(body, signature)
-      head :bad_request
-    end
-
     events = client.parse_events_from(body)
-
     events.each { |event|
       case event
       when Line::Bot::Event::Message
@@ -31,64 +35,59 @@ class Line::BotController < ApplicationController
           begin
             if phrase(event).present?
               if phrase(event).suggest.present?
-                client.reply_message(event['replyToken'], suggests(event))
+                client.reply_message(event["replyToken"], suggests(event))
               elsif phrase(event).link.present?
-                client.reply_message(event['replyToken'], links(event))
+                client.reply_message(event["replyToken"], links(event))
               elsif phrase(event).response.present?
-                client.reply_message(event['replyToken'], res(event))
+                client.reply_message(event["replyToken"], res(event))
               end
             end
           rescue
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
-          client.reply_message(event['replyToken'], carousel(event))
+          client.reply_message(event["replyToken"], carousel(event))
         end
       end
     }
-    head :ok
   end
 
   private
 
-  def site_id
-    Cms::Site.find_by_domain(request_host).id
-  end
-
   def phrase(event)
-    Chat::Intent.find_by({phrase: event.message['text']})
+    Chat::Intent.site(@cur_site).find_by(phrase: event.message["text"])
   end
 
   def res(event)
     template =
       {
         "type": "text",
-        "text": phrase(event).response.gsub(%r{</?[^>]+?>},'')
+        "text": phrase(event).response.gsub(%r{</?[^>]+?>},"")
       }
-    template << site_search(event) if phrase(event).site_search == 'enabled'
-    template << question if phrase(event).question == 'enabled'
+    template << site_search(event) if phrase(event).site_search == "enabled"
+    template << question if phrase(event).question == "enabled"
     template
   end
 
   def answer(event)
     begin
-      if event.message['text'].eql?('yes')
-        client.reply_message(event['replyToken'], {
+      if event.message["text"].eql?("yes")
+        client.reply_message(event["replyToken"], {
           "type": "text",
-          "text": Chat::Node::Bot.find_by(site_id: site_id).chat_success.gsub(%r{</?[^>]+?>},'')
+          "text": Chat::Node::Bot.site(@cur_site).first.chat_success.gsub(%r{</?[^>]+?>}, "")
         })
-      elsif event.message['text'].eql?('no')
-        client.reply_message(event['replyToken'], {
+      elsif event.message["text"].eql?("no")
+        client.reply_message(event["replyToken"], {
           "type": "text",
-          "text": Chat::Node::Bot.find_by(site_id: site_id).chat_retry.gsub(%r{</?[^>]+?>},'')
+          "text": Chat::Node::Bot.site(@cur_site).first.chat_retry.gsub(%r{</?[^>]+?>}, "")
         })
-      elsif event.message['text'].eql?('近くの施設を探す')
+      elsif event.message["text"].eql?("近くの施設を探す")
         set_location(event)
       end
     rescue
       template = []
       template << no_match << site_search(event)
-      client.reply_message(event['replyToken'], template)
+      client.reply_message(event["replyToken"], template)
     end
   end
 
@@ -98,7 +97,7 @@ class Line::BotController < ApplicationController
       "altText": "this is a confirm template",
       "template": {
         "type": "confirm",
-        "text": Chat::Node::Bot.find_by(site_id: site_id).question.gsub(%r{</?[^>]+?>},''),
+        "text": Chat::Node::Bot.site(@cur_site).first.question.gsub(%r{</?[^>]+?>},""),
         "actions": [
           {
             "type": "message",
@@ -116,10 +115,9 @@ class Line::BotController < ApplicationController
   end
 
   def site_search(event)
-    site = Cms::Site.find_by_domain(request_host).id
-    site_search_node = Cms::Node::SiteSearch.find_by(site_id: site)
+    site_search_node = Cms::Node::SiteSearch.site(@cur_site).and_public.first
     uri = URI.parse(site_search_node.url)
-    uri.query = { s: { keyword: event.message['text'] } }.to_query
+    uri.query = {s: {keyword: event.message["text"]}}.to_query
     url = uri.try(:to_s)
     template = {
       "type": "template",
@@ -131,7 +129,7 @@ class Line::BotController < ApplicationController
           {
             "type": "uri",
             "label": "サイト内検索結果へ移動",
-            "uri": "https://" + Cms::Site.find(site).domains[1] + url
+            "uri": "https://" + @cur_site.domains[1] + url
           }
         ]
       }
@@ -142,16 +140,16 @@ class Line::BotController < ApplicationController
   def no_match
     {
       "type": "text",
-      "text": Chat::Node::Bot.find_by(site_id: site_id).exception_text.gsub(%r{</?[^>]+?>},'')
+      "text": Chat::Node::Bot.site(@cur_site).first.exception_text.gsub(%r{</?[^>]+?>}, "")
     }
   end
 
   def suggest_text(event, templates)
     if templates.empty?
       if phrase(event).suggest.present? && phrase(event).response.present?
-        phrase(event).response.gsub(%r{</?[^>]+?>},'')
+        phrase(event).response.gsub(%r{</?[^>]+?>}, "")
       else
-        Chat::Node::Bot.find_by(site_id: site_id).response_template.gsub(%r{</?[^>]+?>},'')
+        Chat::Node::Bot.site(@cur_site).first.response_template.gsub(%r{</?[^>]+?>}, "")
       end
     else
       "選択肢#{templates.length + 1}"
@@ -189,17 +187,17 @@ class Line::BotController < ApplicationController
         }
       templates << template
     end
-    templates << site_search(event) if phrase(event).site_search == 'enabled'
-    templates << question if phrase(event).question == 'enabled'
+    templates << site_search(event) if phrase(event).site_search == "enabled"
+    templates << question if phrase(event).question == "enabled"
     templates
   end
 
   def link_text(event, templates)
     if templates.empty?
       if phrase(event).response.scan(/<p(?: .+?)?>.*?<\/p>/).present?
-        phrase(event).response.scan(/<p(?: .+?)?>.*?<\/p>/).join("").gsub(%r{</?[^>]+?>},'')
+        phrase(event).response.scan(/<p(?: .+?)?>.*?<\/p>/).join("").gsub(%r{</?[^>]+?>}, "")
       else
-        Chat::Node::Bot.find_by(site_id: site_id).response_template.gsub(%r{</?[^>]+?>},'')
+        Chat::Node::Bot.site(@cur_site).first.response_template.gsub(%r{</?[^>]+?>}, "")
       end
     else
       "選択肢#{templates.length + 1}"
@@ -216,7 +214,7 @@ class Line::BotController < ApplicationController
       action.zip(link).each do |label, url|
         link_templates << {
           "type": "uri",
-          "label": label.gsub(%r{</?[^>]+?>},''),
+          "label": label.gsub(%r{</?[^>]+?>}, ""),
           "uri": url
         }
       end
@@ -238,13 +236,13 @@ class Line::BotController < ApplicationController
         }
       templates << template
     end
-    templates << site_search(event) if phrase(event).site_search == 'enabled'
-    templates << question if phrase(event).question == 'enabled'
+    templates << site_search(event) if phrase(event).site_search == "enabled"
+    templates << question if phrase(event).question == "enabled"
     templates
   end
 
   def set_location(event)
-    client.reply_message(event['replyToken'], {
+    client.reply_message(event["replyToken"], {
       "type": "template",
       "altText": "位置検索中",
       "template": {
@@ -272,18 +270,18 @@ class Line::BotController < ApplicationController
       @loc = [@lng, @lat]
     end
 
-    facilities = Facility::Map.where(site_id: site_id, state: "public").where(
+    facilities = Facility::Map.site(@cur_site).and_public.where(
       map_points: {
         "$elemMatch" => {
           "loc" => {
-            "$geoWithin" => { "$centerSphere" => [ @loc, @radius / EARTH_RADIUS_KM ] }
+            "$geoWithin" => {"$centerSphere" => [@loc, @radius / EARTH_RADIUS_KM]}
           }
         }
       }
     ).to_a
 
     if facilities.empty?
-      client.reply_message(event['replyToken'], {
+      client.reply_message(event["replyToken"], {
         "type": "text",
         "text": "近くに施設はありませんでした。"
       })
@@ -291,7 +289,12 @@ class Line::BotController < ApplicationController
       @markers = facilities.map do |item|
         points = item.map_points.map do |point|
           point[:facility_url] = item.url
-          point[:distance] = ::Geocoder::Calculations.distance_between([@lat,@lng], [point["loc"]["lat"], point["loc"]["lng"]], units: :km) rescue 0.0
+          point[:distance] =
+            begin
+              ::Geocoder::Calculations.distance_between([@lat, @lng], [point["loc"][1], point["loc"][0]], units: :km)
+            rescue
+              0.0
+            end
           point
         end
         points
@@ -301,38 +304,38 @@ class Line::BotController < ApplicationController
       @markers = @markers[0..9]
 
       columns = []
-      domain = Cms::Site.find_by_domain(request_host).domains[1]
+      domain = @cur_site.domains[1]
       @markers.each do |map|
-        item = Facility::Node::Page.where(site_id: site_id, state: "public").in_path(map[:facility_url]).first
-        map_lat = map[:loc][:lat]
-        map_lng = map[:loc][:lng]
-        if map[:distance] > 1.0
-          distance = "約#{map[:distance].round(1)}km"
-        else
-          distance = "約#{(map[:distance] * 1000).round}m"
-        end
-        column =
-          {
-            "title": item.name,
-            "text": "#{item.address}\n #{distance}",
-            "defaultAction": {
+        item = Facility::Node::Page.site(@cur_site).and_public.in_path(map[:facility_url]).first
+        map_lat = map[:loc][1]
+        map_lng = map[:loc][0]
+        distance =
+          if map[:distance] > 1.0
+            "約#{map[:distance].round(1)}km"
+          else
+            "約#{(map[:distance] * 1000).round}m"
+          end
+        column = {
+          "title": item.name,
+          "text": "#{item.address}\n #{distance}",
+          "defaultAction": {
+            "type": "uri",
+            "label": "View detail",
+            "uri": "https://" + domain + item.url
+          },
+          "actions": [
+            {
               "type": "uri",
-              "label": "View detail",
-              "uri": "https://" + domain + item.url
+              "label": "地図",
+              "uri": "https://www.google.com/maps/search/?api=1&query=#{map_lat},#{map_lng}"
             },
-            "actions": [
-              {
-                "type": "uri",
-                "label": "地図",
-                "uri": "https://www.google.com/maps/search/?api=1&query=#{map_lat},#{map_lng}"
-              },
-              {
-                "type": "uri",
-                "label": "詳細情報",
-                "uri": "https://" + domain + item.url
-              }
-            ]
-          }
+            {
+              "type": "uri",
+              "label": "詳細情報",
+              "uri": "https://" + domain + item.url
+            }
+          ]
+        }
         columns << column
       end
 

@@ -32,6 +32,7 @@ SS::Application.routes.draw do
 
   node "chat" do
     get "bot/(index.:format)" => "public#index", cell: "nodes/bot"
+    post "bot/line" => "public#line", cell: "nodes/bot"
   end
 
   part "chat" do
