@@ -76,5 +76,4 @@ Rails.application.routes.draw do
     end
   end
   post '/callback' => 'line/bot#callback'
-  post '/line' => 'chat/agents/nodes/bot#line'
 end
