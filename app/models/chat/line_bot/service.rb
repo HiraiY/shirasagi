@@ -1,9 +1,10 @@
 class Chat::LineBot::Service
   include ActiveModel::Model
   include ActiveModel::Validations
-  include Chat::LineBot::CalcDist
 
   require "line/bot"
+
+  EARTH_RADIUS_KM = 6378.137
 
   attr_accessor :cur_site, :cur_node, :request
 
@@ -259,79 +260,89 @@ class Chat::LineBot::Service
   def carousel(event)
     @lat = event["message"]["latitude"]
     @lng = event["message"]["longitude"]
+    @radius = 3
     @lat = @lat.to_f
     @lng = @lng.to_f
 
-    facilities = Facility::Map.site(@cur_site).and_public.to_a
-
-    @markers = facilities.map do |item|
-      points = item.map_points.map do |point|
-        point[:facility_url] = item.url
-        lat1 = @lat.to_f
-        lon1 = @lng.to_f
-        lat2 = point[:loc][0].to_f
-        lon2 = point[:loc][1].to_f
-        point[:distance] =
-          begin
-            obj_calc = Chat::LineBot::CalcDist::Calc.new(lat1, lon1, lat2, lon2 )
-            obj_calc.calc_dist
-          rescue
-            0.0
-          end
-        point
-      end
-      points
-    end.flatten
-
-    @markers = @markers.sort_by { |point| point[:distance] }
-    @markers = @markers[0..9]
-
-    columns = []
-    domain = @cur_site.domains[1]
-    @markers.each do |map|
-      item = Facility::Node::Page.site(@cur_site).and_public.in_path(map[:facility_url]).first
-      map_lat = map[:loc][0]
-      map_lng = map[:loc][1]
-      distance =
-        if map[:distance] > 1000.0
-          "約#{(map[:distance] / 1000).round(1)}km"
-        else
-          "約#{map[:distance].round}m"
-        end
-      column = {
-        "title": item.name,
-        "text": "#{item.address}\n #{distance}",
-        "defaultAction": {
-          "type": "uri",
-          "label": "View detail",
-          "uri": "https://" + domain + item.url
-        },
-        "actions": [
-          {
-            "type": "uri",
-            "label": "地図",
-            "uri": "https://www.google.com/maps/search/?api=1&query=#{map_lat},#{map_lng}"
-          },
-          {
-            "type": "uri",
-            "label": "詳細情報",
-            "uri": "https://" + domain + item.url
-          }
-        ]
-      }
-      columns << column
+    if @lat >= -90 && @lat <= 90 && @lng >= -180 && @lng <= 180
+      @loc = [@lng, @lat]
     end
 
-    template = {
-      "type": "template",
-      "altText": "this is a carousel template",
-      "template": {
-        "type": "carousel",
-        "columns": columns,
-        "imageAspectRatio": "rectangle",
-        "imageSize": "cover"
+    facilities = Facility::Map.site(@cur_site).where(
+      map_points: {
+        "$elemMatch" => {
+          "loc" => {
+            "$geoWithin" => { "$centerSphere" => [ @loc, @radius / EARTH_RADIUS_KM ] }
+          }
+        }
       }
-    }
-    template
+    ).to_a
+
+    if facilities.empty?
+      client.reply_message(event['replyToken'], {
+        "type": "text",
+        "text": "近くに施設はありませんでした。"
+      })
+    else
+      @markers = facilities.map do |item|
+        points = item.map_points.map do |point|
+          point[:facility_url] = item.url
+          point[:distance] = ::Geocoder::Calculations.distance_between(@loc, [point["loc"]["lng"], point["loc"]["lat"]], units: :km) rescue 0.0
+          point
+        end
+        points
+      end.flatten
+
+      @markers = @markers.sort_by { |point| point[:distance] }
+      @markers = @markers[0..9]
+
+      columns = []
+      domain = @cur_site.domains[1]
+      @markers.each do |map|
+        item = Facility::Node::Page.site(@cur_site).and_public.in_path(map[:facility_url]).first
+        map_lat = map[:loc]["lat"]
+        map_lng = map[:loc]["lng"]
+        if map[:distance] > 1.0
+          distance = "約#{map[:distance].round(1)}km"
+        else
+          distance = "約#{(map[:distance] * 1000).round}m"
+        end
+        column =
+          {
+            "title": item.name,
+            "text": "#{item.address}\n #{distance}",
+            "defaultAction": {
+              "type": "uri",
+              "label": "View detail",
+              "uri": "https://" + domain + item.url
+            },
+            "actions": [
+              {
+                "type": "uri",
+                "label": "地図",
+                "uri": "https://www.google.com/maps/search/?api=1&query=#{map_lat},#{map_lng}"
+              },
+              {
+                "type": "uri",
+                "label": "詳細情報",
+                "uri": "https://" + domain + item.url
+              }
+            ]
+          }
+        columns << column
+      end
+
+      template = {
+        "type": "template",
+        "altText": "this is a carousel template",
+        "template": {
+          "type": "carousel",
+          "columns": columns,
+          "imageAspectRatio": "rectangle",
+          "imageSize": "cover"
+        }
+      }
+      template
+    end
   end
 end

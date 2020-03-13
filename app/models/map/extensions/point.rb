@@ -1,5 +1,11 @@
 class Map::Extensions::Point < Hash
   # convert to mongoid native type
+
+  def to_s
+    return "" if self.loc.blank?
+    [self.loc["lng"], self.loc["lat"]].join(", ")
+  end
+
   def mongoize
     loc = self.loc
     return {} if loc.nil?

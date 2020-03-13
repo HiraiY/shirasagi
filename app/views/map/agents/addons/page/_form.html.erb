@@ -40,7 +40,7 @@
     <% @item.map_points.each do |point| %>
       <dd class="marker">
         <p>
-          <%= text_field_tag "item[map_points][][loc_]", point[:loc].join(","), class: "marker-loc-input loc", placeholder: @item.t(:marker_loc) %>
+          <%= text_field_tag "item[map_points][][loc_]", point[:loc].values.join(","), class: "marker-loc-input loc", placeholder: @item.t(:marker_loc) %>
         </p>
         <p>
           <%= text_field_tag "item[map_points][][name]", point[:name], class: "marker-name", placeholder: @item.t(:marker_name) %>
@@ -50,7 +50,7 @@
         </p>
         <p>
           <%= button_tag t("map.buttons.set_marker"), { type: :button, class: "set-marker btn" } %>
-          <%= hidden_field_tag "item[map_points][][loc]", point[:loc].join(","), class: "loc marker-loc" %>
+          <%= hidden_field_tag "item[map_points][][loc]", point[:loc].values.join(","), class: "loc marker-loc" %>
           <%= button_tag t("map.buttons.clear_marker"), { type: :button, class: "clear-marker btn" } %>
         </p>
       </dd>
