@@ -45,7 +45,7 @@ class Chat::LineBot::Service
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
-          client.reply_message(event["replyToken"], carousel(event))
+          client.reply_message(event["replyToken"], show_facilities(event))
         end
       end
     end
@@ -257,7 +257,7 @@ class Chat::LineBot::Service
     })
   end
 
-  def carousel(event)
+  def set_loc(event)
     @lat = event["message"]["latitude"]
     @lng = event["message"]["longitude"]
     @radius = 3
@@ -267,8 +267,11 @@ class Chat::LineBot::Service
     if @lat >= -90 && @lat <= 90 && @lng >= -180 && @lng <= 180
       @loc = [@lng, @lat]
     end
+  end
 
-    facilities = Facility::Map.site(@cur_site).where(
+  def search_facilities(event)
+    set_loc(event)
+    @facilities = Facility::Map.site(@cur_site).where(
       map_points: {
         "$elemMatch" => {
           "loc" => {
@@ -278,28 +281,35 @@ class Chat::LineBot::Service
       }
     ).to_a
 
-    if facilities.empty?
+    @markers = @facilities.map do |item|
+      points = item.map_points.map do |point|
+        point[:facility_url] = item.url
+        point[:distance] = ::Geocoder::Calculations.distance_between(@loc, [point[:loc]["lng"], point[:loc]["lat"]], units: :km) rescue 0.0
+        point[:state] = Facility::Node::Page.site(@cur_site).in_path(point[:facility_url]).first.state
+        point
+      end
+      points
+    end.flatten
+
+    @markers = @markers.delete_if do |item|
+      item[:state] == "closed"
+    end
+    @markers = @markers.sort_by { |point| point[:distance] }
+    @markers = @markers[0..9]
+  end
+
+  def show_facilities(event)
+    search_facilities(event)
+    if @facilities.empty?
       client.reply_message(event['replyToken'], {
         "type": "text",
         "text": "近くに施設はありませんでした。"
       })
     else
-      @markers = facilities.map do |item|
-        points = item.map_points.map do |point|
-          point[:facility_url] = item.url
-          point[:distance] = ::Geocoder::Calculations.distance_between(@loc, [point[:loc]["lng"], point[:loc]["lat"]], units: :km) rescue 0.0
-          point
-        end
-        points
-      end.flatten
-
-      @markers = @markers.sort_by { |point| point[:distance] }
-      @markers = @markers[0..9]
-
       columns = []
       domain = @cur_site.domains[1]
       @markers.each do |map|
-        item = Facility::Node::Page.site(@cur_site).and_public.in_path(map[:facility_url]).first
+        item = Facility::Node::Page.site(@cur_site).in_path(map[:facility_url]).first
         map_lat = map[:loc]["lat"]
         map_lng = map[:loc]["lng"]
         if map[:distance] > 1.0
