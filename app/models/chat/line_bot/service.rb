@@ -287,7 +287,7 @@ class Chat::LineBot::Service
       @markers = facilities.map do |item|
         points = item.map_points.map do |point|
           point[:facility_url] = item.url
-          point[:distance] = ::Geocoder::Calculations.distance_between(@loc, [point["loc"]["lng"], point["loc"]["lat"]], units: :km) rescue 0.0
+          point[:distance] = ::Geocoder::Calculations.distance_between(@loc, [point[:loc]["lng"], point[:loc]["lat"]], units: :km) rescue 0.0
           point
         end
         points

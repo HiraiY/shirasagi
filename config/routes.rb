@@ -75,5 +75,4 @@ Rails.application.routes.draw do
       get "env/:id/login" => "environment#login", as: :env
     end
   end
-  post '/callback' => 'line/bot#callback'
 end
