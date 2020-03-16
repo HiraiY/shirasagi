@@ -13,6 +13,19 @@ ja:
       question:
         success: はい
         retry: いいえ
+    line_bot:
+      about: 約
+      details: 詳細情報
+      map: 地図
+      no_facility: 近くに施設はありません。
+      search_results: サイト内検索結果を開く
+      search_location: 近くの施設を探す
+      send_location: 現在の位置情報を送りますか？
+      set_location: 位置を送る
+      site_search: サイト内検索へ移動
+      success: はい
+      retry: いいえ
+      choices: 選択肢
 
   modules:
     chat: チャット

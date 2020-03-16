@@ -113,7 +113,7 @@ class Chat::LineBot::Service
         @cur_node.response_template.gsub(%r{</?[^>]+?>}, "")
       end
     else
-      "選択肢#{templates.length + 1}"
+      I18n.t("chat.line_bot.choices") + "#{templates.length + 1}"
     end
   end
 
@@ -175,13 +175,13 @@ class Chat::LineBot::Service
         "actions": [
           {
             "type": "message",
-            "label": "Yes",
-            "text": "yes"
+            "label": I18n.t("chat.line_bot.yes"),
+            "text": I18n.t("chat.line_bot.yes")
           },
           {
             "type": "message",
-            "label": "No",
-            "text": "no"
+            "label": I18n.t("chat.line_bot.no"),
+            "text": I18n.t("chat.line_bot.no")
           }
         ]
       }
@@ -189,21 +189,19 @@ class Chat::LineBot::Service
   end
 
   def answer(event)
-    begin
-      if event.message["text"].eql?("yes")
-        client.reply_message(event["replyToken"], {
-          "type": "text",
-          "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
-        })
-      elsif event.message["text"].eql?("no")
-        client.reply_message(event["replyToken"], {
-          "type": "text",
-          "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
-        })
-      elsif event.message["text"].eql?("近くの施設を探す")
-        set_location(event)
-      end
-    rescue
+    if event.message["text"].eql?(I18n.t("chat.line_bot.success"))
+      client.reply_message(event["replyToken"], {
+        "type": "text",
+        "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
+      })
+    elsif event.message["text"].eql?(I18n.t("chat.line_bot.retry"))
+      client.reply_message(event["replyToken"], {
+        "type": "text",
+        "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
+      })
+    elsif event.message["text"].eql?(I18n.t("chat.line_bot.search_location"))
+      set_location(event)
+    else
       template = []
       template << no_match << site_search(event)
       client.reply_message(event["replyToken"], template)
@@ -219,11 +217,11 @@ class Chat::LineBot::Service
       "altText": "this is a buttons template",
       "template": {
         "type": "buttons",
-        "text": "サイト内検索結果を開く",
+        "text": I18n.t("chat.line_bot.site_search"),
         "actions": [
           {
             "type": "uri",
-            "label": "サイト内検索結果へ移動",
+            "label": I18n.t("chat.line_bot.search_results"),
             "uri": "https://" + @cur_site.domains[1] + url
           }
         ]
@@ -235,21 +233,21 @@ class Chat::LineBot::Service
   def no_match
     {
       "type": "text",
-      "text": @cur_node.exception_text.gsub(%r{</?[^>]+?>}, "")
+      "text": Chat::Node::Bot.find_by(site_id: 1).exception_text.gsub(%r{</?[^>]+?>}, "")
     }
   end
 
   def set_location(event)
     client.reply_message(event["replyToken"], {
       "type": "template",
-      "altText": "位置検索中",
+      "altText": "serching location",
       "template": {
         "type": "buttons",
-        "text": "現在の位置を送信しますか？",
+        "text": I18n.t("chat.line_bot.send_location"),
         "actions": [
           {
             "type": "uri",
-            "label": "位置を送る",
+            "label": I18n.t("chat.line_bot.set_location"),
             "uri": "line://nv/location"
           }
         ]
@@ -303,7 +301,7 @@ class Chat::LineBot::Service
     if @facilities.empty?
       client.reply_message(event['replyToken'], {
         "type": "text",
-        "text": "近くに施設はありませんでした。"
+        "text": I18n.t("chat.line_bot.no_facility")
       })
     else
       columns = []
@@ -313,9 +311,9 @@ class Chat::LineBot::Service
         map_lat = map[:loc]["lat"]
         map_lng = map[:loc]["lng"]
         if map[:distance] > 1.0
-          distance = "約#{map[:distance].round(1)}km"
+          distance = I18n.t("chat.line_bot.about") + "#{map[:distance].round(1)}km"
         else
-          distance = "約#{(map[:distance] * 1000).round}m"
+          distance = I18n.t("chat.line_bot.about") + "#{(map[:distance] * 1000).round}m"
         end
         column =
           {
@@ -329,12 +327,12 @@ class Chat::LineBot::Service
             "actions": [
               {
                 "type": "uri",
-                "label": "地図",
+                "label": I18n.t("chat.line_bot.map"),
                 "uri": "https://www.google.com/maps/search/?api=1&query=#{map_lat},#{map_lng}"
               },
               {
                 "type": "uri",
-                "label": "詳細情報",
+                "label": I18n.t("chat.line_bot.details"),
                 "uri": "https://" + domain + item.url
               }
             ]
