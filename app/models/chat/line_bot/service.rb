@@ -175,13 +175,13 @@ class Chat::LineBot::Service
         "actions": [
           {
             "type": "message",
-            "label": I18n.t("chat.line_bot.yes"),
-            "text": I18n.t("chat.line_bot.yes")
+            "label": I18n.t("chat.line_bot.success"),
+            "text": I18n.t("chat.line_bot.success")
           },
           {
             "type": "message",
-            "label": I18n.t("chat.line_bot.no"),
-            "text": I18n.t("chat.line_bot.no")
+            "label": I18n.t("chat.line_bot.retry"),
+            "text": I18n.t("chat.line_bot.retry")
           }
         ]
       }
