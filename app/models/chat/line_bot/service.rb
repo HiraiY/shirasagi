@@ -65,7 +65,7 @@ class Chat::LineBot::Service
         @cur_node.response_template.gsub(%r{</?[^>]+?>}, "")
       end
     else
-      "選択肢#{templates.length + 1}"
+      I18n.t("chat.line_bot.choices") + "#{templates.length + 1}"
     end
   end
 
@@ -100,8 +100,8 @@ class Chat::LineBot::Service
         }
       templates << template
     end
-    templates << site_search(event) if phrase(event).site_search == "enabled"
-    templates << question if phrase(event).question == "enabled"
+    templates << site_search(event) if phrase(event).site_search == "enabled" && site_search?
+    templates << question if phrase(event).question == "enabled" && question?
     templates
   end
 
@@ -149,8 +149,8 @@ class Chat::LineBot::Service
         }
       templates << template
     end
-    templates << site_search(event) if phrase(event).site_search == "enabled"
-    templates << question if phrase(event).question == "enabled"
+    templates << site_search(event) if phrase(event).site_search == "enabled" && site_search?
+    templates << question if phrase(event).question == "enabled" && question?
     templates
   end
 
@@ -160,9 +160,13 @@ class Chat::LineBot::Service
         "type": "text",
         "text": phrase(event).response.gsub(%r{</?[^>]+?>}, "")
       }
-    template << site_search(event) if phrase(event).site_search == "enabled"
-    template << question if phrase(event).question == "enabled"
+    template << site_search(event) if phrase(event).site_search == "enabled" && site_search?
+    template << question if phrase(event).question == "enabled" && question?
     template
+  end
+
+  def question?
+    @cur_node.question.present? && @cur_node.chat_success.present? && @cur_node.chat_retry.present?
   end
 
   def question
@@ -203,9 +207,14 @@ class Chat::LineBot::Service
       set_location(event)
     else
       template = []
-      template << no_match << site_search(event)
+      template << no_match
+      template << site_search(event) if site_search?
       client.reply_message(event["replyToken"], template)
     end
+  end
+
+  def site_search?
+    Cms::Node::SiteSearch.site(@cur_site).and_public.first.present?
   end
 
   def site_search(event)
@@ -234,7 +243,7 @@ class Chat::LineBot::Service
   def no_match
     {
       "type": "text",
-      "text": Chat::Node::Bot.find_by(site_id: 1).exception_text.gsub(%r{</?[^>]+?>}, "")
+      "text": @cur_node.exception_text.gsub(%r{</?[^>]+?>}, "")
     }
   end
 
