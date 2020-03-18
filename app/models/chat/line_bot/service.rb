@@ -204,7 +204,7 @@ class Chat::LineBot::Service
         "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
       })
     elsif event.message["text"].eql?(I18n.t("chat.line_bot.search_location"))
-      set_location(event)
+      send_location(event)
     else
       template = []
       template << no_match
@@ -247,7 +247,7 @@ class Chat::LineBot::Service
     }
   end
 
-  def set_location(event)
+  def send_location(event)
     client.reply_message(event["replyToken"], {
       "type": "template",
       "altText": "serching location",
@@ -292,7 +292,7 @@ class Chat::LineBot::Service
     @markers = @facilities.map do |item|
       points = item.map_points.map do |point|
         point[:facility_url] = item.url
-        point[:distance] = ::Geocoder::Calculations.distance_between(@loc, [point[:loc]["lng"], point[:loc]["lat"]], units: :km) rescue 0.0
+        point[:distance] = ::Geocoder::Calculations.distance_between(@loc, [point[:loc][0], point[:loc][1]], units: :km) rescue 0.0
         point[:state] = Facility::Node::Page.site(@cur_site).in_path(point[:facility_url]).first.state
         point
       end
@@ -318,8 +318,8 @@ class Chat::LineBot::Service
       domain = @cur_site.domains[1]
       @markers.each do |map|
         item = Facility::Node::Page.site(@cur_site).in_path(map[:facility_url]).first
-        map_lat = map[:loc]["lat"]
-        map_lng = map[:loc]["lng"]
+        map_lat = map[:loc][1]
+        map_lng = map[:loc][0]
         if map[:distance] > 1.0
           distance = I18n.t("chat.line_bot.about") + "#{map[:distance].round(1)}km"
         else
