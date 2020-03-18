@@ -1,19 +1,19 @@
-class Map::Extensions::Loc < Hash
+class Map::Extensions::Loc < Array
   def to_s
-    [self["lng"], self["lat"]].join(", ")
+    join(", ")
   end
 
   def lat
-    self["lng"]
+    self[0]
   end
 
   def lng
-    self["lat"]
+    self[1]
   end
 
   # convert to mongoid native type
   def mongoize
-    { "lng" => lng, "lat" => lat }
+    self.to_a
   end
 
   class << self
@@ -29,12 +29,13 @@ class Map::Extensions::Loc < Hash
         object.mongoize
       when String then
         object = object.gsub(/[, 　、\r\n]+/, ",").split(",").select(&:present?)
-        { "lng" => Float(object[0]), "lat" => Float(object[1]) } rescue {}
+        self[Float(object[0]), Float(object[1])].mongoize rescue []
       when Array then
-        { "lng" => Float(object[0]), "lat" => Float(object[1]) } rescue {}
+        self[Float(object[0]), Float(object[1])].mongoize rescue []
       when Hash then
-        object.mongoize
-      else
+        lat = object[:lat].presence || object['lat']
+        lng = object[:lng].presence || object['lng']
+        self[Float(lat), Float(lng)].mongoize rescue []      else
         # unknown type
         object
       end

@@ -17,7 +17,7 @@ class SS::Migration20200313000000
         if map_point["loc"].present?
           lat = map_point["loc"][0]
           lon = map_point["loc"][1]
-          map_point["loc"] = [lon, lat]
+          map_point["loc"] = [lon, lat] if lat < lon
           map_point
         else
           map_point

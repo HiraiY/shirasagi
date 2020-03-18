@@ -36,7 +36,7 @@ $(".mod-map .clear-marker").on('click', function (e) {
       <% @item.map_points.each do |point| %>
         <dd class="marker">
           <p>
-            <%= text_field_tag "item[map_points][][loc_]", point[:loc].values.join(","), class: "marker-loc-input loc", placeholder: @item.t(:marker_loc) %>
+            <%= text_field_tag "item[map_points][][loc]", point[:loc].join(","), class: "marker-loc-input loc", placeholder: @item.t(:marker_loc) %>
           </p>
           <p>
             <%= text_field_tag "item[map_points][][name]", point[:name], class: "marker-name", placeholder: @item.t(:marker_name) %>
