@@ -35,7 +35,8 @@ class Map::Extensions::Loc < Array
       when Hash then
         lat = object[:lat].presence || object['lat']
         lng = object[:lng].presence || object['lng']
-        self[Float(lat), Float(lng)].mongoize rescue []      else
+        self[Float(lat), Float(lng)].mongoize rescue []
+      else
         # unknown type
         object
       end
