@@ -250,7 +250,7 @@ class Chat::LineBot::Service
   def send_location(event)
     client.reply_message(event["replyToken"], {
       "type": "template",
-      "altText": "serching location",
+      "altText": "searching location",
       "template": {
         "type": "buttons",
         "text": I18n.t("chat.line_bot.send_location"),
