@@ -232,7 +232,7 @@ class Chat::LineBot::Service
           {
             "type": "uri",
             "label": I18n.t("chat.line_bot.search_results"),
-            "uri": "https://" + @cur_site.domains[1] + url
+            "uri": "https://" + @cur_site.domains.first + url
           }
         ]
       }
@@ -315,7 +315,7 @@ class Chat::LineBot::Service
       })
     else
       columns = []
-      domain = @cur_site.domains[1]
+      domain = @cur_site.domains.first
       @markers.each do |map|
         item = Facility::Node::Page.site(@cur_site).in_path(map[:facility_url]).first
         map_lat = map[:loc][1]
