@@ -47,6 +47,18 @@ class Chat::LineBot::Service
         when Line::Bot::Event::MessageType::Location
           client.reply_message(event["replyToken"], show_facilities(event))
         end
+      when Line::Bot::Event::Postback
+        if event['postback']['data'].split(',')[0] == 'yes'
+          client.reply_message(event["replyToken"], {
+            "type": "text",
+            "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
+          })
+        elsif event['postback']['data'].split(',')[0] == 'no'
+          client.reply_message(event["replyToken"], {
+            "type": "text",
+            "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
+          })
+        end
       end
     end
   end
@@ -54,7 +66,7 @@ class Chat::LineBot::Service
   private
 
   def phrase(event)
-    Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by({phrase: event.message['text']})
+    Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(phrase: event.message['text'])
   end
 
   def suggest_text(event, templates)
@@ -101,7 +113,7 @@ class Chat::LineBot::Service
       templates << template
     end
     templates << site_search(event) if phrase(event).site_search == "enabled" && site_search?
-    templates << question if phrase(event).question == "enabled" && question?
+    templates << question(event) if phrase(event).question == "enabled" && question?
     templates
   end
 
@@ -150,7 +162,7 @@ class Chat::LineBot::Service
       templates << template
     end
     templates << site_search(event) if phrase(event).site_search == "enabled" && site_search?
-    templates << question if phrase(event).question == "enabled" && question?
+    templates << question(event) if phrase(event).question == "enabled" && question?
     templates
   end
 
@@ -161,7 +173,7 @@ class Chat::LineBot::Service
         "text": phrase(event).response.gsub(%r{</?[^>]+?>}, "")
       }
     template << site_search(event) if phrase(event).site_search == "enabled" && site_search?
-    template << question if phrase(event).question == "enabled" && question?
+    template << question(event) if phrase(event).question == "enabled" && question?
     template
   end
 
@@ -169,7 +181,7 @@ class Chat::LineBot::Service
     @cur_node.question.present? && @cur_node.chat_success.present? && @cur_node.chat_retry.present?
   end
 
-  def question
+  def question(event)
     {
       "type": "template",
       "altText": "this is a confirm template",
@@ -178,14 +190,14 @@ class Chat::LineBot::Service
         "text": @cur_node.question.gsub(%r{</?[^>]+?>}, ""),
         "actions": [
           {
-            "type": "message",
+            "type": "postback",
             "label": I18n.t("chat.line_bot.success"),
-            "text": I18n.t("chat.line_bot.success")
+            "data": "yes, #{event.message['text']}"
           },
           {
-            "type": "message",
+            "type": "postback",
             "label": I18n.t("chat.line_bot.retry"),
-            "text": I18n.t("chat.line_bot.retry")
+            "data": "no, #{event.message['text']}"
           }
         ]
       }
@@ -193,17 +205,7 @@ class Chat::LineBot::Service
   end
 
   def answer(event)
-    if event.message["text"].eql?(I18n.t("chat.line_bot.success"))
-      client.reply_message(event["replyToken"], {
-        "type": "text",
-        "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
-      })
-    elsif event.message["text"].eql?(I18n.t("chat.line_bot.retry"))
-      client.reply_message(event["replyToken"], {
-        "type": "text",
-        "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
-      })
-    elsif event.message["text"].eql?(I18n.t("chat.line_bot.search_location"))
+    if event.message["text"].eql?(I18n.t("chat.line_bot.search_location"))
       send_location(event)
     else
       template = []
