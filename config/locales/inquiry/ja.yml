@@ -128,6 +128,7 @@ ja:
         order: 並び順
         input_type: 入力形式
         select_options: 選択肢
+        initial_value: 初期値
         required: 必須入力
         required_in_select_form: フォーム別必須入力
         additional_attr: 追加属性
@@ -222,6 +223,8 @@ ja:
       select_options:
         - 入力形式で「ラジオボタン選択」「プルダウン選択」「チェックボックス選択」「フォーム選択」を選択した場合の回答の選択肢を入力します。
         - 改行で複数の選択肢を入力します。
+      initial_value:
+        - 入力形式で「テキストエリア」を選択した場合の初期値を設定します。
       required:
         - 項目の入力が必須か任意かを選択します。
       required_in_select_form:
