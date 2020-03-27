@@ -5,6 +5,9 @@
   <dt><%= @model.t :select_options %></dt>
   <dd><%=br @item.send(:select_options) %></dd>
 
+  <dt><%= @model.t :initial_value %></dt>
+  <dd><%=br @item.send(:initial_value) %></dd>
+
   <dt><%= @model.t :required %></dt>
   <dd><%= @item.label :required %></dd>
 

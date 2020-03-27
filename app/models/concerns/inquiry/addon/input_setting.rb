@@ -6,6 +6,7 @@ module Inquiry::Addon
     included do
       field :input_type, type: String, default: "text_field"
       field :select_options, type: SS::Extensions::Lines, default: ""
+      field :initial_value, type: String
       field :required, type: String, default: "required"
       field :required_in_select_form, type: Array
       field :additional_attr, type: String, default: ""
@@ -13,7 +14,7 @@ module Inquiry::Addon
       field :question, type: String, default: 'disabled'
       field :max_upload_file_size, type: Integer, default: 0
       field :transfers, type: Array
-      permit_params :input_type, :required, :additional_attr
+      permit_params :input_type, :initial_value, :required, :additional_attr
       permit_params :select_options, :input_confirm, :question, :max_upload_file_size
       permit_params required_in_select_form: []
       permit_params transfers: [:keyword, :email]
