@@ -28,8 +28,7 @@ def add_permissions(name, permissions)
   item
 end
 
-add_permissions "記事編集権限",
-  %w(
+add_permissions "記事編集権限", %w(
     read_other_opendata_datasets edit_other_opendata_datasets delete_other_opendata_datasets
     read_private_opendata_datasets edit_private_opendata_datasets delete_private_opendata_datasets
     read_other_opendata_apps edit_other_opendata_apps delete_other_opendata_apps
@@ -504,16 +503,6 @@ save_page route: "ads/banner", filename: "ads/page605.html", name: "シラサギ
 ## -------------------------------------
 puts "# licenses"
 
-def license_file(filename)
-  file = Fs::UploadedFile.new("fixtures")
-  file.binmode
-  file.write File.read("fixtures/#{filename}")
-  file.rewind
-  file.original_filename = filename
-  file.content_type = "image/png"
-  file
-end
-
 def save_license(data)
   puts data[:name]
   cond = { site_id: @site._id, name: data[:name] }
@@ -522,13 +511,22 @@ def save_license(data)
   item
 end
 
-license_cc_by = save_license name: "表示（CC BY）", in_file: license_file("cc-by.png"), order: 1, default_state: 'default', uid: "cc-by"
-save_license name: "表示-継承（CC BY-SA）", in_file: license_file("cc-by-sa.png"), order: 2, uid: "cc-by-sa"
-save_license name: "表示-改変禁止（CC BY-ND）", in_file: license_file("cc-by-nd.png"), order: 3, uid: "cc-by-nd"
-save_license name: "表示-非営利（CC BY-NC）", in_file: license_file("cc-by-nc.png"), order: 4, uid: "cc-by-nc"
-save_license name: "表示-非営利-継承（CC BY-NC-SA）", in_file: license_file("cc-by-nc-sa.png"), order: 5, uid: "cc-by-nc-sa"
-save_license name: "表示-非営利-改変禁止（CC BY-NC-ND）", in_file: license_file("cc-by-nc-nd.png"), order: 6, uid: "cc-by-nc-nd"
-save_license name: "いかなる権利も保有しない（CC 0）", in_file: license_file("cc-zero.png"), order: 7, uid: "cc-zero"
+license_file1 = save_ss_files "fixtures/cc-by.png", filename: "cc-by.png", model: "opendata/license"
+license_file2 = save_ss_files "fixtures/cc-by-sa.png", filename: "cc-by-sa.png", model: "opendata/license"
+license_file3 = save_ss_files "fixtures/cc-by-nd.png", filename: "cc-by-nd.png", model: "opendata/license"
+license_file4 = save_ss_files "fixtures/cc-by-nc.png", filename: "cc-by-nc.png", model: "opendata/license"
+license_file5 = save_ss_files "fixtures/cc-by-nc-sa.png", filename: "cc-by-nc-sa.png", model: "opendata/license"
+license_file6 = save_ss_files "fixtures/cc-by-nc-nd.png", filename: "cc-by-nc-nd.png", model: "opendata/license"
+license_file7 = save_ss_files "fixtures/cc-zero.png", filename: "cc-zero.png", model: "opendata/license"
+
+license_cc_by = save_license name: "表示（CC BY）", file_id: license_file1.id, order: 1,
+                             default_state: 'default', uid: "cc-by"
+save_license name: "表示-継承（CC BY-SA）", file_id: license_file2.id, order: 2, uid: "cc-by-sa"
+save_license name: "表示-改変禁止（CC BY-ND）", file_id: license_file3.id, order: 3, uid: "cc-by-nd"
+save_license name: "表示-非営利（CC BY-NC）", file_id: license_file4.id, order: 4, uid: "cc-by-nc"
+save_license name: "表示-非営利-継承（CC BY-NC-SA）", file_id: license_file5.id, order: 5, uid: "cc-by-nc-sa"
+save_license name: "表示-非営利-改変禁止（CC BY-NC-ND）", file_id: license_file6.id, order: 6, uid: "cc-by-nc-nd"
+save_license name: "いかなる権利も保有しない（CC 0）", file_id: license_file7.id, order: 7, uid: "cc-zero"
 
 ## -------------------------------------
 puts "# opendata dataset_groups"
@@ -566,7 +564,7 @@ def save_resource(dataset, data)
   Fs::UploadedFile.create_from_file(path) do |file|
     item = dataset.resources.where(cond).first || dataset.resources.new
     item.in_file = file
-    item.update_attributes! data
+    item.update! data
     puts item.errors.full_messages unless item.save
   end
 end
@@ -615,7 +613,7 @@ def save_appfile(app, data)
   Fs::UploadedFile.create_from_file(path) do |file|
     item = app.appfiles.where(cond).first || app.appfiles.new
     item.in_file = file
-    item.update_attributes! data
+    item.update! data
     puts item.errors.full_messages unless item.save
   end
 end
@@ -707,7 +705,11 @@ end
 
 save_word_dictionary name: "機種依存文字", body_file: "#{Rails.root}/db/seeds/cms/word_dictionary/dependent_characters.txt"
 
+##
+puts "# site settings"
+
 @site.editor_css_path = '/css/ckeditor_contents.css'
+@site.anti_bot_methods = %w(set_nofollow use_button_for_bulk_download)
 @site.update!
 
 if @site.subdir.present?
@@ -717,3 +719,10 @@ if @site.subdir.present?
   ENV["site"]=@site.host
   Rake::Task['cms:set_subdir_url'].invoke
 end
+
+## -------------------------------------
+puts "# translate_lang"
+item = Translate::Lang.new
+item.cur_site = @site
+item.in_file = Fs::UploadedFile.create_from_file("#{Rails.root}/db/seeds/demo/translate/lang.csv")
+item.import_csv

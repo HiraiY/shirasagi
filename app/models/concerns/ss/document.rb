@@ -72,7 +72,7 @@ module SS::Document
 
       h = []
       h << %(<div class="tooltip">?)
-      h << %(<ul>)
+      h << %(<ul class="tooltip-content">)
       h << list
       h << %(</ul>)
       h << %(</div>)
@@ -193,6 +193,12 @@ module SS::Document
       map = %(function(){ emit(1, Object.bsonsize(this)); })
       reduce = %(function(k, v){ if (0 == v.length) return 0; return Array.sum(v); })
       data = map_reduce(map, reduce).out(inline: 1).first.try(:[], :value).to_i || 0
+    end
+
+    def labels
+      fields.collect do |field|
+        [field[0], t(field[0])]
+      end.to_h
     end
   end
 
