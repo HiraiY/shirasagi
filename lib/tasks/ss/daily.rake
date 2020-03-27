@@ -16,6 +16,9 @@ namespace :ss do
       # ゴミ箱の掃除
       Rake.application.invoke_task("history:trash:purge")
 
+      # history_logの削除
+      Rake.application.invoke_task("history:history_log:purge")
+
       ::Tasks::Cms.each_sites do |site|
         # クローリングリソースの更新
         Rake.application.invoke_task("opendata:crawl[#{site.host}]")
@@ -23,8 +26,16 @@ namespace :ss do
         # スコア計算（リコメンド機能）
         Rake.application.invoke_task("recommend:create_similarity_scores[#{site.host}]") if SS.config.recommend.disable.blank?
 
+        # 公開ファイルの一貫性チェック - 誤って公開されているファイルの削除
+        SS::PublicFileRemoverJob.bind(site_id: site).perform_now
+
         # リンクチェック
         # Rake.application.invoke_task("cms:check_links[#{site.host}, 'admin@example.jp']")
+
+        # オープンデータのレポート作成
+        Rake.application.invoke_task("opendata:report:generate_download[#{site.host}]")
+        Rake.application.invoke_task("opendata:report:generate_access[#{site.host}]")
+        Rake.application.invoke_task("opendata:report:generate_preview[#{site.host}]")
       end
 
       # 各種使用率の更新

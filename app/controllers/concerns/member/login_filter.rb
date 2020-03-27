@@ -12,10 +12,6 @@ module Member::LoginFilter
 
   private
 
-  def remote_addr
-    request.env["HTTP_X_REAL_IP"] || request.remote_addr
-  end
-
   def logged_in?(opts = {})
     if @cur_member
       set_last_logged_in
@@ -39,6 +35,7 @@ module Member::LoginFilter
 
   def set_member(member, timestamp = Time.zone.now.to_i)
     if @cur_site
+      reset_session
       session[session_member_key] = {
         "member_id" => member.id,
         "remote_addr" => remote_addr,

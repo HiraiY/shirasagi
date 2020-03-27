@@ -212,13 +212,17 @@ module Cms::PublicFilter
   end
 
   def page_not_found
+    request.env["action_dispatch.show_exceptions"] = false if @preview
     raise "404"
   end
 
   def rescue_action(exception = nil)
-    return render_error(exception, status: exception.to_s.to_i) if exception.to_s.numeric?
-    return render_error(exception, status: 404) if exception.is_a? Mongoid::Errors::DocumentNotFound
-    return render_error(exception, status: 404) if exception.is_a? ActionController::RoutingError
+    if !@preview
+      return render_error(exception, status: exception.to_s.to_i) if exception.to_s.numeric?
+      return render_error(exception, status: 404) if exception.is_a? Mongoid::Errors::DocumentNotFound
+      return render_error(exception, status: 404) if exception.is_a? ActionController::RoutingError
+    end
+
     raise exception
   end
 

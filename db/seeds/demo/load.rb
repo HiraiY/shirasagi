@@ -12,6 +12,11 @@ load "#{Rails.root}/db/seeds/cms/users.rb"
 
 @g_seisaku = SS::Group.where(name: "シラサギ市/企画政策部/政策課").first
 
+if @site.translate_api_limit_exceeded_html.blank?
+  @site.translate_api_limit_exceeded_html = '<div>翻訳文字数がAPIの制限を超過したため、翻訳できませんでした。</div>'
+  @site.save
+end
+
 load "#{Rails.root}/db/seeds/cms/workflow.rb"
 load "#{Rails.root}/db/seeds/cms/members.rb"
 load "#{Rails.root}/db/seeds/cms/contents/files.rb"
@@ -40,6 +45,7 @@ load "#{Rails.root}/db/seeds/cms/contents/max_file_size.rb"
 load "#{Rails.root}/db/seeds/cms/contents/source_cleaner_templates.rb"
 load "#{Rails.root}/db/seeds/cms/contents/postal_code.rb"
 load "#{Rails.root}/db/seeds/cms/contents/word_dictionary.rb"
+load "#{Rails.root}/db/seeds/cms/contents/translate_lang.rb"
 
 if @site.subdir.present?
   # rake cms:set_subdir_url site=@site.host
