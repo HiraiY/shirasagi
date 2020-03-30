@@ -1,0 +1,56 @@
+<div class="addon-views">
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.input_phrase') %></h2>
+    </div>
+    <div class="addon-body">
+      <table>
+        <thead>
+        <tr>
+          <th>入力名</th>
+          <th>頻度</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @items.pluck(:name, :frequency).each do |item| %>
+          <tr>
+            <td><%= item[0] %></td>
+            <td><%= item[1] %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="addon-views">
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.input_phrase') %></h2>
+    </div>
+    <div class="addon-body">
+      <table>
+        <thead>
+        <tr>
+          <th>フレーズ名</th>
+          <th>頻度</th>
+          <th>役に立った</th>
+          <th>役に立たなかった</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @intents.each do |item| %>
+          <% if item.question == "enabled" && item.confirm_yes != 0 && item.confirm_no != 0 %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.frequency %></td>
+              <td><%= item.confirm_yes %></td>
+              <td><%= item.confirm_no %></td>
+            </tr>
+          <% end %>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

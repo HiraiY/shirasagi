@@ -28,6 +28,7 @@ SS::Application.routes.draw do
     resources :categories, concerns: :deletion
     resources :histories, concerns: [:deletion, :download], only: [:index, :show, :destroy]
     get 'report' => 'report#index'
+    get 'line_report' => 'line_report#index'
   end
 
   node "chat" do

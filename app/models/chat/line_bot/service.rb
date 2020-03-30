@@ -33,6 +33,9 @@ class Chat::LineBot::Service
         when Line::Bot::Event::MessageType::Text
           begin
             if phrase(event).present?
+              add_intent_frequency = phrase(event)
+              add_intent_frequency.frequency += 1
+              add_intent_frequency.save
               if phrase(event).suggest.present?
                 client.reply_message(event["replyToken"], suggests(event))
               elsif phrase(event).link.present?
