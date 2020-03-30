@@ -36,6 +36,8 @@
           <th>頻度</th>
           <th>役に立った</th>
           <th>役に立たなかった</th>
+          <th>返答回数</th>
+          <th>返答率</th>
         </tr>
         </thead>
         <tbody>
@@ -46,6 +48,8 @@
               <td><%= item.frequency %></td>
               <td><%= item.confirm_yes %></td>
               <td><%= item.confirm_no %></td>
+              <td><%= item.confirm_yes + item.confirm_no %></td>
+              <td><%= (item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100 %>%</td>
             </tr>
           <% end %>
         <% end %>

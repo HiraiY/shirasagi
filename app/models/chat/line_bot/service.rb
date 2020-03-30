@@ -45,7 +45,11 @@ class Chat::LineBot::Service
               end
             end
           rescue
-            record_phrase(event)
+            begin
+              answer(event) if phrase(event).present?
+            rescue
+              record_phrase(event)
+            end
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
