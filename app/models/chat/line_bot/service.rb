@@ -42,6 +42,7 @@ class Chat::LineBot::Service
               end
             end
           rescue
+            record_phrase(event)
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
@@ -77,6 +78,18 @@ class Chat::LineBot::Service
 
   def postback_intent(event)
     Chat::Intent.find_by(phrase: event['postback']['data'].split(',')[1].strip)
+  end
+
+  def record_phrase(event)
+    begin
+      phrase = Chat::LineBot::Phrase.site(@cur_site).find_by(name: event.message["text"])
+      phrase.frequency += 1
+      phrase.save
+    rescue
+      phrase = Chat::LineBot::Phrase.create(site_id: @cur_site.id, name: event.message["text"])
+      phrase.frequency += 1
+      phrase.save
+    end
   end
 
   def suggest_text(event, templates)
