@@ -58,3 +58,24 @@
     </div>
   </div>
 </div>
+<div class="addon-views">
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.session_user') %></h2>
+    </div>
+    <div class="addon-body">
+      <table>
+        <thead>
+        <tr>
+          <th>使用ユーザー数</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td><%= Chat::LineBot::Session.count %></td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

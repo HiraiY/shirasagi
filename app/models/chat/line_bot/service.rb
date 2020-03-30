@@ -27,6 +27,7 @@ class Chat::LineBot::Service
     body = request.body.read
     events = client.parse_events_from(body)
     events.each do |event|
+      session_user(event)
       case event
       when Line::Bot::Event::Message
         case event.type
@@ -78,6 +79,11 @@ class Chat::LineBot::Service
   end
 
   private
+
+  def session_user(event)
+    @user = Chat::LineBot::Session.new(site_id: @cur_site.id, user: event['source']['userId'])
+    @user.save
+  end
 
   def phrase(event)
     Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(phrase: event.message['text'])
