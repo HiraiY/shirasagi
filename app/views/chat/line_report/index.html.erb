@@ -49,7 +49,7 @@
               <td><%= item.confirm_yes %></td>
               <td><%= item.confirm_no %></td>
               <td><%= item.confirm_yes + item.confirm_no %></td>
-              <td><%= (item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100 %>%</td>
+              <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
             </tr>
           <% end %>
         <% end %>
