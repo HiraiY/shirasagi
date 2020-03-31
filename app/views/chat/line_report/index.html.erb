@@ -14,13 +14,13 @@
 <div class="addon-views">
   <div class="addon-view">
     <div class="addon-head">
-      <h2><%= I18n.t('chat.input_phrase') %></h2>
+      <h2><%= I18n.t('chat.line_bot.input_phrase') %></h2>
     </div>
     <div class="addon-body">
       <table>
         <thead>
         <tr>
-          <th>入力名</th>
+          <th>フレーズ名</th>
           <th>頻度</th>
         </tr>
         </thead>
@@ -39,7 +39,7 @@
 <div class="addon-views">
   <div class="addon-view">
     <div class="addon-head">
-      <h2><%= I18n.t('chat.input_phrase') %></h2>
+      <h2><%= I18n.t('chat.line_bot.called_phrase') %></h2>
     </div>
     <div class="addon-body">
       <table>
@@ -74,10 +74,10 @@
 <div class="addon-views">
   <div class="addon-view">
     <div class="addon-head">
-      <h2><%= I18n.t('chat.session_user') %></h2>
+      <h2><%= I18n.t('chat.line_bot.session_user') %></h2>
     </div>
     <div class="addon-body">
-      <canvas class="graph-sessions" data-name='<%= I18n.t('chat.session_user') %>' data-columns='<%= sessions.to_json %>'></canvas>
+      <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_bot.session_user') %>' data-columns='<%= sessions.to_json %>'></canvas>
     </div>
   </div>
 </div>

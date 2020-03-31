@@ -26,6 +26,10 @@ ja:
       success: はい
       retry: いいえ
       choices: 選択肢
+      input_phrase: 入力されたフレーズ
+      session_user: 利用者数
+      called_phrase: 使用されたフレーズ
+      line_report: Lineのレポート
 
   modules:
     chat: チャット
