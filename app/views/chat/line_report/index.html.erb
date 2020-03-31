@@ -25,10 +25,10 @@
         </tr>
         </thead>
         <tbody>
-        <% @items.pluck(:name, :frequency).each do |item| %>
+        <% @items.each do |item| %>
           <tr>
-            <td><%= item[0] %></td>
-            <td><%= item[1] %></td>
+            <td><%= item.name %></td>
+            <td><%= item.frequency %></td>
           </tr>
         <% end %>
         </tbody>

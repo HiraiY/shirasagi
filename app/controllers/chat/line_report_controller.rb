@@ -3,9 +3,9 @@ class Chat::LineReportController < ApplicationController
   navi_view "cms/node/main/navi"
 
   def index
-    @items = Chat::LineBot::Phrase.site(@cur_site).order_by(frequency: "DESC")
-    @intents = Chat::Intent.site(@cur_site).order_by(frequency: "DESC")
-    @users = Chat::LineBot::Session.site(@cur_site)
+    @items = Chat::LineBot::Phrase.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
+    @intents = Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
+    @users = Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id)
   end
 
   private

@@ -90,16 +90,16 @@ class Chat::LineBot::Service
   end
 
   def postback_intent(event)
-    Chat::Intent.find_by(phrase: event['postback']['data'].split(',')[1].strip)
+    Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(phrase: event['postback']['data'].split(',')[1].strip)
   end
 
   def record_phrase(event)
     begin
-      phrase = Chat::LineBot::Phrase.site(@cur_site).find_by(name: event.message["text"])
+      phrase = Chat::LineBot::Phrase.site(@cur_site).where(node_id: @cur_node.id).find_by(name: event.message["text"])
       phrase.frequency += 1
       phrase.save
     rescue
-      phrase = Chat::LineBot::Phrase.create(site_id: @cur_site.id, name: event.message["text"])
+      phrase = Chat::LineBot::Phrase.create(site_id: @cur_site.id, node_id: @cur_node.id, name: event.message["text"])
       phrase.frequency += 1
       phrase.save
     end
