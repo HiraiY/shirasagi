@@ -34,6 +34,7 @@ class Chat::LineBot::Service
         when Line::Bot::Event::MessageType::Text
           begin
             if phrase(event).present?
+              record_date
               add_intent_frequency = phrase(event)
               add_intent_frequency.frequency += 1
               add_intent_frequency.save
@@ -49,6 +50,7 @@ class Chat::LineBot::Service
             begin
               answer(event) if phrase(event).present?
             rescue
+              record_date
               record_phrase(event)
             end
             answer(event)
@@ -103,6 +105,10 @@ class Chat::LineBot::Service
       phrase.frequency += 1
       phrase.save
     end
+  end
+
+  def record_date
+    Chat::LineBot::UsedTime.create(site_id: @cur_site.id, node_id: @cur_node.id, hour: Time.zone.now.hour)
   end
 
   def suggest_text(event, templates)

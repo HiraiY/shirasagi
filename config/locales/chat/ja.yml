@@ -30,6 +30,7 @@ ja:
       session_user: 利用者数
       called_phrase: 使用されたフレーズ
       line_report: Lineのレポート
+      used_time: "時間別利用回数"
 
   modules:
     chat: チャット

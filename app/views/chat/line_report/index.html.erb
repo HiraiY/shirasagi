@@ -6,6 +6,13 @@
     @users.gte(date_created: date).lt(date_created: date.tomorrow).count
   end
   sessions = [dates, counts, gen.next]
+
+  hours = (0..23).to_a
+  counts = hours.collect do |hour|
+    @used_times.gte(hour: hour).lt(hour: hour + 1).count
+  end
+  used_times = [hours, counts, gen.next ]
+
 %>
 <%= jquery do %>
   Chat_Chart.drawBar(".graph-sessions");
@@ -35,8 +42,7 @@
       </table>
     </div>
   </div>
-</div>
-<div class="addon-views">
+
   <div class="addon-view">
     <div class="addon-head">
       <h2><%= I18n.t('chat.line_bot.called_phrase') %></h2>
@@ -81,8 +87,7 @@
       </table>
     </div>
   </div>
-</div>
-<div class="addon-views">
+
   <div class="addon-view">
     <div class="addon-head">
       <h2><%= I18n.t('chat.line_bot.session_user') %></h2>
@@ -92,6 +97,14 @@
       <span>今月の利用者数</span>
       <%= @users.gte(created: Time.zone.now.prev_month).lt(created: Time.zone.now).count %>
       <span>人</span>
+    </div>
+  </div>
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.line_bot.used_time') %></h2>
+    </div>
+    <div class="addon-body">
+      <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_bot.used_time') %>' data-columns='<%= used_times.to_json %>'></canvas>
     </div>
   </div>
 </div>

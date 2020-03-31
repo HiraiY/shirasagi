@@ -27,7 +27,7 @@ this.Chat_Chart = (function() {
           scales: {
             yAxes: [{
               ticks: {
-                stepSize: 10
+                stepSize: 1
               },
             }],
           }
