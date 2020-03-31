@@ -1,9 +1,11 @@
 class Chat::LineBot::Session
   include SS::Document
   include SS::Reference::Site
+  include Cms::Reference::Node
   include Cms::SitePermission
 
-  field :user, type: String
+  field :userId, type: String
+  field :date_created, type: String
 
-  validates :user, uniqueness: true
+  validates :userId, uniqueness: { scope: :date_created }
 end

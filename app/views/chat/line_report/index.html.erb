@@ -3,7 +3,7 @@
 
   dates = (Time.zone.now.prev_month.to_date..Time.zone.now.to_date).to_a
   counts = dates.collect do |date|
-    @users.gte(created: date).lt(created: date.tomorrow).count
+    @users.gte(date_created: date).lt(date_created: date.tomorrow).count
   end
   sessions = [dates, counts, gen.next]
 %>

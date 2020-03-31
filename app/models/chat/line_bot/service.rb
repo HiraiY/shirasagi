@@ -81,7 +81,7 @@ class Chat::LineBot::Service
   private
 
   def session_user(event)
-    @user = Chat::LineBot::Session.new(site_id: @cur_site.id, user: event['source']['userId'])
+    @user = Chat::LineBot::Session.new(site_id: @cur_site.id, node_id: @cur_node.id, userId: event['source']['userId'], date_created: Date.today)
     @user.save
   end
 
