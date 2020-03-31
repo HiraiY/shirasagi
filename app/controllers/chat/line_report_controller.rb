@@ -4,8 +4,8 @@ class Chat::LineReportController < ApplicationController
 
   def index
     @items = Chat::LineBot::Phrase.site(@cur_site).order_by(frequency: "DESC")
-    @intents = Chat::Intent.site(@cur_site)
-    @users = Chat::LineBot::Session
+    @intents = Chat::Intent.site(@cur_site).order_by(frequency: "DESC")
+    @users = Chat::LineBot::Session.site(@cur_site)
   end
 
   private

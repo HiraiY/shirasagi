@@ -55,14 +55,25 @@
         </thead>
         <tbody>
         <% @intents.each do |item| %>
-          <% if item.question == "enabled" && item.confirm_yes != 0 && item.confirm_no != 0 %>
+          <% if item.frequency != 0 %>
             <tr>
               <td><%= item.name %></td>
               <td><%= item.frequency %></td>
-              <td><%= item.confirm_yes %></td>
-              <td><%= item.confirm_no %></td>
-              <td><%= item.confirm_yes + item.confirm_no %></td>
-              <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
+              <% if item.question == "enabled" %>
+                <td><%= item.confirm_yes %></td>
+                <td><%= item.confirm_no %></td>
+                <td><%= item.confirm_yes + item.confirm_no %></td>
+                <% if item.confirm_yes != 0 && item.confirm_no != 0 %>
+                  <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
+                <% else %>
+                  <td>0%</td>
+                <% end %>
+              <% else %>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+              <% end %>
             </tr>
           <% end %>
         <% end %>
@@ -78,6 +89,9 @@
     </div>
     <div class="addon-body">
       <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_bot.session_user') %>' data-columns='<%= sessions.to_json %>'></canvas>
+      <span>今月の利用者数</span>
+      <%= @users.gte(created: Time.zone.now.prev_month).lt(created: Time.zone.now).count %>
+      <span>人</span>
     </div>
   </div>
 </div>
