@@ -102,11 +102,11 @@
         </tr>
         <tr>
           <td><%= I18n.t('chat.line_report.session/this_month') %></td>
-          <td><%= @users.gte(date_created: Time.current.beginning_of_month).lt(date_created: Time.current.end_of_month).count %>人</td>
+          <td><%= @users.gt(date_created: Time.current.prev_month.end_of_month).lte(date_created: Time.current.end_of_month).count %>人</td>
         </tr>
         <tr>
           <td><%= I18n.t('chat.line_report.session/last_month') %></td>
-          <td><%= @users.gte(date_created: Time.current.prev_month.beginning_of_month).lt(date_created: Time.current.prev_month.end_of_month).count %>人</td>
+          <td><%= @users.gte(date_created: Time.current.prev_month.beginning_of_month).lte(date_created: Time.current.prev_month.end_of_month).count %>人</td>
         </tr>
         </tbody>
       </table>
