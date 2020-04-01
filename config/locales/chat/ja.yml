@@ -42,6 +42,7 @@ ja:
       session/today: 今日の利用者数
       session/this_month: 今月の利用者数
       session/last_month: 先月の利用者数
+      session/yesterday: 昨日の利用者数
 
   modules:
     chat: チャット

@@ -101,6 +101,10 @@
           <td><%= Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id, date_created: Date.today).count %>人</td>
         </tr>
         <tr>
+          <td><%= I18n.t('chat.line_report.session/yesterday') %></td>
+          <td><%= Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id, date_created: Date.yesterday).count %>人</td>
+        </tr>
+        <tr>
           <td><%= I18n.t('chat.line_report.session/this_month') %></td>
           <td><%= @users.gt(date_created: Time.current.prev_month.end_of_month).lte(date_created: Time.current.end_of_month).count %>人</td>
         </tr>
