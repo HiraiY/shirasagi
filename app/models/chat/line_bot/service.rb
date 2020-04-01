@@ -27,12 +27,17 @@ class Chat::LineBot::Service
     body = request.body.read
     events = client.parse_events_from(body)
     events.each do |event|
+      session_user(event)
       case event
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
           begin
             if phrase(event).present?
+              record_date
+              add_intent_frequency = phrase(event)
+              add_intent_frequency.frequency += 1
+              add_intent_frequency.save
               if phrase(event).suggest.present?
                 client.reply_message(event["replyToken"], suggests(event))
               elsif phrase(event).link.present?
@@ -42,6 +47,12 @@ class Chat::LineBot::Service
               end
             end
           rescue
+            begin
+              answer(event) if phrase(event).present?
+            rescue
+              record_date
+              record_phrase(event)
+            end
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
@@ -49,11 +60,17 @@ class Chat::LineBot::Service
         end
       when Line::Bot::Event::Postback
         if event['postback']['data'].split(',')[0] == 'yes'
+          add_confirm_yes = postback_intent(event)
+          add_confirm_yes.confirm_yes += 1
+          add_confirm_yes.save
           client.reply_message(event["replyToken"], {
             "type": "text",
             "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
           })
         elsif event['postback']['data'].split(',')[0] == 'no'
+          add_confirm_no = postback_intent(event)
+          add_confirm_no.confirm_no += 1
+          add_confirm_no.save
           client.reply_message(event["replyToken"], {
             "type": "text",
             "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
@@ -65,8 +82,33 @@ class Chat::LineBot::Service
 
   private
 
+  def session_user(event)
+    @user = Chat::LineBot::Session.new(site_id: @cur_site.id, node_id: @cur_node.id, userId: event['source']['userId'], date_created: Date.today)
+    @user.save
+  end
+
   def phrase(event)
     Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(phrase: event.message['text'])
+  end
+
+  def postback_intent(event)
+    Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(phrase: event['postback']['data'].split(',')[1].strip)
+  end
+
+  def record_phrase(event)
+    begin
+      phrase = Chat::LineBot::Phrase.site(@cur_site).where(node_id: @cur_node.id).find_by(name: event.message["text"])
+      phrase.frequency += 1
+      phrase.save
+    rescue
+      phrase = Chat::LineBot::Phrase.create(site_id: @cur_site.id, node_id: @cur_node.id, name: event.message["text"])
+      phrase.frequency += 1
+      phrase.save
+    end
+  end
+
+  def record_date
+    Chat::LineBot::UsedTime.create(site_id: @cur_site.id, node_id: @cur_node.id, hour: Time.zone.now.hour)
   end
 
   def suggest_text(event, templates)
@@ -77,7 +119,7 @@ class Chat::LineBot::Service
         @cur_node.response_template.gsub(%r{</?[^>]+?>}, "")
       end
     else
-      I18n.t("chat.line_bot.choices") + "#{templates.length + 1}"
+      I18n.t("chat.line_bot.service.choices") + "#{templates.length + 1}"
     end
   end
 
@@ -125,7 +167,7 @@ class Chat::LineBot::Service
         @cur_node.response_template.gsub(%r{</?[^>]+?>}, "")
       end
     else
-      I18n.t("chat.line_bot.choices") + "#{templates.length + 1}"
+      I18n.t("chat.line_bot.service.choices") + "#{templates.length + 1}"
     end
   end
 
@@ -191,12 +233,12 @@ class Chat::LineBot::Service
         "actions": [
           {
             "type": "postback",
-            "label": I18n.t("chat.line_bot.success"),
+            "label": I18n.t("chat.line_bot.service.success"),
             "data": "yes, #{event.message['text']}"
           },
           {
             "type": "postback",
-            "label": I18n.t("chat.line_bot.retry"),
+            "label": I18n.t("chat.line_bot.service.retry"),
             "data": "no, #{event.message['text']}"
           }
         ]
@@ -205,7 +247,7 @@ class Chat::LineBot::Service
   end
 
   def answer(event)
-    if event.message["text"].eql?(I18n.t("chat.line_bot.search_location"))
+    if event.message["text"].eql?(I18n.t("chat.line_bot.service.search_location"))
       send_location(event)
     else
       template = []
@@ -229,11 +271,11 @@ class Chat::LineBot::Service
       "altText": "this is a buttons template",
       "template": {
         "type": "buttons",
-        "text": I18n.t("chat.line_bot.site_search"),
+        "text": I18n.t("chat.line_bot.service.site_search"),
         "actions": [
           {
             "type": "uri",
-            "label": I18n.t("chat.line_bot.search_results"),
+            "label": I18n.t("chat.line_bot.service.search_results"),
             "uri": "https://" + @cur_site.domains.first + url
           }
         ]
@@ -255,11 +297,11 @@ class Chat::LineBot::Service
       "altText": "searching location",
       "template": {
         "type": "buttons",
-        "text": I18n.t("chat.line_bot.send_location"),
+        "text": I18n.t("chat.line_bot.service.send_location"),
         "actions": [
           {
             "type": "uri",
-            "label": I18n.t("chat.line_bot.set_location"),
+            "label": I18n.t("chat.line_bot.service.set_location"),
             "uri": "line://nv/location"
           }
         ]
@@ -313,7 +355,7 @@ class Chat::LineBot::Service
     if @facilities.empty?
       client.reply_message(event['replyToken'], {
         "type": "text",
-        "text": I18n.t("chat.line_bot.no_facility")
+        "text": I18n.t("chat.line_bot.service.no_facility")
       })
     else
       columns = []
@@ -323,9 +365,9 @@ class Chat::LineBot::Service
         map_lat = map[:loc][1]
         map_lng = map[:loc][0]
         if map[:distance] > 1.0
-          distance = I18n.t("chat.line_bot.about") + "#{map[:distance].round(1)}km"
+          distance = I18n.t("chat.line_bot.service.about") + "#{map[:distance].round(1)}km"
         else
-          distance = I18n.t("chat.line_bot.about") + "#{(map[:distance] * 1000).round}m"
+          distance = I18n.t("chat.line_bot.service.about") + "#{(map[:distance] * 1000).round}m"
         end
         column =
           {
@@ -339,12 +381,12 @@ class Chat::LineBot::Service
             "actions": [
               {
                 "type": "uri",
-                "label": I18n.t("chat.line_bot.map"),
+                "label": I18n.t("chat.line_bot.service.map"),
                 "uri": "https://www.google.com/maps/search/?api=1&query=#{map_lat},#{map_lng}"
               },
               {
                 "type": "uri",
-                "label": I18n.t("chat.line_bot.details"),
+                "label": I18n.t("chat.line_bot.service.details"),
                 "uri": "https://" + domain + item.url
               }
             ]

@@ -1,0 +1,123 @@
+<%
+  gen = SS::HslGenerator.new(@cur_node.id).to_enum
+
+  dates = (Time.zone.now.prev_month.to_date..Time.zone.now.to_date).to_a
+  counts = dates.collect do |date|
+    @users.gte(date_created: date).lt(date_created: date.tomorrow).count
+  end
+  sessions = [dates, counts, gen.next]
+
+  hours = (0..23).to_a
+  counts = hours.collect do |hour|
+    @used_times.gte(hour: hour).lt(hour: hour + 1).count
+  end
+  used_times = [hours, counts, gen.next ]
+
+%>
+<%= jquery do %>
+  Chat_Chart.drawBar(".graph-sessions");
+<% end %>
+
+<div class="addon-views">
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.line_report.phrase/input') %></h2>
+    </div>
+    <div class="addon-body">
+      <table>
+        <thead>
+        <tr>
+          <th><%= I18n.t('chat.line_report.phrase/name') %></th>
+          <th><%= I18n.t('chat.line_report.phrase/frequency') %></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @items.each do |item| %>
+          <tr>
+            <td><%= item.name %></td>
+            <td><%= item.frequency %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.line_report.phrase/called') %></h2>
+    </div>
+    <div class="addon-body">
+      <table>
+        <thead>
+        <tr>
+          <th><%= I18n.t('chat.line_report.phrase/name') %></th>
+          <th><%= I18n.t('chat.line_report.phrase/frequency') %></th>
+          <th><%= I18n.t('chat.line_report.phrase/success') %></th>
+          <th><%= I18n.t('chat.line_report.phrase/retry') %></th>
+          <th><%= I18n.t('chat.line_report.phrase/reply_count') %></th>
+          <th><%= I18n.t('chat.line_report.phrase/reply_rate') %></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @intents.each do |item| %>
+          <% if item.frequency != 0 %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.frequency %></td>
+              <% if item.question == "enabled" %>
+                <td><%= item.confirm_yes %></td>
+                <td><%= item.confirm_no %></td>
+                <td><%= item.confirm_yes + item.confirm_no %></td>
+                <% if item.confirm_yes != 0 && item.confirm_no != 0 %>
+                  <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
+                <% else %>
+                  <td>0%</td>
+                <% end %>
+              <% else %>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+              <% end %>
+            </tr>
+          <% end %>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.line_report.session') %></h2>
+    </div>
+    <div class="addon-body">
+      <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_report.session') %>' data-columns='<%= sessions.to_json %>'></canvas>
+      <table>
+        <tbody>
+        <tr>
+          <td><%= I18n.t('chat.line_report.session/today') %></td>
+          <td><%= Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id, date_created: Date.today).count %>人</td>
+        </tr>
+        <tr>
+          <td><%= I18n.t('chat.line_report.session/this_month') %></td>
+          <td><%= @users.gte(date_created: Time.current.beginning_of_month).lt(date_created: Time.current.end_of_month).count %>人</td>
+        </tr>
+        <tr>
+          <td><%= I18n.t('chat.line_report.session/last_month') %></td>
+          <td><%= @users.gte(date_created: Time.current.prev_month.beginning_of_month).lt(date_created: Time.current.prev_month.end_of_month).count %>人</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="addon-view">
+    <div class="addon-head">
+      <h2><%= I18n.t('chat.line_report.called_time') %></h2>
+    </div>
+    <div class="addon-body">
+      <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_report.called_time') %>' data-columns='<%= used_times.to_json %>'></canvas>
+    </div>
+  </div>
+</div>

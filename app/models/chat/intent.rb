@@ -20,10 +20,13 @@ class Chat::Intent
   field :question, type: String
   field :site_search, type: String
   field :order, type: Integer
+  field :frequency, type: Integer, default: 0
+  field :confirm_yes, type: Integer, default: 0
+  field :confirm_no, type: Integer, default: 0
 
   belongs_to :node, class_name: "Chat::Node::Bot", inverse_of: :intents
 
-  permit_params :name, :phrase, :suggest, :response, :link, :question, :site_search, :order
+  permit_params :name, :phrase, :suggest, :response, :link, :question, :site_search, :order, :frequency, :confirm_yes, :confirm_no
 
   validates :name, presence: true, length: { maximum: 80 }
   validates :phrase, presence: true

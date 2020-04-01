@@ -14,18 +14,34 @@ ja:
         success: はい
         retry: いいえ
     line_bot:
-      about: 約
-      details: 詳細情報
-      map: 地図
-      no_facility: 近くに施設はありません。
-      search_results: サイト内検索結果を開く
-      search_location: 近くの施設を探す
-      send_location: 現在の位置情報を送りますか？
-      set_location: 位置を送る
-      site_search: サイト内検索へ移動
-      success: はい
-      retry: いいえ
-      choices: 選択肢
+      service:
+        about: 約
+        details: 詳細情報
+        map: 地図
+        no_facility: 近くに施設はありません。
+        search_results: サイト内検索結果を開く
+        search_location: 近くの施設を探す
+        send_location: 現在の位置情報を送りますか？
+        set_location: 位置を送る
+        site_search: サイト内検索へ移動
+        success: はい
+        retry: いいえ
+        choices: 選択肢
+      line_report: Lineのレポート
+    line_report:
+      phrase/input: 入力されたフレーズ
+      called_time: 利用時間帯
+      session: 利用者数
+      phrase/called: 使用されたフレーズ
+      phrase/name: フレーズ名
+      phrase/frequency: 使用回数
+      phrase/success: 解決した
+      phrase/retry: 解決しなかった
+      phrase/reply_count: 返答回数
+      phrase/reply_rate: 返答率
+      session/today: 今日の利用者数
+      session/this_month: 今月の利用者数
+      session/last_month: 先月の利用者数
 
   modules:
     chat: チャット
