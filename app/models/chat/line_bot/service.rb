@@ -38,13 +38,7 @@ class Chat::LineBot::Service
               add_intent_frequency = phrase(event)
               add_intent_frequency.frequency += 1
               add_intent_frequency.save
-              if phrase(event).suggest.present?
-                client.reply_message(event["replyToken"], suggests(event))
-              elsif phrase(event).link.present?
-                client.reply_message(event["replyToken"], links(event))
-              elsif phrase(event).response.present?
-                client.reply_message(event["replyToken"], res(event))
-              end
+              reply_message(event)
             end
           rescue
             begin
@@ -59,23 +53,7 @@ class Chat::LineBot::Service
           client.reply_message(event["replyToken"], show_facilities(event))
         end
       when Line::Bot::Event::Postback
-        if event['postback']['data'].split(',')[0] == 'yes'
-          add_confirm_yes = postback_intent(event)
-          add_confirm_yes.confirm_yes += 1
-          add_confirm_yes.save
-          client.reply_message(event["replyToken"], {
-            "type": "text",
-            "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
-          })
-        elsif event['postback']['data'].split(',')[0] == 'no'
-          add_confirm_no = postback_intent(event)
-          add_confirm_no.confirm_no += 1
-          add_confirm_no.save
-          client.reply_message(event["replyToken"], {
-            "type": "text",
-            "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
-          })
-        end
+        reply_confirm(event)
       end
     end
   end
@@ -93,6 +71,36 @@ class Chat::LineBot::Service
 
   def postback_intent(event)
     Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(phrase: event['postback']['data'].split(',')[1].strip)
+  end
+
+  def reply_message(event)
+    if phrase(event).suggest.present?
+      client.reply_message(event["replyToken"], suggests(event))
+    elsif phrase(event).link.present?
+      client.reply_message(event["replyToken"], links(event))
+    elsif phrase(event).response.present?
+      client.reply_message(event["replyToken"], res(event))
+    end
+  end
+
+  def reply_confirm(event)
+    if event['postback']['data'].split(',')[0] == 'yes'
+      add_confirm_yes = postback_intent(event)
+      add_confirm_yes.confirm_yes += 1
+      add_confirm_yes.save
+      client.reply_message(event["replyToken"], {
+        "type": "text",
+        "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
+      })
+    elsif event['postback']['data'].split(',')[0] == 'no'
+      add_confirm_no = postback_intent(event)
+      add_confirm_no.confirm_no += 1
+      add_confirm_no.save
+      client.reply_message(event["replyToken"], {
+        "type": "text",
+        "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
+      })
+    end
   end
 
   def record_phrase(event)
