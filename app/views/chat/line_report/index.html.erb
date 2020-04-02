@@ -11,7 +11,7 @@
   counts = hours.collect do |hour|
     @used_times.gte(hour: hour).lt(hour: hour + 1).count
   end
-  used_times = [hours, counts, gen.next ]
+  used_times = [hours, counts, gen.next]
 
 %>
 <%= jquery do %>
