@@ -22,6 +22,8 @@ class Chat::LineReportController < ApplicationController
 
     @current_month_date = Date.new(@year, @month, 1)
     @current_month_end_date = @current_month_date.end_of_month
+
+    raise '404' if @current_month_date > Date.today.beginning_of_month
   end
 
   private
