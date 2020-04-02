@@ -39,10 +39,11 @@ ja:
       phrase/retry: 解決しなかった
       phrase/reply_count: 返答回数
       phrase/reply_rate: 返答率
-      session/today: 今日の利用者数
-      session/this_month: 今月の利用者数
-      session/last_month: 先月の利用者数
-      session/yesterday: 昨日の利用者数
+      session/range: 期間
+      session/users: 利用者数
+      session/today: 今日
+      session/this_month: 今月
+      session/yesterday: 昨日
 
   modules:
     chat: チャット
