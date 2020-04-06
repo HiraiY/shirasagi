@@ -52,7 +52,7 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Small',			element: 'small' },
 
 	{ name: 'Computer Code',	element: 'code' },
-	{ name: 'Keyboard Phrase',	element: 'kbd' },
+	{ name: 'Keyboard RecordPhrase',	element: 'kbd' },
 	{ name: 'Sample Text',		element: 'samp' },
 	{ name: 'Variable',			element: 'var' },
 

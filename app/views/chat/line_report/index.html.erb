@@ -3,7 +3,7 @@
 
   dates = (@current_month_date.to_date..@current_month_end_date.to_date).to_a
   counts = dates.collect do |date|
-    @users.gte(date_created: date).lt(date_created: date.tomorrow).count
+    @sessions.gte(date_created: date).lt(date_created: date.tomorrow).count
   end
   sessions = [dates, counts, gen.next]
 
@@ -23,7 +23,7 @@
     <div class="addon-head">
       <h2><%= I18n.t('chat.line_report.phrase/input') %></h2>
     </div>
-    <% if @items.present? %>
+    <% if @record_phrases.present? %>
       <div class="addon-body">
         <table>
           <thead>
@@ -33,7 +33,7 @@
           </tr>
           </thead>
           <tbody>
-          <% @items.each do |item| %>
+          <% @record_phrases.each do |item| %>
             <tr>
               <td><%= item.name %></td>
               <td><%= item.frequency %></td>
@@ -49,7 +49,7 @@
     <div class="addon-head">
       <h2><%= I18n.t('chat.line_report.phrase/called') %></h2>
     </div>
-    <% if @exists_phrase.present? %>
+    <% if @exists_phrases.present? %>
       <div class="addon-body">
         <table>
           <thead>
@@ -63,7 +63,7 @@
           </tr>
           </thead>
           <tbody>
-          <% @exists_phrase.each do |item| %>
+          <% @exists_phrases.each do |item| %>
             <% if item.frequency != 0 %>
               <tr>
                 <td><%= item.name %></td>
@@ -126,11 +126,11 @@
         </tr>
         <tr>
           <td><%= I18n.t('chat.line_report.session/this_month') %></td>
-          <td><%= @users.gt(date_created: Time.current.prev_month.end_of_month).lte(date_created: Time.current.end_of_month).count %>人</td>
+          <td><%= @sessions.gt(date_created: Time.current.prev_month.end_of_month).lte(date_created: Time.current.end_of_month).count %>人</td>
         </tr>
         <tr>
           <td><%= "#{@current_month_date.year}年#{@current_month_date.month}月" %></td>
-          <td><%= @users.gte(date_created: @current_month_date).lte(date_created: @current_month_end_date).count %>人</td>
+          <td><%= @sessions.gte(date_created: @current_month_date).lte(date_created: @current_month_end_date).count %>人</td>
         </tr>
         </tbody>
       </table>

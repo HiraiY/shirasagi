@@ -1,4 +1,4 @@
-class Chat::LineBot::Phrase
+class Chat::LineBot::RecordPhrase
   include SS::Document
   include SS::Reference::Site
   include Cms::Reference::Node

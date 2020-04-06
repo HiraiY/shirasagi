@@ -111,11 +111,11 @@ class Chat::LineBot::Service
 
   def record_phrase(event)
     begin
-      phrase = Chat::LineBot::Phrase.site(@cur_site).where(node_id: @cur_node.id).find_by(name: event.message["text"])
+      phrase = Chat::LineBot::RecordPhrase.site(@cur_site).where(node_id: @cur_node.id).find_by(name: event.message["text"])
       phrase.frequency += 1
       phrase.save
     rescue
-      phrase = Chat::LineBot::Phrase.create(site_id: @cur_site.id, node_id: @cur_node.id, name: event.message["text"])
+      phrase = Chat::LineBot::RecordPhrase.create(site_id: @cur_site.id, node_id: @cur_node.id, name: event.message["text"])
       phrase.frequency += 1
       phrase.save
     end
@@ -126,8 +126,8 @@ class Chat::LineBot::Service
   end
 
   def session_user(event)
-    @user = Chat::LineBot::Session.new(site_id: @cur_site.id, node_id: @cur_node.id, userId: event['source']['userId'], date_created: Date.today)
-    @user.save
+    @session = Chat::LineBot::Session.new(site_id: @cur_site.id, node_id: @cur_node.id, userId: event['source']['userId'], date_created: Date.today)
+    @session.save
   end
 
   def suggest_text(event, templates)

@@ -11,7 +11,7 @@
       'Some more text.');
 
   /*
-   * Phrase Modifiers
+   * RecordPhrase Modifiers
    */
 
   MT('em',

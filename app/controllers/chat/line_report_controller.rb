@@ -7,9 +7,9 @@ class Chat::LineReportController < ApplicationController
   before_action :set_year_month
 
   def index
-    @items = Chat::LineBot::Phrase.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
-    @exists_phrase = Chat::LineBot::ExistsPhrase.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
-    @users = Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id)
+    @record_phrases = Chat::LineBot::RecordPhrase.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
+    @exists_phrases = Chat::LineBot::ExistsPhrase.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
+    @sessions = Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id)
     @used_times = Chat::LineBot::UsedTime.site(@cur_site).where(node_id: @cur_node.id)
 
     year = params[:year]
