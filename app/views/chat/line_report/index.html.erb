@@ -23,69 +23,73 @@
     <div class="addon-head">
       <h2><%= I18n.t('chat.line_report.phrase/input') %></h2>
     </div>
-    <div class="addon-body">
-      <table>
-        <thead>
-        <tr>
-          <th><%= I18n.t('chat.line_report.phrase/name') %></th>
-          <th><%= I18n.t('chat.line_report.phrase/frequency') %></th>
-        </tr>
-        </thead>
-        <tbody>
-        <% @items.each do |item| %>
+    <% if @items.present? %>
+      <div class="addon-body">
+        <table>
+          <thead>
           <tr>
-            <td><%= item.name %></td>
-            <td><%= item.frequency %></td>
+            <th><%= I18n.t('chat.line_report.phrase/name') %></th>
+            <th><%= I18n.t('chat.line_report.phrase/frequency') %></th>
           </tr>
-        <% end %>
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+          <% @items.each do |item| %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.frequency %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
   </div>
 
   <div class="addon-view">
     <div class="addon-head">
       <h2><%= I18n.t('chat.line_report.phrase/called') %></h2>
     </div>
-    <div class="addon-body">
-      <table>
-        <thead>
-        <tr>
-          <th><%= I18n.t('chat.line_report.phrase/name') %></th>
-          <th><%= I18n.t('chat.line_report.phrase/frequency') %></th>
-          <th><%= I18n.t('chat.line_report.phrase/success') %></th>
-          <th><%= I18n.t('chat.line_report.phrase/retry') %></th>
-          <th><%= I18n.t('chat.line_report.phrase/reply_count') %></th>
-          <th><%= I18n.t('chat.line_report.phrase/reply_rate') %></th>
-        </tr>
-        </thead>
-        <tbody>
-        <% @intents.each do |item| %>
-          <% if item.frequency != 0 %>
-            <tr>
-              <td><%= item.name %></td>
-              <td><%= item.frequency %></td>
-              <% if item.question == "enabled" %>
-                <td><%= item.confirm_yes %></td>
-                <td><%= item.confirm_no %></td>
-                <td><%= item.confirm_yes + item.confirm_no %></td>
-                <% if item.confirm_yes != 0 && item.confirm_no != 0 %>
-                  <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
+    <% if @exists_phrase.present? %>
+      <div class="addon-body">
+        <table>
+          <thead>
+          <tr>
+            <th><%= I18n.t('chat.line_report.phrase/name') %></th>
+            <th><%= I18n.t('chat.line_report.phrase/frequency') %></th>
+            <th><%= I18n.t('chat.line_report.phrase/success') %></th>
+            <th><%= I18n.t('chat.line_report.phrase/retry') %></th>
+            <th><%= I18n.t('chat.line_report.phrase/reply_count') %></th>
+            <th><%= I18n.t('chat.line_report.phrase/reply_rate') %></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @exists_phrase.each do |item| %>
+            <% if item.frequency != 0 %>
+              <tr>
+                <td><%= item.name %></td>
+                <td><%= item.frequency %></td>
+                <% if Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(name: item.name).question === "enabled" %>
+                  <td><%= item.confirm_yes %></td>
+                  <td><%= item.confirm_no %></td>
+                  <td><%= item.confirm_yes + item.confirm_no %></td>
+                  <% if item.confirm_yes != 0 && item.confirm_no != 0 %>
+                    <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
+                  <% else %>
+                    <td>0%</td>
+                  <% end %>
                 <% else %>
-                  <td>0%</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
                 <% end %>
-              <% else %>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              <% end %>
-            </tr>
+              </tr>
+            <% end %>
           <% end %>
-        <% end %>
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
   </div>
 
   <div class="addon-view">

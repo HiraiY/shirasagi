@@ -35,11 +35,17 @@ class Chat::LineBot::Service
         when Line::Bot::Event::MessageType::Text
           begin
             if phrase(event).present?
-              add_intent_frequency(event)
+              exists_phrase(event)
               reply_message(event)
             end
           rescue
-            record_phrase(event)
+            begin
+              if phrase(event).blank?
+                record_phrase(event)
+              end
+            rescue
+              answer(event)
+            end
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
@@ -52,11 +58,6 @@ class Chat::LineBot::Service
   end
 
   private
-
-  def session_user(event)
-    @user = Chat::LineBot::Session.new(site_id: @cur_site.id, node_id: @cur_node.id, userId: event['source']['userId'], date_created: Date.today)
-    @user.save
-  end
 
   def phrase(event)
     Chat::Intent.site(@cur_site).where(node_id: @cur_node.id).find_by(phrase: event.message['text'])
@@ -78,7 +79,7 @@ class Chat::LineBot::Service
 
   def reply_confirm(event)
     if event['postback']['data'].split(',')[0] == 'yes'
-      add_confirm_yes = postback_intent(event)
+      add_confirm_yes = Chat::LineBot::ExistsPhrase.site(@cur_site).where(node_id: @cur_node.id).find_by(name: postback_intent(event).name)
       add_confirm_yes.confirm_yes += 1
       add_confirm_yes.save
       client.reply_message(event["replyToken"], {
@@ -86,13 +87,25 @@ class Chat::LineBot::Service
         "text": @cur_node.chat_success.gsub(%r{</?[^>]+?>}, "")
       })
     elsif event['postback']['data'].split(',')[0] == 'no'
-      add_confirm_no = postback_intent(event)
+      add_confirm_no = Chat::LineBot::ExistsPhrase.site(@cur_site).where(node_id: @cur_node.id).find_by(name: postback_intent(event).name)
       add_confirm_no.confirm_no += 1
       add_confirm_no.save
       client.reply_message(event["replyToken"], {
         "type": "text",
         "text": @cur_node.chat_retry.gsub(%r{</?[^>]+?>}, "")
       })
+    end
+  end
+
+  def exists_phrase(event)
+    begin
+      phrase = Chat::LineBot::ExistsPhrase.site(@cur_site).where(node_id: @cur_node.id).find_by(name: phrase(event).name)
+      phrase.frequency += 1
+      phrase.save
+    rescue
+      phrase = Chat::LineBot::ExistsPhrase.create(site_id: @cur_site.id, node_id: @cur_node.id, name: phrase(event).name)
+      phrase.frequency += 1
+      phrase.save
     end
   end
 
@@ -112,10 +125,9 @@ class Chat::LineBot::Service
     Chat::LineBot::UsedTime.create(site_id: @cur_site.id, node_id: @cur_node.id, hour: Time.zone.now.hour)
   end
 
-  def add_intent_frequency(event)
-    add_intent_frequency = phrase(event)
-    add_intent_frequency.frequency += 1
-    add_intent_frequency.save
+  def session_user(event)
+    @user = Chat::LineBot::Session.new(site_id: @cur_site.id, node_id: @cur_node.id, userId: event['source']['userId'], date_created: Date.today)
+    @user.save
   end
 
   def suggest_text(event, templates)
