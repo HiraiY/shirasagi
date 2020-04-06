@@ -28,25 +28,18 @@ class Chat::LineBot::Service
     events = client.parse_events_from(body)
     events.each do |event|
       session_user(event)
+      record_date
       case event
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
           begin
             if phrase(event).present?
-              record_date
-              add_intent_frequency = phrase(event)
-              add_intent_frequency.frequency += 1
-              add_intent_frequency.save
+              add_intent_frequency(event)
               reply_message(event)
             end
           rescue
-            begin
-              answer(event) if phrase(event).present?
-            rescue
-              record_date
-              record_phrase(event)
-            end
+            record_phrase(event)
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
@@ -117,6 +110,12 @@ class Chat::LineBot::Service
 
   def record_date
     Chat::LineBot::UsedTime.create(site_id: @cur_site.id, node_id: @cur_node.id, hour: Time.zone.now.hour)
+  end
+
+  def add_intent_frequency(event)
+    add_intent_frequency = phrase(event)
+    add_intent_frequency.frequency += 1
+    add_intent_frequency.save
   end
 
   def suggest_text(event, templates)
