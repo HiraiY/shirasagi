@@ -72,10 +72,10 @@
                   <td><%= item.confirm_yes %></td>
                   <td><%= item.confirm_no %></td>
                   <td><%= item.confirm_yes + item.confirm_no %></td>
-                  <% if item.confirm_yes != 0 && item.confirm_no != 0 %>
-                    <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
-                  <% else %>
+                  <% if item.confirm_yes == 0 && item.confirm_no == 0 %>
                     <td>0%</td>
+                  <% else %>
+                    <td><%= ((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor %>%</td>
                   <% end %>
                 <% else %>
                   <td>-</td>
