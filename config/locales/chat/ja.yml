@@ -42,8 +42,10 @@ ja:
       session/range: 期間
       session/users: 利用者数
       session/today: 今日
-      session/this_month: 今月
       session/yesterday: 昨日
+      session/this_month: 今月
+      session/last_month: 先月
+
 
   modules:
     chat: チャット

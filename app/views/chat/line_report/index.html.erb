@@ -129,6 +129,10 @@
           <td><%= @sessions.gt(date_created: Time.current.prev_month.end_of_month).lte(date_created: Time.current.end_of_month).count %>人</td>
         </tr>
         <tr>
+          <td><%= I18n.t('chat.line_report.session/last_month') %></td>
+          <td><%= @sessions.gte(date_created: Time.current.prev_month.beginning_of_month).lte(date_created: Time.current.prev_month.end_of_month).count %>人</td>
+        </tr>
+        <tr>
           <td><%= "#{@current_month_date.year}年#{@current_month_date.month}月" %></td>
           <td><%= @sessions.gte(date_created: @current_month_date).lte(date_created: @current_month_end_date).count %>人</td>
         </tr>
