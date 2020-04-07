@@ -35,17 +35,11 @@ class Chat::LineBot::Service
         when Line::Bot::Event::MessageType::Text
           begin
             if phrase(event).present?
-              exists_phrase(event)
               reply_message(event)
+              exists_phrase(event)
             end
           rescue
-            begin
-              if phrase(event).blank?
-                record_phrase(event)
-              end
-            rescue
-              answer(event)
-            end
+            record_phrase(event)
             answer(event)
           end
         when Line::Bot::Event::MessageType::Location
