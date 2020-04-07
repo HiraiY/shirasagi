@@ -1,6 +1,6 @@
-class Chat::LineReportController < ApplicationController
+class Chat::LineReportsController < ApplicationController
   include Cms::BaseFilter
-  helper Chat::LineReportHelper
+  helper Chat::LineReportsHelper
 
   navi_view "cms/node/main/navi"
 
