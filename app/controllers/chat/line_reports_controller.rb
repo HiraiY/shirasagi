@@ -57,7 +57,10 @@ class Chat::LineReportsController < ApplicationController
   end
 
   def send_csv_record_phrases(items)
-    headers = %w(name frequency)
+    headers = [
+      I18n.t('chat.line_report.phrase/name'),
+      I18n.t('chat.line_report.phrase/frequency')
+    ]
     csv = CSV.generate do |data|
       data << headers
       items.each do |item|
@@ -73,7 +76,14 @@ class Chat::LineReportsController < ApplicationController
   end
 
   def send_csv_exists_phrases(items)
-    headers = %w(name frequency confirm_yes confirm_no reply_count reply_rate)
+    headers = [
+      I18n.t('chat.line_report.phrase/name'),
+      I18n.t('chat.line_report.phrase/frequency'),
+      I18n.t('chat.line_report.phrase/success'),
+      I18n.t('chat.line_report.phrase/retry'),
+      I18n.t('chat.line_report.phrase/reply_count'),
+      I18n.t('chat.line_report.phrase/reply_rate')
+    ]
     csv = CSV.generate do |data|
       data << headers
       items.each do |item|
@@ -93,7 +103,10 @@ class Chat::LineReportsController < ApplicationController
   end
 
   def send_csv_sessions(items, dates)
-    headers = %w(date count)
+    headers = [
+      I18n.t('chat.line_report.date'),
+      I18n.t('chat.line_report.session')
+    ]
     csv = CSV.generate do |data|
       data << headers
       items.zip(dates).each do |item, date|
@@ -103,7 +116,7 @@ class Chat::LineReportsController < ApplicationController
         data << row
       end
       row = []
-      row << "total"
+      row << I18n.t('chat.line_report.total')
       row << items.map(&:to_i).sum
       data << row
     end

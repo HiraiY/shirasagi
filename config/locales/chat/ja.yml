@@ -45,6 +45,8 @@ ja:
       session/yesterday: 昨日
       session/this_month: 今月
       session/last_month: 先月
+      date: 日付
+      total: 合計
 
 
   modules:
