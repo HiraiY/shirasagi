@@ -24,8 +24,8 @@
       <h2><%= I18n.t('chat.line_report.phrase/input') %></h2>
     </div>
     <% if @record_phrases.present? %>
-      <%= link_to I18n.t('ss.links.download'), {action: :download_record_phrases}, {class: "btn"} %>
       <div class="addon-body">
+        <%= link_to I18n.t('ss.links.download'), {action: :download_record_phrases}, {class: "btn"} %>
         <table>
           <thead>
           <tr>
@@ -51,8 +51,8 @@
       <h2><%= I18n.t('chat.line_report.phrase/called') %></h2>
     </div>
     <% if @exists_phrases.present? %>
-      <%= link_to I18n.t('ss.links.download'), {action: :download_exists_phrases}, {class: "btn"} %>
       <div class="addon-body">
+        <%= link_to I18n.t('ss.links.download'), {action: :download_exists_phrases}, {class: "btn"} %>
         <table>
           <thead>
           <tr>
@@ -98,17 +98,15 @@
     <div class="addon-head">
       <h2><%= I18n.t('chat.line_report.session') %></h2>
     </div>
-
-    <ul>
-      <li class="prev"><%= link_to_monthly @current_month_date.advance(months: -1) %></li>
-      <% if @current_month_date == Date.today.beginning_of_month %>
-        <li class="next"><%= "#{@current_month_date.advance(months: 1).year}年#{@current_month_date.advance(months: 1).month}月" %></li>
-      <% else %>
-        <li class="next"><%= link_to_monthly @current_month_date.advance(months: 1) %></li>
-      <% end %>
-    </ul>
-
     <div class="addon-body">
+      <div class="nav-menu">
+        <%= link_to_monthly @current_month_date.advance(months: -1) %>
+        <% if @current_month_date == Date.today.beginning_of_month %>
+          <%= "#{@current_month_date.advance(months: 1).year}年#{@current_month_date.advance(months: 1).month}月" %>
+        <% else %>
+          <%= link_to_monthly @current_month_date.advance(months: 1) %>
+        <% end %>
+      </div>
       <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_report.session') %>' data-columns='<%= sessions.to_json %>'></canvas>
       <table>
         <thead>
