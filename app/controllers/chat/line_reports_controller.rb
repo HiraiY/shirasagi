@@ -26,6 +26,16 @@ class Chat::LineReportsController < ApplicationController
     raise '404' if @current_month_date > Date.today.beginning_of_month
   end
 
+  def download_record_phrases
+    @models = Chat::LineBot::RecordPhrase.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
+    send_csv_record_phrases @models
+    end
+
+  def download_exists_phrases
+    @models = Chat::LineBot::ExistsPhrase.site(@cur_site).where(node_id: @cur_node.id).order_by(frequency: "DESC")
+    send_csv_exists_phrases @models
+  end
+
   private
 
   def set_crumbs
@@ -37,5 +47,41 @@ class Chat::LineReportsController < ApplicationController
       @year  = Time.zone.today.year.to_i
       @month = Time.zone.today.month.to_i
     end
+  end
+
+  def send_csv_record_phrases(items)
+    headers = %w(name frequency)
+    csv = CSV.generate do |data|
+      data << headers
+      items.each do |item|
+        row = []
+        row << item.name
+        row << item.frequency
+        data << row
+      end
+    end
+
+    send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
+              filename: "record_phrase#{Time.zone.now.to_i}.csv"
+  end
+
+  def send_csv_exists_phrases(items)
+    headers = %w(name frequency confirm_yes confirm_no reply_count reply_rate)
+    csv = CSV.generate do |data|
+      data << headers
+      items.each do |item|
+        row = []
+        row << item.name
+        row << item.frequency
+        row << item.confirm_yes
+        row << item.confirm_no
+        row << item.confirm_yes + item.confirm_no
+        row << "#{((item.confirm_yes + item.confirm_no).fdiv(item.frequency) * 100).floor}%"
+        data << row
+      end
+    end
+
+    send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
+              filename: "exists_phrase#{Time.zone.now.to_i}.csv"
   end
 end

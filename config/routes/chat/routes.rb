@@ -9,6 +9,8 @@ SS::Application.routes.draw do
 
   concern :download do
     get :download, on: :collection
+    get :download_record_phrases, on: :collection
+    get :download_exists_phrases, on: :collection
   end
 
   concern :import do
@@ -27,7 +29,7 @@ SS::Application.routes.draw do
     resources :intents, concerns: [:deletion, :download, :import]
     resources :categories, concerns: :deletion
     resources :histories, concerns: [:deletion, :download], only: [:index, :show, :destroy]
-    resources :line_reports, only: [:index]
+    resources :line_reports, concerns: [:download], only: [:index]
     get 'report' => 'report#index'
   end
 

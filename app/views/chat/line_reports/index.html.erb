@@ -24,6 +24,7 @@
       <h2><%= I18n.t('chat.line_report.phrase/input') %></h2>
     </div>
     <% if @record_phrases.present? %>
+      <%= link_to I18n.t('ss.links.download'), {action: :download_record_phrases}, {class: "btn"} %>
       <div class="addon-body">
         <table>
           <thead>
@@ -50,6 +51,7 @@
       <h2><%= I18n.t('chat.line_report.phrase/called') %></h2>
     </div>
     <% if @exists_phrases.present? %>
+      <%= link_to I18n.t('ss.links.download'), {action: :download_exists_phrases}, {class: "btn"} %>
       <div class="addon-body">
         <table>
           <thead>
