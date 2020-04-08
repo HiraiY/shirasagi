@@ -36,6 +36,13 @@ class Chat::LineReportsController < ApplicationController
     send_csv_exists_phrases @models
   end
 
+  def download_sessions
+    @session_counts = params[:session_counts]
+    @dates = params[:dates]
+    @current_date = params[:current_date]
+    send_csv_sessions(@session_counts, @dates)
+  end
+
   private
 
   def set_crumbs
@@ -83,5 +90,25 @@ class Chat::LineReportsController < ApplicationController
 
     send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
               filename: "exists_phrase#{Time.zone.now.to_i}.csv"
+  end
+
+  def send_csv_sessions(items, dates)
+    headers = %w(date count)
+    csv = CSV.generate do |data|
+      data << headers
+      items.zip(dates).each do |item, date|
+        row = []
+        row << date
+        row << item
+        data << row
+      end
+      row = []
+      row << "total"
+      row << items.map(&:to_i).sum
+      data << row
+    end
+
+    send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
+              filename: "session_counts_#{@current_date}_#{Time.zone.now.to_i}.csv"
   end
 end

@@ -1,17 +1,17 @@
 <%
   gen = SS::HslGenerator.new(@cur_node.id).to_enum
 
-  dates = (@current_month_date.to_date..@current_month_end_date.to_date).to_a
-  counts = dates.collect do |date|
+  @dates = (@current_month_date..@current_month_end_date).to_a
+  @session_counts = @dates.collect do |date|
     @sessions.gte(date_created: date).lt(date_created: date.tomorrow).count
   end
-  sessions = [dates, counts, gen.next]
+  sessions = [@dates, @session_counts, gen.next]
 
-  hours = (0..23).to_a
-  counts = hours.collect do |hour|
+  @hours = (0..23).to_a
+  @used_times_counts = @hours.collect do |hour|
     @used_times.gte(hour: hour).lt(hour: hour + 1).count
   end
-  used_times = [hours, counts, gen.next]
+  used_times = [@hours, @used_times_counts, gen.next]
 
 %>
 <%= jquery do %>
@@ -107,6 +107,7 @@
           <%= link_to_monthly @current_month_date.advance(months: 1) %>
         <% end %>
       </div>
+      <%= link_to I18n.t('ss.links.download'), {action: :download_sessions, dates: @dates, session_counts: @session_counts, current_date: @current_month_date.strftime('%Y%m')}, {class: "btn"} %>
       <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_report.session') %>' data-columns='<%= sessions.to_json %>'></canvas>
       <table>
         <thead>

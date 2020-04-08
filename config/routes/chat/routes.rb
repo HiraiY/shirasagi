@@ -11,6 +11,7 @@ SS::Application.routes.draw do
     get :download, on: :collection
     get :download_record_phrases, on: :collection
     get :download_exists_phrases, on: :collection
+    get :download_sessions, on: :collection
   end
 
   concern :import do
