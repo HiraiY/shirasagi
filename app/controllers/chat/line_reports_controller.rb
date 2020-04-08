@@ -43,6 +43,12 @@ class Chat::LineReportsController < ApplicationController
     send_csv_sessions(@session_counts, @dates)
   end
 
+  def download_used_times
+    @used_times_counts = params[:used_times_counts]
+    @hours = params[:hours]
+    send_csv_used_times(@used_times_counts, @hours)
+  end
+
   private
 
   def set_crumbs
@@ -105,7 +111,7 @@ class Chat::LineReportsController < ApplicationController
   def send_csv_sessions(items, dates)
     headers = [
       I18n.t('chat.line_report.date'),
-      I18n.t('chat.line_report.session')
+      I18n.t('chat.line_report.session/users')
     ]
     csv = CSV.generate do |data|
       data << headers
@@ -123,5 +129,28 @@ class Chat::LineReportsController < ApplicationController
 
     send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
               filename: "session_counts_#{@current_date}_#{Time.zone.now.to_i}.csv"
+  end
+
+  def send_csv_used_times(items, hours)
+    headers = [
+      I18n.t('chat.line_report.hour'),
+      I18n.t('chat.line_report.session')
+    ]
+    csv = CSV.generate do |data|
+      data << headers
+      items.zip(hours).each do |item, hour|
+        row = []
+        row << hour + "時"
+        row << item
+        data << row
+      end
+      row = []
+      row << I18n.t('chat.line_report.total')
+      row << items.map(&:to_i).sum
+      data << row
+    end
+
+    send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
+              filename: "used_times_counts_#{@current_date}_#{Time.zone.now.to_i}.csv"
   end
 end

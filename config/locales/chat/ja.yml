@@ -31,7 +31,6 @@ ja:
     line_report:
       phrase/input: 入力されたフレーズ
       used_time: 利用時間帯
-      session: 利用者数
       phrase/called: 使用されたフレーズ
       phrase/name: フレーズ名
       phrase/frequency: 使用回数
@@ -47,6 +46,8 @@ ja:
       session/last_month: 先月
       date: 日付
       total: 合計
+      hour: 時
+      session: 利用回数
 
 
   modules:

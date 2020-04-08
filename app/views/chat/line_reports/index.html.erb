@@ -96,7 +96,7 @@
 
   <div class="addon-view">
     <div class="addon-head">
-      <h2><%= I18n.t('chat.line_report.session') %></h2>
+      <h2><%= "#{@current_month_date.year}年#{@current_month_date.month}月の" %><%= I18n.t('chat.line_report.session/users') %></h2>
     </div>
     <div class="addon-body">
       <div class="nav-menu">
@@ -108,7 +108,7 @@
         <% end %>
       </div>
       <%= link_to I18n.t('ss.links.download'), {action: :download_sessions, dates: @dates, session_counts: @session_counts, current_date: @current_month_date.strftime('%Y%m')}, {class: "btn"} %>
-      <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_report.session') %>' data-columns='<%= sessions.to_json %>'></canvas>
+      <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_report.session/users') %>' data-columns='<%= sessions.to_json %>'></canvas>
       <table>
         <thead>
         <tr>
@@ -146,6 +146,7 @@
       <h2><%= I18n.t('chat.line_report.used_time') %></h2>
     </div>
     <div class="addon-body">
+      <%= link_to I18n.t('ss.links.download'), {action: :download_used_times, hours: @hours, used_times_counts: @used_times_counts}, {class: "btn"} %>
       <canvas class="graph-sessions" data-name='<%= I18n.t('chat.line_report.used_time') %>' data-columns='<%= used_times.to_json %>'></canvas>
     </div>
   </div>
