@@ -69,7 +69,7 @@ class Chat::LineReportsController < ApplicationController
     end
 
     send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
-              filename: "record_phrase#{Time.zone.now.to_i}.csv"
+              filename: "record_phrase_#{Time.zone.now.to_i}.csv"
   end
 
   def send_csv_exists_phrases(items)
@@ -89,7 +89,7 @@ class Chat::LineReportsController < ApplicationController
     end
 
     send_data csv.encode("SJIS", invalid: :replace, undef: :replace),
-              filename: "exists_phrase#{Time.zone.now.to_i}.csv"
+              filename: "exists_phrase_#{Time.zone.now.to_i}.csv"
   end
 
   def send_csv_sessions(items, dates)

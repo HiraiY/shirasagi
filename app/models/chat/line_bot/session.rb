@@ -4,8 +4,8 @@ class Chat::LineBot::Session
   include Cms::Reference::Node
   include Cms::SitePermission
 
-  field :userId, type: String
+  field :line_user_id, type: String
   field :date_created, type: String
 
-  validates :userId, uniqueness: { scope: :date_created }
+  validates :line_user_id, uniqueness: { scope: :date_created }
 end
