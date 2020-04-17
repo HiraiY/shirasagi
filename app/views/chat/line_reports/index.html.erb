@@ -101,7 +101,7 @@
     <div class="addon-body">
       <div class="nav-menu">
         <%= link_to_monthly @current_month_date.advance(months: -1) %>
-        <% if @current_month_date == Date.today.beginning_of_month %>
+        <% if @current_month_date == Time.zone.today.beginning_of_month %>
           <%= "#{@current_month_date.advance(months: 1).year}年#{@current_month_date.advance(months: 1).month}月" %>
         <% else %>
           <%= link_to_monthly @current_month_date.advance(months: 1) %>
@@ -119,11 +119,11 @@
         <tbody>
         <tr>
           <td><%= I18n.t('chat.line_report.session/today') %></td>
-          <td><%= Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id, date_created: Date.today).count %>人</td>
+          <td><%= Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id, date_created: Time.zone.today).count %>人</td>
         </tr>
         <tr>
           <td><%= I18n.t('chat.line_report.session/yesterday') %></td>
-          <td><%= Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id, date_created: Date.yesterday).count %>人</td>
+          <td><%= Chat::LineBot::Session.site(@cur_site).where(node_id: @cur_node.id, date_created: Time.zone.yesterday).count %>人</td>
         </tr>
         <tr>
           <td><%= I18n.t('chat.line_report.session/this_month') %></td>
