@@ -1,0 +1,5 @@
+<% message.subject = "[#{I18n.t('gws.registration.mail.subject.verification')}]" %>
+
+下記のURLより、仮登録の申請をしてください。
+- URL
+  <%= "#{@page_url}?#{ { token: @user.token }.to_query }" %>

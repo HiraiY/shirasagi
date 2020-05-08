@@ -33,6 +33,8 @@ ja:
     color: 表示色
     bg_color: 背景色
     contrast_ratio: コントラスト比
+    registration: ユーザー新規登録
+    reset_password: パスワード変更
 
     views:
       login/login:
@@ -59,6 +61,7 @@ ja:
       input: 入力する
       delete: 削除する
       import: インポート
+      temporary: 承認待ち一覧
       reply: 返信する
       back: 戻る
       back_to_show: 詳細へ戻る
@@ -290,6 +293,11 @@ ja:
         silence: 通知しない
         force_silence: 通知しない（全体管理）
         deleted: 削除済み
+      temporary:
+        temporary: (仮登録)
+        request: 承認待ち
+        approval: 承認
+        deny: 非承認
       resizing:
         320x240: 320x240 (QVGA横)
         240x320: 240x320 (QVGA縦)
@@ -359,6 +367,10 @@ ja:
       user_deletion_lock_state:
         unlocked: 削除可
         locked: 削除不可
+      user_temporary:
+        request: 承認待ち
+        approval: 承認
+        deny: 非承認
       text_zoom:
         zoom_in: '+'
         zoom_out: '-'
@@ -508,6 +520,7 @@ ja:
         restriction: 利用制限
         lock_state: 利用状態
         deletion_lock_state: 削除状態
+        temporary: 仮登録状態
         remark: 備考
         organization_id: 所属組織
         organization_uid: 職員番号
@@ -776,6 +789,11 @@ ja:
         - 利用状態を選択します。
       deletion_lock_state:
         - 削除状態を選択します。
+      temporary:
+        - 仮登録状態を選択します。
+        - 「承認」にするとユーザーに承認メールを送信し、利用状態が「利用可」となります。
+        - 「非承認」にするとユーザーに非承認メールを送信します。
+        - 「承認」「非承認」を選択すると変更ができなくなります。
       remark:
         - 備考を入力します。
       organization_id: 所属する組織を選択します。

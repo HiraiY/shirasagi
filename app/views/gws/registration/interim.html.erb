@@ -1,0 +1,9 @@
+<section class="main-box">
+  <h1> <%= @sender %> から登録案内メールを <%= @item.email %> に送りました。<br>
+    1時間以内に登録を完了しないと無効となります。<br>
+    しばらく待ってもメールが届かない場合は、 <%= @sender %> からのメールが着信拒否されていないか確認の上、<br>
+    もう一度登録をしてください。</h1>
+  <footer class="send">
+    <%= link_to I18n.t("gws/registration.links.new"), new_gws_registration_path, class: "btn-default" %>
+  </footer>
+</section>

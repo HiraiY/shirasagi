@@ -25,7 +25,7 @@ class Gws::UsersController < ApplicationController
   end
 
   def fix_params
-    { cur_user: @cur_user, cur_site: @cur_site }
+    { cur_user: @cur_user, cur_site: @cur_site, in_protocol: request.protocol, in_host: request.host_with_port }
   end
 
   def pre_params
@@ -84,9 +84,22 @@ class Gws::UsersController < ApplicationController
 
     @items = @model.site(@cur_site).
       state(params.dig(:s, :state)).
+      temporary(params.dig(:s, :temporary)).
       allow(:read, @cur_user, site: @cur_site).
       in(group_ids: group_ids).
       search(@s).
+      order_by_title(@cur_site).
+      page(params[:page]).per(50)
+  end
+
+  def temporary
+    @groups = @cur_site.descendants.active.tree_sort(root_name: @cur_site.name)
+
+    @items = @model.site(@cur_site).
+      state(params.dig(:s, :state)).
+      temporary('request').
+      allow(:read, @cur_user, site: @cur_site).
+      in(group_ids: group_ids).
       order_by_title(@cur_site).
       page(params[:page]).per(50)
   end

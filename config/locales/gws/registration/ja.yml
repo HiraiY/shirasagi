@@ -1,0 +1,79 @@
+ja:
+  gws/registration:
+    view:
+      here: こちら
+      new_password: 新しいパスワード
+      new_password_again: 新しいパスワード（入力確認）
+      change_password: パスワードを変更します。
+    views:
+      reset_password:
+        description: |-
+          ご登録されている以下のメールアドレスにパスワードの再設定用のURLをお送りします。
+      password_min_use: "パスワードは%{count}文字以上にしてください。"
+      password_min_upcase_use: "パスワードは英大文字（A-Z）を%{count}文字以上含むようにしてください。"
+      password_min_downcase_use: "パスワードは英小文字（a-z）を%{count}文字以上含むようにしてください。"
+      password_min_digit_use: "パスワードは数字（0-9）を%{count}文字以上含むようにしてください。"
+      password_min_symbol_use: "パスワードは記号を%{count}文字以上含むようにしてください。"
+      password_prohibited_char_use: "パスワードの使用禁止文字(%{char})"
+    buttons:
+      send: 送信する
+      confirm: 確認画面へ
+      register: 登録
+      back: 戻る
+      change_password: パスワードを変更
+    links:
+      new: 新規登録
+
+  modules:
+    gws/registration: 仮登録
+    addons:
+      gws/registration/group_setting: 仮登録設定
+
+  mongoid:
+    attributes:
+      gws/addon/registration/group_setting:
+        approver_name: 承認者名
+        approver_email: 承認者メールアドレス
+        approver_id: 承認者
+        default_group_id: 所属グループ
+        default_role_ids: 権限/ロール
+
+  tooltip:
+    gws/addon/registration/group_setting:
+      approver_name:
+        - システムから送信されるメールの既定の承認者名を入力します。
+      approver_email: |-
+        システムから送信されるメールの既定の承認者メールアドレスを入力します。
+        未入力の場合、システム設定のメールアドレス（例: noreply@example.jp）が使用されます。
+      approver_id: |-
+        承認者を選択します。
+        仮登録での承認者として使用されます。
+        また、承認者と承認者メールアドレスの両方が設定されている場合、差承認者の方が優先的に使用されます。
+      default_group_id:
+        - 仮登録時の所属グループを設定します。
+      default_role_ids:
+        - 仮登録時の権限/ロールを設定します。
+
+  errors:
+    messages:
+      not_input: を入力してください。
+      input_again: をもう一度入力してください。
+      mismatch: が一致しません。
+      in_registerd: は登録されています。
+      not_registerd: は登録されていません。
+      already_registerd: は、確認済みです。
+      password_short: "は%{count}文字以上にしてください。"
+      password_short_upcase: "は英大文字（A-Z）を%{count}文字以上含むようにしてください。"
+      password_short_downcase: "は英小文字（a-z）を%{count}文字以上含むようにしてください。"
+      password_short_digit: "は数字（0-9）を%{count}文字以上含むようにしてください。"
+      password_short_symbol: "は記号を%{count}文字以上含むようにしてください。"
+      password_contains_prohibited_chars: "は使用禁止文字が含まれています。"
+      password_min_change_chars: "は以前のものから%{count}文字以上違う文字を含むようにしてください。"
+      password_alphabet_only: に英字のみの文字は使用できません。
+      password_numeric_only: に数字のみの文字は使用できません。
+      password_include_email: にメールアドレスが含まれています。
+      password_include_name: に氏名が含まれています。
+      password_include_kana: によみがなが含まれています。
+      please_confirm_personal_data_protection: 個人情報の保護に同意してください。
+      name_long: "は%{count}文字以内にしてください。"
+

@@ -1,0 +1,22 @@
+<%= jquery do %> SS_AddonTabs.hide(".addon-gws-registration-group-setting"); <% end %>
+
+<dl class="see addon-gws-registration-group-setting">
+  <dt><%= @model.t :approver_name %></dt>
+  <dd><%= @item.approver_name %></dd>
+
+  <dt><%= @model.t :approver_email %></dt>
+  <dd><%= @item.approver_email %></dd>
+
+  <dt><%= @model.t :approver_id %></dt>
+  <dd><%= @item.approver.try(:long_name) %></dd>
+
+  <dt><%= @model.t :default_group_id %></dt>
+  <dd><%= @item.default_group.name if @item.default_group.present?%></dd>
+
+  <dt><%= @model.t :default_role_ids %></dt>
+  <dd>
+    <% @item.default_roles.site(@cur_site).order_by(name: 1).each do |role| %>
+      <div><%= link_to role.name, gws_role_path(id: role) %></div>
+    <% end %>
+  </dd>
+</dl>

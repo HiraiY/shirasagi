@@ -19,6 +19,9 @@ SS_Clipboard.renderCopy();
   <% if item.deletion_locked? %>
     <span class="deletion-lock state state-deletion-locked"><%= item.label :deletion_lock_state %></span>
   <% end %>
+  <% if item.temporary.present? %>
+    <span class="temporary"><%= I18n.t("ss.options.user_temporary.#{item.temporary}") %></span>
+  <% end %>
 <% end %>
 
 <%= render file: "gws/crud/index" %>

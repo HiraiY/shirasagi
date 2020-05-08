@@ -1,0 +1,9 @@
+<% message.subject = "[#{I18n.t('gws.registration.mail.subject.notify')}]#{@user.name} - #{@site.name}" %>
+<%= @user.name %>さんより仮登録申請が届きました。
+下記URLより承認してください。
+
+- <%= @user.t :name %>
+  <%= @user.name %>
+
+- URL
+  <%= @page_url %>

@@ -72,6 +72,15 @@
   <dt><%= @model.t :deletion_lock_state %><%= @model.tt :deletion_lock_state %></dt>
   <dd><%= f.select :deletion_lock_state, @item.deletion_lock_state_options, include_blank: true %></dd>
 
+  <% if @item.temporary.present? %>
+    <dt><%= @model.t :temporary %><%= @model.tt :temporary %></dt>
+    <% if @item.temporary == 'request' %>
+      <dd><%= f.select :temporary, @item.temporary_options %></dd>
+    <% else %>
+      <dd><%= f.select :temporary, @item.temporary_options, {}, disabled: true %></dd>
+    <% end %>
+  <% end %>
+
   <dt><%= @model.t :organization_id %><%= @model.tt :organization_id %></dt>
   <dd><%= f.select :organization_id, @item.organization_id_options([@cur_site]) %></dd>
 </dl>

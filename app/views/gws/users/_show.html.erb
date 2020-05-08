@@ -63,6 +63,11 @@ SS_Clipboard.renderCopy();
   <dt><%= @model.t :deletion_lock_state %></dt>
   <dd><%= @item.label :deletion_lock_state %></dd>
 
+  <% if @item.temporary.present? %>
+  <dt><%= @model.t :temporary %></dt>
+  <dd><%= @item.label :temporary %></dd>
+  <% end %>
+
   <% if @item.organization.present? %>
   <dt><%= @model.t :organization_id %></dt>
   <dd><%= @item.organization.name %></dd>

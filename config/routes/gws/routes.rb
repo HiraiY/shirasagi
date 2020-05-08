@@ -29,8 +29,18 @@ Rails.application.routes.draw do
   namespace "gws", path: ".g:site" do
     get "/", to: "portal/main#show", as: :portal
     match "logout" => "login#logout", as: :logout, via: [:get, :delete]
-    match "login" => "login#login", as: :login, via: [:get, :post]
-    post "access_token" => "login#access_token", as: :access_token
+    match "login"  => "login#login", as: :login, via: [:get, :post]
+    post "access_token"  => "login#access_token", as: :access_token
+    resources :registration, only: [:index, :new] do
+      match :confirm, on: :collection, via: [:get, :post]
+      match :interim, on: :collection, via: [:post]
+      match :verify, on: :collection, via: [:get]
+      match :registration, on: :collection, via: [:post]
+      match :reset_password, on: :collection, via: [:get, :post]
+      match :confirm_reset_password, on: :collection, via: [:get]
+      match :change_password, on: :collection, via: [:get, :post]
+      match :confirm_password, on: :collection, via: [:get]
+    end
   end
 
   namespace "gws", path: ".g:site/gws" do
@@ -39,7 +49,9 @@ Rails.application.routes.draw do
     resource  :site
     resources :groups, concerns: [:deletion, :download, :import]
     resources :custom_groups, concerns: [:deletion]
-    resources :users, concerns: [:deletion, :download, :import, :webmail_import, :lock_and_unlock]
+    resources :users, concerns: [:deletion, :download, :import, :webmail_import, :lock_and_unlock] do
+      match :temporary, on: :collection, via: [:get]
+    end
     resources :user_titles, concerns: [:deletion] do
       match :download_all, on: :collection, via: %i[get post]
       match :import, on: :collection, via: %i[get post]

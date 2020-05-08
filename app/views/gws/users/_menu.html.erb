@@ -4,6 +4,7 @@
       <%= link_to t('ss.links.new'), action: :new %>
       <%= link_to t('ss.links.download'), action: :download %>
       <%= link_to t('ss.links.import'), action: :import %>
+      <%= link_to t('ss.links.temporary'), action: :temporary %>
     <% end %>
   <% elsif params[:action] =~ /new|create/ %>
     <%= link_to t('ss.links.back_to_index'), action: :index %>
@@ -19,7 +20,9 @@
     <%= link_to t('ss.links.back_to_index'), action: :index %>
     <%= link_to t('ss.links.download'), action: :download %>
     <%= link_to t("gws.links.webmail_user_import"), action: :webmail_import %>
-  <% else %>
+  <% elsif params[:action] =~ /temporary/ %>
+    <%= link_to t('ss.links.back_to_index'), action: :index %>
+<% else %>
     <% if @item.allowed?(:edit, @cur_user, site: @cur_site) %>
       <%= link_to t('ss.links.edit'), action: :edit, id: @item %>
     <% end %>
@@ -27,5 +30,6 @@
       <%= link_to t('ss.links.delete'), action: :delete, id: @item %>
     <% end %>
     <%= link_to t('ss.links.back_to_index'), action: :index %>
-  <% end %>
+    <%= link_to t('ss.links.temporary'), action: :temporary %>
+<% end %>
 </nav>
