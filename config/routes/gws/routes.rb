@@ -31,6 +31,12 @@ SS::Application.routes.draw do
     match "logout" => "login#logout", as: :logout, via: [:get, :delete]
     match "login"  => "login#login", as: :login, via: [:get, :post]
     post "access_token"  => "login#access_token", as: :access_token
+    resources :registration do
+      collection do
+        post :confirm
+        post :interim
+      end
+    end
   end
 
   namespace "gws", path: ".g:site/gws" do

@@ -38,6 +38,8 @@
       </footer>
     <% end %>
 
+    <%= link_to "新規登録", new_gws_registration_path %>
+
     <% sso = Sys::Auth::Base.where(state: "enabled").order_by(order: 1).to_a %>
     <% if sso.present? %>
       <ul class="sso">

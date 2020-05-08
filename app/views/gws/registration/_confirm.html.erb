@@ -1,0 +1,10 @@
+<div class="columns">
+  <dl class="colum email">
+    <dt><%= @item.class.t :email %></dt>
+    <dd>
+      <%= @item.email %>
+      <%= f.hidden_field :email, value: @item.email %>
+    </dd>
+  </dl>
+  <%= f.hidden_field :sends_verification_mail, value: 'yes' %>
+</div>
