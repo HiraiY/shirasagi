@@ -1,0 +1,24 @@
+<%= f.hidden_field_tag("token", params[:token]) %>
+
+<dl class="colum name">
+  <dt><%= @item.class.t :name %><span class="required"><%= t("ss.required_field") %></span></dt>
+  <dd><%= f.text_field :name %><%= remarks :name %></dd>
+</dl>
+
+<dl class="colum uid">
+  <dt><%= @item.class.t :uid %><span class="required"><%= t("ss.required_field") %></span></dt>
+  <dd><%= f.text_field :uid %><%= remarks :uid %></dd>
+</dl>
+
+<dl class="colum email">
+  <dt><%= @item.class.t :email %></dt>
+  <dd><%= @item.email %></dd>
+</dl>
+
+<dl class="colum password">
+  <dt><%= @item.t :in_password %><span class="required"><%= t("ss.required_field") %></span></dt>
+  <dd><%= f.password_field :in_password %><%= remarks :in_password %></dd>
+
+  <dt><%= @item.class.t :in_password_again %><span class="required"><%= t("ss.required_field") %></span></dt>
+  <dd><%= f.password_field :in_password_again %><%= remarks :in_password_again %></dd>
+</dl>

@@ -76,6 +76,32 @@ class Gws::RegistrationController < ApplicationController
     raise "404" if @item.blank?
   end
 
+  def registration
+    @item = Gws::Registration.site(@cur_site).and_verification_token(params[:token]).and_temporary.first
+    raise "404" if @item.blank?
+
+    @item.attributes = get_params
+    @item.in_check_password = true
+    @item.group_ids << @cur_site.id
+    @item.state = 'request'
+
+
+    if @item.in_password_again.blank?
+      @item.errors.add :in_password_again, :not_input
+      render action: :verify
+      return
+    elsif @item.in_password != @item.in_password_again
+      @item.errors.add :password, :mismatch
+      render action: :verify
+      return
+    end
+
+    unless @item.update
+      render action: :verify
+      return
+    end
+  end
+
   private
 
 end

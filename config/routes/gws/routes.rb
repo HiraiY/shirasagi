@@ -35,7 +35,7 @@ SS::Application.routes.draw do
       match :confirm, on: :collection, via: [:get, :post]
       match :interim, on: :collection, via: [:get, :post]
       match :verify, on: :collection, via: [:get, :post]
-      match :temporary_registration, on: :collection, via: [:get, :post]
+      match :registration, on: :collection, via: [:get, :post]
     end
   end
 

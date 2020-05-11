@@ -19,10 +19,12 @@ module Gws::Model::Registration
 
     seqid :id
     field :name, type: String
+    field :uid, type: String
     field :email, type: String
     field :email_type, type: String
     field :password, type: String
     field :state, type: String
+    field :group_ids, type: Array, default: []
     field :oauth_type, type: String
     field :oauth_id, type: String
     field :oauth_token, type: String
@@ -30,7 +32,7 @@ module Gws::Model::Registration
     field :last_loggedin, type: DateTime
     field :verify_mail_sent, type: DateTime
 
-    permit_params :name, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state
+    permit_params :name, :uid, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state, :group_ids
     permit_params :sends_notify_mail, :sends_verification_mail, :in_confirm_personal_info
 
     validates :name, presence: true, length: { maximum: 40 }, if: ->{ enabled? || in_check_name }
