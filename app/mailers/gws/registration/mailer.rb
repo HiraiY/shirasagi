@@ -11,11 +11,9 @@ class Gws::Registration::Mailer < ActionMailer::Base
   # 会員登録に対して確認メールを配信する。
   #
   # @param [Cms::Member] member
-  def verification_mail(member)
+  def verification_mail(member, protocol, host)
     @member = member
-    @node = Gws::Registration.first
-    return if @node.blank?
-    # sender = "#{@node.sender_name} <#{@node.sender_email}>"
+    @page_url = Rails.application.routes.url_helpers.gws_registration_index_url(protocol: protocol, host: host, site: member.site)
     sender = "a"
 
     mail from: sender, to: member.email

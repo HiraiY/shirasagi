@@ -9,7 +9,7 @@ class Gws::RegistrationController < ApplicationController
   private
 
   def fix_params
-    { cur_site: @cur_site }
+    { cur_site: @cur_site, in_protocol: request.protocol, in_host: request.host }
   end
 
   def permit_fields
@@ -72,6 +72,7 @@ class Gws::RegistrationController < ApplicationController
 
   def verify
     @item = Gws::Registration.site(@cur_site).and_verification_token(params[:token]).and_temporary.first
+
     raise "404" if @item.blank?
   end
 

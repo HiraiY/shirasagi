@@ -15,6 +15,7 @@ module Gws::Model::Registration
     attr_accessor :in_check_name
     attr_accessor :in_check_email_again
     attr_accessor :in_check_password
+    attr_accessor :in_protocol, :in_host
 
     seqid :id
     field :name, type: String
@@ -102,7 +103,7 @@ module Gws::Model::Registration
   end
 
   def send_verification_mail
-    Gws::Registration::Mailer.verification_mail(self).deliver_now if self.sends_verification_mail == 'yes'
+    Gws::Registration::Mailer.verification_mail(self, in_protocol, in_host).deliver_now if self.sends_verification_mail == 'yes'
   end
 
   def validate_email_again

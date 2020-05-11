@@ -22,7 +22,6 @@ class Gws::Group
   include Gws::Addon::System::LogSetting
   include Gws::Addon::System::GroupSetting
   include Gws::Addon::System::DesktopSetting
-  include Gws::Addon::Registration::GroupSetting
   include Gws::Addon::History
   include Gws::Addon::Import::Group
 

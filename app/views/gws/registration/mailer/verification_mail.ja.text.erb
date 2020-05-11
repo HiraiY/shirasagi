@@ -6,3 +6,5 @@
 <%#= @node.reply_lower_text %>
 
 <%#= @node.reply_signature %>
+
+<%= "#{@page_url}/verify?#{ { token: @member.verification_token }.to_query }" %>

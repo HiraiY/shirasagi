@@ -32,10 +32,10 @@ SS::Application.routes.draw do
     match "login"  => "login#login", as: :login, via: [:get, :post]
     post "access_token"  => "login#access_token", as: :access_token
     resources :registration do
-      collection do
-        post :confirm
-        post :interim
-      end
+      match :confirm, on: :collection, via: [:get, :post]
+      match :interim, on: :collection, via: [:get, :post]
+      match :verify, on: :collection, via: [:get, :post]
+      match :temporary_registration, on: :collection, via: [:get, :post]
     end
   end
 
