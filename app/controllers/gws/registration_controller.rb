@@ -9,7 +9,7 @@ class Gws::RegistrationController < ApplicationController
   private
 
   def fix_params
-    { cur_site: @cur_site, in_protocol: request.protocol, in_host: request.host }
+    { cur_site: @cur_site, in_protocol: request.protocol, in_host: request.host_with_port }
   end
 
   def permit_fields
@@ -43,7 +43,6 @@ class Gws::RegistrationController < ApplicationController
     end
 
     @item.state = 'temporary'
-    @item
   end
 
   public
@@ -82,9 +81,7 @@ class Gws::RegistrationController < ApplicationController
 
     @item.attributes = get_params
     @item.in_check_password = true
-    @item.group_ids << @cur_site.id
     @item.state = 'request'
-
 
     if @item.in_password_again.blank?
       @item.errors.add :in_password_again, :not_input
@@ -100,6 +97,18 @@ class Gws::RegistrationController < ApplicationController
       render action: :verify
       return
     end
+
+    item = @item
+    group_ids = []
+    group_ids << item.site_id
+    user = Gws::User.new
+    user.name = item.name
+    user.email = item.email
+    user.password = item.password
+    user.group_ids = group_ids
+    # デフォルトの権限
+    # user.gws_role_ids
+    user.save
   end
 
   private
