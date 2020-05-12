@@ -98,19 +98,15 @@ class Gws::RegistrationController < ApplicationController
       return
     end
 
-    item = @item
     group_ids = []
-    group_ids << item.site_id
+    group_ids << @item.site_id
     user = Gws::User.new
-    user.name = item.name
-    user.email = item.email
-    user.password = item.password
+    user.name = @item.name
+    user.email = @item.email
+    user.password = @item.password
     user.group_ids = group_ids
     # デフォルトの権限
     # user.gws_role_ids
     user.save
   end
-
-  private
-
 end

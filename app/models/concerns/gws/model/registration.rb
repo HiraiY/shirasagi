@@ -45,7 +45,7 @@ module Gws::Model::Registration
     before_validation :encrypt_password, if: ->{ in_password.present? }
     before_validation :set_site_email, if: ->{ email.present? }
 
-    # after_save :send_notify_mail, if: ->{ oauth_type.blank? }
+    after_save :send_notify_mail, if: ->{ oauth_type.blank? }
     after_save :send_verification_mail, if: ->{ oauth_type.blank? }
 
     scope :and_enabled, -> { self.or({ state: 'enabled' }, { state: nil }) }
@@ -99,7 +99,7 @@ module Gws::Model::Registration
   end
 
   def send_notify_mail
-    Gws::Registration::Mailer.notify_mail(self).deliver_now if self.sends_notify_mail == 'yes'
+    Gws::Registration::Mailer.notify_mail(self, in_protocol, in_host).deliver_now if self.sends_notify_mail == 'yes'
   end
 
   def send_verification_mail
