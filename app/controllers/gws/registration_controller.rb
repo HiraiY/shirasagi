@@ -105,8 +105,11 @@ class Gws::RegistrationController < ApplicationController
     user.email = @item.email
     user.password = @item.password
     user.group_ids = group_ids
+    user.temporary = @item.state
+    user.lock_state = 'locked'
     # デフォルトの権限
     # user.gws_role_ids
     user.save
+    @item.destroy if user.save
   end
 end
