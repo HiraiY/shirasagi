@@ -218,6 +218,13 @@ ja:
         state: 状態
         in_basename: フォルダー名
         in_parent: 親フォルダー
+      gws/model/registration:
+        name: 氏名
+        email: メールアドレス
+        email_again: メールアドレス（確認用）
+        password: パスワード
+        in_password: パスワード
+        in_password_again: パスワード（確認用）
       gws/model/memo/folder:
         in_basename: フォルダー名
       gws/user:

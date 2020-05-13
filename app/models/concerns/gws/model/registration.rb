@@ -11,7 +11,6 @@ module Gws::Model::Registration
     attr_accessor :email_again
     attr_accessor :sends_notify_mail
     attr_accessor :sends_verification_mail
-    attr_accessor :in_confirm_personal_info
     attr_accessor :in_check_name
     attr_accessor :in_check_email_again
     attr_accessor :in_check_password
@@ -31,11 +30,11 @@ module Gws::Model::Registration
     field :verify_mail_sent, type: DateTime
 
     permit_params :name, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state
-    permit_params :sends_notify_mail, :sends_verification_mail, :in_confirm_personal_info
+    permit_params :sends_notify_mail, :sends_verification_mail
 
     validates :name, presence: true, length: { maximum: 40 }, if: ->{ in_check_name }
     validates :email, email: true, length: { maximum: 80 }
-    validates :email, presence: true, if: ->{ oauth_type.blank? }
+    validates :email, presence: true, if: ->{ email.present? }
     validates :email, uniqueness: { scope: :site_id }, if: ->{ oauth_type.blank? || email.present? }
     validate :validate_email_again, if: ->{ in_check_email_again }
     validates :email_type, inclusion: { in: %w(text html) }, if: ->{ email_type.present? }
@@ -43,12 +42,10 @@ module Gws::Model::Registration
     validate :validate_password, if: ->{ in_check_password }
 
     before_validation :encrypt_password, if: ->{ in_password.present? }
-    before_validation :set_site_email, if: ->{ email.present? }
 
     after_save :send_notify_mail, if: ->{ oauth_type.blank? }
     after_save :send_verification_mail, if: ->{ oauth_type.blank? }
 
-    scope :and_enabled, -> { self.or({ state: 'enabled' }, { state: nil }) }
     scope :and_temporary, -> { where(state: 'temporary') }
     scope :and_verification_token, ->(token) do
       email = SS::Crypt.decrypt(token) rescue nil
@@ -64,16 +61,6 @@ module Gws::Model::Registration
     SS::Crypt.encrypt(email)
   end
 
-  def enabled?
-    state.nil? || state == 'enabled'
-  end
-
-  # 本登録済みかどうか
-  def authorized?
-    enabled?
-  end
-  deprecate :authorized?
-
   def email_type_options
     %w(text html).map { |m| [ I18n.t("cms.options.email_type.#{m}"), m ] }.to_a
   end
@@ -82,21 +69,7 @@ module Gws::Model::Registration
     %w(disabled enabled temporary).map { |m| [ I18n.t("cms.options.member_state.#{m}"), m ] }.to_a
   end
 
-  # 関連するデータの削除
-  def delete_leave_member_data(site)
-    photos = Member::Photo.site(site).member(self)
-    blog_node = Member::Node::Blog.site(site).first
-    blog_page_node = Member::Node::BlogPage.site(site).node(blog_node).member(self).first
-
-    photos.each { |p| p.destroy } if photos
-    blog_page_node.destroy if blog_page_node
-  end
-
   private
-
-  def set_site_email
-    self.site_email = "#{site_id}_#{email}"
-  end
 
   def send_notify_mail
     Gws::Registration::Mailer.notify_mail(self, in_protocol, in_host).deliver_now if self.sends_notify_mail == 'yes'

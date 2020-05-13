@@ -20,18 +20,6 @@ class Gws::RegistrationController < ApplicationController
     params.require(:item).permit(permit_fields).merge(fix_params)
   end
 
-  def set_item_for_register(extra_attrs = {})
-    @item = item = @model.new get_params.merge(extra_attrs)
-    if item.email.present?
-      item = @model.site(@cur_site).where(email: item.email).first
-    end
-    if item
-      @item = item
-      @item.attributes = get_params
-    end
-    @item
-  end
-
   def set_item_for_interim(extra_attrs = {})
     @item = item = @model.new get_params.merge(extra_attrs)
     if item.email.present?
@@ -54,6 +42,11 @@ class Gws::RegistrationController < ApplicationController
   # 入力確認
   def confirm
     set_item_for_interim(in_check_email_again: true)
+    if Gws::User.site(@cur_site).where(email: @item.email).present?
+      @item.errors.add :email, :in_registerd
+      render action: :new
+      return
+    end
     render action: :new unless @item.valid?
   end
 
@@ -83,6 +76,14 @@ class Gws::RegistrationController < ApplicationController
     @item.in_check_password = true
     @item.state = 'request'
 
+    if @item.name.blank?
+      @item.errors.add :name, :not_input
+    elsif @item.name.length > 40
+      @item.errors.add :name, :name_long, count: 40
+    end
+    if @item.in_password.blank?
+      @item.errors.add :in_password, :not_input
+    end
     if @item.in_password_again.blank?
       @item.errors.add :in_password_again, :not_input
       render action: :verify
