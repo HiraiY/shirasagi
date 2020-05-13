@@ -22,20 +22,17 @@ module Gws::Model::Registration
     field :email_type, type: String
     field :password, type: String
     field :state, type: String
-    field :oauth_type, type: String
-    field :oauth_id, type: String
-    field :oauth_token, type: String
-    field :site_email, type: String
-    field :last_loggedin, type: DateTime
-    field :verify_mail_sent, type: DateTime
+    field :verification_mail_sent, type: DateTime
+    field :notify_mail_sent, type: DateTime
 
     permit_params :name, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state
+    permit_params :verification_mail_sent, :notify_mail_sent
     permit_params :sends_notify_mail, :sends_verification_mail
 
     validates :name, presence: true, length: { maximum: 40 }, if: ->{ in_check_name }
     validates :email, email: true, length: { maximum: 80 }
     validates :email, presence: true, if: ->{ email.present? }
-    validates :email, uniqueness: { scope: :site_id }, if: ->{ oauth_type.blank? || email.present? }
+    validates :email, uniqueness: { scope: :site_id }
     validate :validate_email_again, if: ->{ in_check_email_again }
     validates :email_type, inclusion: { in: %w(text html) }, if: ->{ email_type.present? }
     validates :password, presence: true, if: ->{ in_check_password }
@@ -43,8 +40,8 @@ module Gws::Model::Registration
 
     before_validation :encrypt_password, if: ->{ in_password.present? }
 
-    after_save :send_notify_mail, if: ->{ oauth_type.blank? }
-    after_save :send_verification_mail, if: ->{ oauth_type.blank? }
+    # after_save :send_notify_mail
+    after_save :send_verification_mail
 
     scope :and_temporary, -> { where(state: 'temporary') }
     scope :and_verification_token, ->(token) do
@@ -70,10 +67,6 @@ module Gws::Model::Registration
   end
 
   private
-
-  def send_notify_mail
-    Gws::Registration::Mailer.notify_mail(self, in_protocol, in_host).deliver_now if self.sends_notify_mail == 'yes'
-  end
 
   def send_verification_mail
     Gws::Registration::Mailer.verification_mail(self, in_protocol, in_host).deliver_now if self.sends_verification_mail == 'yes'

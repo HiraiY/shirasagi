@@ -31,6 +31,11 @@ class Gws::RegistrationController < ApplicationController
     end
 
     @item.state = 'temporary'
+    @item.verification_mail_sent = Time.zone.now
+  end
+
+  def send_notify_mail(user, site)
+    Gws::Registration::Mailer.notify_mail(user, site, request.protocol, request.host_with_port).deliver_now
   end
 
   public
@@ -72,9 +77,9 @@ class Gws::RegistrationController < ApplicationController
     raise "404" if @item.blank?
 
     @item.attributes = get_params
-    @item.in_check_name = true
     @item.in_check_password = true
     @item.state = 'request'
+    @item.notify_mail_sent = Time.zone.now
 
     if @item.name.blank?
       @item.errors.add :name, :not_input
@@ -111,6 +116,7 @@ class Gws::RegistrationController < ApplicationController
     # デフォルトの権限
     # user.gws_role_ids
     user.save
+    send_notify_mail(user, @cur_site)
     @item.destroy
   end
 end
