@@ -21,15 +21,18 @@ class Gws::Registration::Mailer < ActionMailer::Base
     require 'pry'
     binding.pry
     @user = user
-    @page_url = Rails.application.routes.url_helpers.gws_registration_index_url(protocol: protocol, host: host, site: user.site_id)
+    @page_url = url_helpers.gws_registration_index_url(protocol: protocol, host: host, site: user.site_id)
     sender = "a"
 
     mail from: sender, to: user.email
   end
 
   # 承認メールを送る
-  def approval_mail(user)
+  def approval_mail(user, protocol, host)
     @user = user
+    @page_url = url_helpers.sns_login_url(protocol: protocol, host: host)
+    require 'pry'
+    binding.pry
     sender = "a"
 
     mail from: sender, to: user.email
@@ -41,13 +44,5 @@ class Gws::Registration::Mailer < ActionMailer::Base
     sender = "a"
 
     mail from: sender, to: user.email
-  end
-
-  # パスワードの再設定メールを配信する。
-  def reset_password_mail(member)
-    @member = member
-    sender = "#{@node.sender_name} <#{@node.sender_email}>"
-
-    mail from: sender, to: member.email
   end
 end

@@ -16,6 +16,7 @@ module SS::Model::User
 
   included do
     attr_accessor :cur_site, :cur_user
+    attr_accessor :in_protocol, :in_host
 
     store_in collection: "ss_users"
     index({ email: 1 }, { sparse: true, unique: true })
@@ -390,7 +391,7 @@ module SS::Model::User
   end
 
   def send_approval_mail
-    Gws::Registration::Mailer.approval_mail(self).deliver_now
+    Gws::Registration::Mailer.approval_mail(self, in_protocol, in_host).deliver_now
     self.approval_mail_sent = Time.zone.now
     self.unlock
     self.save

@@ -25,7 +25,7 @@ class Gws::UsersController < ApplicationController
   end
 
   def fix_params
-    { cur_user: @cur_user, cur_site: @cur_site }
+    { cur_user: @cur_user, cur_site: @cur_site, in_protocol: request.protocol, in_host: request.host_with_port }
   end
 
   def pre_params

@@ -1,9 +1,11 @@
+<section class="main-box">
 <%= form_for :item, url: confirm_gws_registration_index_path, html: { method: "POST" } do |f| %>
-  <div class="member-registration-form">
+  <div>
     <%= error_messages_for :item, header_message: false %>
     <%= render partial: "new", locals: { f: f, confirm: false } %>
     <footer class="send">
-      <%= f.submit t("member.buttons.confirm"), name: :submit %>
+      <%= f.submit t("member.buttons.confirm"), name: :submit, class: "btn-primary" %>
     </footer>
   </div>
 <% end %>
+</section>
