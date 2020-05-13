@@ -47,7 +47,7 @@ class Gws::RegistrationController < ApplicationController
   # 入力確認
   def confirm
     set_item_for_interim(in_check_email_again: true)
-    if Gws::User.site(@cur_site).where(email: @item.email).present?
+    if Gws::User.where(email: @item.email).present?
       @item.errors.add :email, :in_registerd
       render action: :new
       return
