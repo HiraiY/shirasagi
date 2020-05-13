@@ -591,3 +591,17 @@ ja:
     models:
       gws/history_archive_job: 操作履歴アーカイブ作成
       gws/compress_job: ファイル/圧縮ダウンロード
+
+  remarks:
+    gws/registration:
+      name:
+        - お名前を入力してください。
+      email:
+        - 半角英数字記号で入力してください。
+        - ログインに利用したり、大切な情報を配信したりする際に利用させていただきます。
+      email_again:
+        - メールアドレスの確認として、上記と同じメールアドレスを入力してください。
+      in_password:
+        - パスワードを入力してください。
+      in_password_again:
+        - パスワードの確認として、上記と同じパスワードを入力してください。
