@@ -33,14 +33,14 @@ module Gws::Model::Registration
     permit_params :name, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state
     permit_params :sends_notify_mail, :sends_verification_mail, :in_confirm_personal_info
 
-    validates :name, presence: true, length: { maximum: 40 }, if: ->{ enabled? || in_check_name }
+    validates :name, presence: true, length: { maximum: 40 }, if: ->{ in_check_name }
     validates :email, email: true, length: { maximum: 80 }
     validates :email, presence: true, if: ->{ oauth_type.blank? }
     validates :email, uniqueness: { scope: :site_id }, if: ->{ oauth_type.blank? || email.present? }
     validate :validate_email_again, if: ->{ in_check_email_again }
     validates :email_type, inclusion: { in: %w(text html) }, if: ->{ email_type.present? }
-    validates :password, presence: true, if: ->{ oauth_type.blank? && enabled? }
-    validate :validate_password, if: ->{ (in_password.present? && oauth_type.blank? && enabled?) || in_check_password }
+    validates :password, presence: true, if: ->{ in_check_password }
+    validate :validate_password, if: ->{ in_check_password }
 
     before_validation :encrypt_password, if: ->{ in_password.present? }
     before_validation :set_site_email, if: ->{ email.present? }

@@ -53,7 +53,8 @@ module SS::Model::User
     # 利用停止
     field :lock_state, type: String
 
-    field :temporary, type: String
+    field :temporary, type: String, default: nil
+    field :approval_mail_sent, type: DateTime
 
     belongs_to :organization, class_name: "SS::Group"
     belongs_to :switch_user, class_name: "SS::User"
@@ -62,7 +63,7 @@ module SS::Model::User
 
     permit_params :name, :kana, :uid, :email, :tel, :tel_ext, :type, :login_roles, :remark, group_ids: []
     permit_params :account_start_date, :account_expiration_date, :session_lifetime
-    permit_params :restriction, :lock_state, :temporary
+    permit_params :restriction, :lock_state, :temporary, :approval_mail_sent
     permit_params :organization_id, :organization_uid, :switch_user_id
 
     validates :name, presence: true, length: { maximum: 40 }
@@ -82,6 +83,7 @@ module SS::Model::User
     validate :validate_account_expiration_date
 
     after_save :save_group_history, if: -> { @db_changes['group_ids'] }
+    after_save :temporary_changed?, if: -> { temporary.present? }
     before_destroy :validate_cur_user, if: ->{ cur_user.present? }
 
     default_scope -> {
@@ -375,5 +377,28 @@ module SS::Model::User
       dec_group_ids: (changes[0].to_a - changes[1].to_a)
     )
     item.save
+  end
+
+  def temporary_changed?
+    if self.approval_mail_sent.blank?
+      if self.temporary_was == 'request' && self.temporary == 'approval'
+        send_approval_mail
+      elsif self.temporary_was == 'request' && self.temporary == 'deny'
+        send_deny_mail
+      end
+    end
+  end
+
+  def send_approval_mail
+    Gws::Registration::Mailer.approval_mail(self).deliver_now
+    self.approval_mail_sent = Time.zone.now
+    self.unlock
+    self.save
+  end
+
+  def send_deny_mail
+    Gws::Registration::Mailer.deny_mail(self).deliver_now
+    self.approval_mail_sent = Time.zone.now
+    self.save
   end
 end

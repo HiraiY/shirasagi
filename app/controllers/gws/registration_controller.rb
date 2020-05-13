@@ -71,7 +71,6 @@ class Gws::RegistrationController < ApplicationController
 
   def verify
     @item = Gws::Registration.site(@cur_site).and_verification_token(params[:token]).and_temporary.first
-
     raise "404" if @item.blank?
   end
 
@@ -80,6 +79,7 @@ class Gws::RegistrationController < ApplicationController
     raise "404" if @item.blank?
 
     @item.attributes = get_params
+    @item.in_check_name = true
     @item.in_check_password = true
     @item.state = 'request'
 
@@ -110,6 +110,6 @@ class Gws::RegistrationController < ApplicationController
     # デフォルトの権限
     # user.gws_role_ids
     user.save
-    @item.destroy if user.save
+    @item.destroy
   end
 end
