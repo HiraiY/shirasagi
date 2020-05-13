@@ -8,7 +8,8 @@ class Gws::Registration::Mailer < ActionMailer::Base
   def verification_mail(user, protocol, host)
     @user = user
     @page_url = url_helpers.gws_registration_index_url(protocol: protocol, host: host, site: user.site_id)
-    sender = "a"
+    @group = Gws::Group.where(_id: user.site_id).first
+    sender = @group.registration_sender_address
 
     mail from: sender, to: user.email
   end
@@ -18,24 +19,28 @@ class Gws::Registration::Mailer < ActionMailer::Base
     @user = user
     @site = site
     @page_url = url_helpers.gws_user_url(protocol: protocol, host: host, site: site.id, id: user.id)
-    sender = "a"
+    sender = "#{@user.name} <#{@user.email}>"
+    @group = Gws::Group.where(_id: site.id).first
+    @receiver = @group.registration_receiver_address
 
-    mail from: sender, to: user.email
+    mail from: sender, to: @receiver
   end
 
   # 承認メールを送る
-  def approval_mail(user, protocol, host)
+  def approval_mail(user, site, protocol, host)
     @user = user
     @page_url = url_helpers.sns_login_url(protocol: protocol, host: host)
-    sender = "a"
+    @group = Gws::Group.where(_id: site.id).first
+    sender = @group.registration_sender_address
 
     mail from: sender, to: user.email
   end
 
   # 非承認メールを送る
-  def deny_mail(user)
+  def deny_mail(user, site)
     @user = user
-    sender = "a"
+    @group = Gws::Group.where(_id: site.id).first
+    sender = @group.registration_sender_address
 
     mail from: sender, to: user.email
   end

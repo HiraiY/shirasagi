@@ -1,0 +1,25 @@
+ja:
+
+  modules:
+    gws/registration: 仮登録
+    addons:
+      gws/registration/group_setting: 仮登録設定
+
+  mongoid:
+    attributes:
+      gws/addon/registration/group_setting:
+        registration_sender_name: 差出人名
+        registration_sender_email: 差出人メールアドレス
+        registration_sender_user_id: 差出ユーザー
+
+  tooltip:
+    gws/addon/registration/group_setting:
+      registration_sender_name:
+        - システムから送信されるメールの既定の差出人名を入力します。
+      registration_sender_email: |-
+        システムから送信されるメールの既定の差出人メールアドレスを入力します。
+        未入力の場合、システム設定のメールアドレス（例: noreply@example.jp）が使用されます。
+      registration_sender_user_id: |-
+        差出ユーザーを選択します。
+        仮登録での差出人として使用されます。
+        また、差出人ユーザーと差出人メールアドレスの両方が設定されている場合、差出人ユーザーの方が優先的に使用されます。

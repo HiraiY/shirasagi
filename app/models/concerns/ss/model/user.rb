@@ -391,14 +391,14 @@ module SS::Model::User
   end
 
   def send_approval_mail
-    Gws::Registration::Mailer.approval_mail(self, in_protocol, in_host).deliver_now
+    Gws::Registration::Mailer.approval_mail(self, cur_site, in_protocol, in_host).deliver_now
     self.approval_mail_sent = Time.zone.now
     self.unlock
     self.save
   end
 
   def send_deny_mail
-    Gws::Registration::Mailer.deny_mail(self).deliver_now
+    Gws::Registration::Mailer.deny_mail(self, cur_site).deliver_now
     self.approval_mail_sent = Time.zone.now
     self.save
   end

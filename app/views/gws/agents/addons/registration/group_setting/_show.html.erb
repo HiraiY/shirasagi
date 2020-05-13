@@ -1,0 +1,12 @@
+<%= jquery do %> SS_AddonTabs.hide(".addon-gws-registration-group-setting"); <% end %>
+
+<dl class="see addon-gws-registration-group-setting">
+  <dt><%= @model.t :registration_sender_name %></dt>
+  <dd><%= @item.registration_sender_name %></dd>
+
+  <dt><%= @model.t :registration_sender_email %></dt>
+  <dd><%= @item.registration_sender_email %></dd>
+
+  <dt><%= @model.t :registration_sender_user_id %></dt>
+  <dd><%= @item.registration_sender_user.try(:long_name) %></dd>
+</dl>
