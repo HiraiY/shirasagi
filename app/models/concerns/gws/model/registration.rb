@@ -23,10 +23,11 @@ module Gws::Model::Registration
     field :password, type: String
     field :state, type: String
     field :verification_mail_sent, type: DateTime
-    field :url_limit, type: DateTime
+    field :token, type: String
+    field :expiration_date, type: DateTime
 
     permit_params :name, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state
-    permit_params :verification_mail_sent, :url_limit
+    permit_params :verification_mail_sent, :url_limit, :token
     permit_params :sends_notify_mail, :sends_verification_mail
 
     validates :name, presence: true, length: { maximum: 40 }, if: ->{ in_check_name }
@@ -43,10 +44,7 @@ module Gws::Model::Registration
     after_save :send_verification_mail
 
     scope :and_temporary, -> { where(state: 'temporary') }
-    scope :and_verification_token, ->(token) do
-      email = SS::Crypt.decrypt(token) rescue nil
-      where(email: email)
-    end
+    scope :and_token, ->(token) { where(token: token.to_s)}
   end
 
   def encrypt_password

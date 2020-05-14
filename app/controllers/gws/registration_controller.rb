@@ -3,7 +3,6 @@ class Gws::RegistrationController < ApplicationController
   include Sns::LoginFilter
 
   skip_before_action :logged_in?
-  before_action :destroy_registration, only: [:verify]
 
   model Gws::Registration
 
@@ -33,20 +32,20 @@ class Gws::RegistrationController < ApplicationController
 
     @item.state = 'temporary'
     @item.verification_mail_sent = Time.zone.now
-    @item.url_limit = Time.zone.now + 3600
   end
 
   def send_notify_mail(user, site)
     Gws::Registration::Mailer.notify_mail(user, site, request.protocol, request.host_with_port).deliver_now
   end
 
-  def destroy_registration
-    @item = Gws::Registration.site(@cur_site).and_verification_token(params[:token]).and_temporary.first
-    raise "404" if @item.blank?
-    if @item.url_limit < Time.zone.now
-      @item.destroy
-      raise "404"
-    end
+  def create_token(item)
+    item.token = SecureRandom.urlsafe_base64(12)
+    item.expiration_date = 60.minutes.from_now
+  end
+
+  def token_disabled?(item)
+    return false if item.expiration_date.blank?
+    return item.expiration_date < Time.zone.now
   end
 
   public
@@ -68,6 +67,7 @@ class Gws::RegistrationController < ApplicationController
 
   def interim
     set_item_for_interim
+    create_token(@item)
 
     @group = Gws::Group.site(@cur_site).first
     @sender = @group.sender_email
@@ -82,13 +82,13 @@ class Gws::RegistrationController < ApplicationController
   end
 
   def verify
-    @item = Gws::Registration.site(@cur_site).and_verification_token(params[:token]).and_temporary.first
-    raise "404" if @item.blank?
+    @item = Gws::Registration.site(@cur_site).and_token(params[:token]).and_temporary.first
+    raise "404" if @item.blank? || token_disabled?(@item)
   end
 
   def registration
-    @item = Gws::Registration.site(@cur_site).and_verification_token(params[:token]).and_temporary.first
-    raise "404" if @item.blank?
+    @item = Gws::Registration.site(@cur_site).and_token(params[:token]).and_temporary.first
+    raise "404" if @item.blank? || token_disabled?(@item)
 
     @item.attributes = get_params
     @item.in_check_password = true
