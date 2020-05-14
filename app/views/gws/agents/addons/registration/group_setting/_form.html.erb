@@ -47,3 +47,11 @@
     </table>
   </dd>
 </dl>
+<dl class="see gws-default-role-id">
+  <dt><%= @model.t :default_role_id %><%= @model.tt :default_role_id %></dt>
+  <dd>
+    <% Gws::Role.site(@cur_site).order_by(name: 1).each do |role| %>
+      <label><%= f.radio_button :default_role_id, role.id %><%= role.name %></label><br />
+    <% end %>
+  </dd>
+</dl>

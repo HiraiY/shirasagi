@@ -103,17 +103,25 @@ class Gws::RegistrationController < ApplicationController
       render action: :verify
       return
     end
-    group_ids = []
-    group_ids << Gws::Group.site(@cur_site).first.default_group.id
+
     user = Gws::User.new
     user.name = @item.name
     user.email = @item.email
     user.password = @item.password
-    user.group_ids = group_ids
     user.temporary = @item.state
     user.lock_state = 'locked'
-    # デフォルトの権限
-    # user.gws_role_ids
+    group_ids = []
+    if Gws::Group.site(@cur_site).first.default_group.present?
+      group_ids << Gws::Group.site(@cur_site).first.default_group.id
+    else
+      group_ids << @item.site_id
+    end
+    user.group_ids = group_ids
+    if Gws::Group.site(@cur_site).first.default_role_id.present?
+      gws_role_ids = []
+      gws_role_ids << Gws::Group.site(@cur_site).first.default_role_id
+      user.gws_role_ids = gws_role_ids
+    end
     user.save
     send_notify_mail(user, @cur_site)
     @item.destroy if user.present?
