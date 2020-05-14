@@ -58,6 +58,9 @@ class Gws::RegistrationController < ApplicationController
   def interim
     set_item_for_interim
 
+    @group = Gws::Group.site(@cur_site).first
+    @sender = @group.sender_email
+
     # 戻るボタンのクリック
     unless params[:submit]
       render action: :new

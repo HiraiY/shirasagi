@@ -47,4 +47,16 @@ module Gws::Addon::Registration::GroupSetting
       end
     end
   end
+
+  def sender_email
+    @sender_email ||= begin
+      if registration_sender_user.present? && registration_sender_user.active? && registration_sender_user.email.present?
+        registration_sender_user.email
+      elsif registration_sender_email.present?
+          registration_sender_email
+      else
+        SS.config.mail.default_from
+      end
+    end
+  end
 end
