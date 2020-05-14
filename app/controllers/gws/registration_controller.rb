@@ -103,9 +103,8 @@ class Gws::RegistrationController < ApplicationController
       render action: :verify
       return
     end
-
     group_ids = []
-    group_ids << @item.site_id
+    group_ids << Gws::Group.site(@cur_site).first.default_group.id
     user = Gws::User.new
     user.name = @item.name
     user.email = @item.email
@@ -117,6 +116,6 @@ class Gws::RegistrationController < ApplicationController
     # user.gws_role_ids
     user.save
     send_notify_mail(user, @cur_site)
-    @item.destroy
+    @item.destroy if user.present?
   end
 end

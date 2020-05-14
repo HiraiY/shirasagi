@@ -11,6 +11,7 @@ ja:
         registration_sender_name: 差出人名
         registration_sender_email: 差出人メールアドレス
         registration_sender_user_id: 差出ユーザー
+        default_group_id: 所属グループ
 
   tooltip:
     gws/addon/registration/group_setting:
@@ -23,3 +24,5 @@ ja:
         差出ユーザーを選択します。
         仮登録での差出人として使用されます。
         また、差出人ユーザーと差出人メールアドレスの両方が設定されている場合、差出人ユーザーの方が優先的に使用されます。
+      default_group_id:
+        - 仮登録時の所属グループを設定します。

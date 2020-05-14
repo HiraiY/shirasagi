@@ -9,4 +9,7 @@
 
   <dt><%= @model.t :registration_sender_user_id %></dt>
   <dd><%= @item.registration_sender_user.try(:long_name) %></dd>
+
+  <dt><%= @model.t :default_group_id %></dt>
+  <dd><%= @item.default_group.name %></dd>
 </dl>

@@ -38,8 +38,11 @@
       </footer>
     <% end %>
 
-<!--    サイトを入れないとmypageでエラーになる-->
-    <%#= link_to "新規登録", new_gws_registration_path(site: 1) %>
+    <% if params[:site].present? %>
+      <%= link_to "新規登録", new_gws_registration_path %>
+    <% elsif Gws::Group.organizations.active.count == 1 %>
+      <%= link_to "新規登録", new_gws_registration_path(site: Gws::Group.organizations.active.first) %>
+    <% end %>
 
     <% sso = Sys::Auth::Base.where(state: "enabled").order_by(order: 1).to_a %>
     <% if sso.present? %>
