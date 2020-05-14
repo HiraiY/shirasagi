@@ -3,6 +3,7 @@ class Gws::RegistrationController < ApplicationController
   include Sns::LoginFilter
 
   skip_before_action :logged_in?
+  before_action :destroy_registration, only: [:verify]
 
   model Gws::Registration
 
@@ -32,10 +33,20 @@ class Gws::RegistrationController < ApplicationController
 
     @item.state = 'temporary'
     @item.verification_mail_sent = Time.zone.now
+    @item.url_limit = Time.zone.now + 3600
   end
 
   def send_notify_mail(user, site)
     Gws::Registration::Mailer.notify_mail(user, site, request.protocol, request.host_with_port).deliver_now
+  end
+
+  def destroy_registration
+    @item = Gws::Registration.site(@cur_site).and_verification_token(params[:token]).and_temporary.first
+    raise "404" if @item.blank?
+    if @item.url_limit < Time.zone.now
+      @item.destroy
+      raise "404"
+    end
   end
 
   public
@@ -82,7 +93,6 @@ class Gws::RegistrationController < ApplicationController
     @item.attributes = get_params
     @item.in_check_password = true
     @item.state = 'request'
-    @item.notify_mail_sent = Time.zone.now
 
     if @item.name.blank?
       @item.errors.add :name, :not_input
@@ -127,6 +137,6 @@ class Gws::RegistrationController < ApplicationController
     end
     user.save
     send_notify_mail(user, @cur_site)
-    @item.destroy if user.present?
+    @item.destroy
   end
 end
