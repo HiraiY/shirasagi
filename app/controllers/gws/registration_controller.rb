@@ -138,4 +138,33 @@ class Gws::RegistrationController < ApplicationController
     send_notify_mail(user, @cur_site)
     @item.destroy
   end
+
+  # パスワード再設定
+  def reset_password
+    @item = Gws::Registration.new
+    return if request.get?
+
+    @item = @model.new get_params
+
+    if @item.email.blank?
+      @item.errors.add :email, :not_input
+      render action: :reset_password
+      return
+    end
+
+    user = Gws::User.site(@cur_site).and_enabled.where(email: @item.email).first
+    if user.nil?
+      @item.errors.add :email, :not_registerd
+      render action: :reset_password
+      return
+    end
+    user.cur_site = @cur_site
+
+    Gws::Registration::Mailer.reset_password_mail(user).deliver_now
+
+    redirect_to confirm_reset_password_gws_registration_index_path
+  end
+
+  def confirm_reset_password
+  end
 end

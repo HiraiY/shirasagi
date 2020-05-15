@@ -36,6 +36,8 @@ SS::Application.routes.draw do
       match :interim, on: :collection, via: [:get, :post]
       match :verify, on: :collection, via: [:get, :post]
       match :registration, on: :collection, via: [:get, :post]
+      match :reset_password, on: :collection, via: [:get, :post]
+      match :confirm_reset_password, on: :collection, via: [:get, :post]
     end
   end
 

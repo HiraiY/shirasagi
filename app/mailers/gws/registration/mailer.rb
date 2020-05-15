@@ -44,4 +44,13 @@ class Gws::Registration::Mailer < ActionMailer::Base
 
     mail from: sender, to: user.email
   end
+
+  # パスワードの再設定メールを配信する。
+  def reset_password_mail(user)
+    @user = user
+    @group = Gws::Group.site(user.cur_site).first
+    sender = @group.registration_sender_address
+
+    mail from: sender, to: user.email
+  end
 end
