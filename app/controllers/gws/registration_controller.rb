@@ -159,10 +159,13 @@ class Gws::RegistrationController < ApplicationController
       return
     end
     user.cur_site = @cur_site
+    group = Gws::Group.site(@cur_site).first
+    sender = group.set_sender_email
+    user_email = user.email
 
     Gws::Registration::Mailer.reset_password_mail(user).deliver_now
 
-    redirect_to confirm_reset_password_gws_registration_index_path
+    redirect_to confirm_reset_password_gws_registration_index_path(sender: sender, user_email: user_email)
   end
 
   def confirm_reset_password

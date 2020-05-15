@@ -6,6 +6,7 @@
     <footer class="send">
       <%= f.submit t("member.buttons.confirm"), name: :submit, class: "btn-primary" %>
     </footer>
+    <div>パスワードをお忘れの場合は、<%= link_to "こちら", reset_password_gws_registration_index_path %>のリンクからパスワードを再設定してください。</div>
   </div>
 <% end %>
 </section>
