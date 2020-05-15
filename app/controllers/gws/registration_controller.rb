@@ -29,9 +29,7 @@ class Gws::RegistrationController < ApplicationController
       @item = item
       @item.attributes = get_params
     end
-
     @item.state = 'temporary'
-    @item.verification_mail_sent = Time.zone.now
   end
 
   def send_notify_mail(user, site)
@@ -91,6 +89,7 @@ class Gws::RegistrationController < ApplicationController
     raise "404" if @item.blank? || token_disabled?(@item)
 
     @item.attributes = get_params
+    @item.in_check_name = true
     @item.in_check_password = true
     @item.state = 'request'
 

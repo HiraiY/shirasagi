@@ -9,10 +9,9 @@ module Gws::Model::Registration
     attr_accessor :in_password
     attr_accessor :in_password_again
     attr_accessor :email_again
-    attr_accessor :sends_notify_mail
     attr_accessor :sends_verification_mail
-    attr_accessor :in_check_name
     attr_accessor :in_check_email_again
+    attr_accessor :in_check_name
     attr_accessor :in_check_password
     attr_accessor :in_protocol, :in_host
 
@@ -22,20 +21,17 @@ module Gws::Model::Registration
     field :email_type, type: String
     field :password, type: String
     field :state, type: String
-    field :verification_mail_sent, type: DateTime
     field :token, type: String
     field :expiration_date, type: DateTime
 
     permit_params :name, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state
-    permit_params :verification_mail_sent, :url_limit, :token
-    permit_params :sends_notify_mail, :sends_verification_mail
+    permit_params :url_limit, :token
+    permit_params :sends_verification_mail
 
-    validates :name, presence: true, length: { maximum: 40 }, if: ->{ in_check_name }
     validates :email, email: true, length: { maximum: 80 }
-    validates :email, presence: true, if: ->{ email.present? }
-    validates :email, uniqueness: { scope: :site_id }
+    validates :email, presence: true
     validate :validate_email_again, if: ->{ in_check_email_again }
-    validates :email_type, inclusion: { in: %w(text html) }, if: ->{ email_type.present? }
+    validates :name, presence: true, length: { maximum: 40 }, if: ->{ in_check_name }
     validates :password, presence: true, if: ->{ in_check_password }
     validate :validate_password, if: ->{ in_check_password }
 
@@ -53,10 +49,6 @@ module Gws::Model::Registration
 
   def verification_token
     SS::Crypt.encrypt(email)
-  end
-
-  def email_type_options
-    %w(text html).map { |m| [ I18n.t("cms.options.email_type.#{m}"), m ] }.to_a
   end
 
   def state_options
