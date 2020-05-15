@@ -13,12 +13,14 @@ class Gws::User
   include Gws::Addon::History
   include Sys::Reference::Role
   include Webmail::Reference::Role
+  include Gws::ExpirableSecureId
 
   set_permission_name "gws_users", :edit
 
   cattr_reader(:group_class) { Gws::Group }
 
   attr_accessor :in_title_id, :in_gws_main_group_id
+  attr_accessor :in_password, :in_password_again
 
   field :gws_main_group_ids, type: Hash, default: {}
   field :gws_default_group_ids, type: Hash, default: {}
@@ -26,6 +28,7 @@ class Gws::User
   embeds_ids :groups, class_name: "Gws::Group"
 
   permit_params :in_title_id, :in_gws_main_group_id
+  permit_params :in_password, :in_password_again
 
   before_validation :set_title_ids, if: ->{ in_title_id }
   before_validation :set_gws_main_group_id, if: ->{ @cur_site && in_gws_main_group_id }

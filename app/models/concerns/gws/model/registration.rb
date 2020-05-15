@@ -25,7 +25,7 @@ module Gws::Model::Registration
     field :expiration_date, type: DateTime
 
     permit_params :name, :email, :email_again, :email_type, :password, :in_password, :in_password_again, :state
-    permit_params :url_limit, :token
+    permit_params :token, :expiration_date
     permit_params :sends_verification_mail
 
     validates :email, email: true, length: { maximum: 80 }

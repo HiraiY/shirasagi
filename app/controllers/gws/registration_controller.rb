@@ -163,11 +163,49 @@ class Gws::RegistrationController < ApplicationController
     sender = group.set_sender_email
     user_email = user.email
 
-    Gws::Registration::Mailer.reset_password_mail(user).deliver_now
+    Gws::Registration::Mailer.reset_password_mail(user, request.protocol, request.host_with_port).deliver_now
 
     redirect_to confirm_reset_password_gws_registration_index_path(sender: sender, user_email: user_email)
   end
 
   def confirm_reset_password
+  end
+
+  def change_password
+    @item = Gws::User.site(@cur_site).and_enabled.find_by_secure_id(params[:token]) rescue nil
+    raise "404" unless @item.present?
+
+    return if request.get?
+
+    if params[:item][:new_password].blank?
+      # @item.errors.add I18n.t("gws.view.new_password"), :not_input
+      render action: :change_password
+      return
+    elsif params[:item][:new_password_again].blank?
+      # @item.errors.add I18n.t("gws.view.new_password_again"), :not_input
+      render action: :change_password
+      return
+    elsif params[:item][:new_password] != params[:item][:new_password_again]
+      # @item.errors.add I18n.t("gws.view.new_password"), :mismatch
+      render action: :change_password
+      return
+    end
+
+    @item.in_password = params[:item][:new_password]
+    @item.in_password_again = params[:item][:new_password_again]
+    @item.encrypt_password
+
+    require 'pry'
+    binding.pry
+
+    unless @item.update
+      render :change_password
+      return
+    end
+
+    redirect_to confirm_password_gws_registration_index_path
+  end
+
+  def confirm_password
   end
 end
