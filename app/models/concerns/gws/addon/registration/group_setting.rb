@@ -48,7 +48,7 @@ module Gws::Addon::Registration::GroupSetting
     end
   end
 
-  def sender_email
+  def set_sender_email
     @sender_email ||= begin
       if registration_sender_user.present? && registration_sender_user.active? && registration_sender_user.email.present?
         registration_sender_user.email

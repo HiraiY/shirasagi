@@ -70,7 +70,7 @@ class Gws::RegistrationController < ApplicationController
     create_token(@item)
 
     @group = Gws::Group.site(@cur_site).first
-    @sender = @group.sender_email
+    @sender = @group.set_sender_email
 
     # 戻るボタンのクリック
     unless params[:submit]
