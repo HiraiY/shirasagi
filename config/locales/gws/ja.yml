@@ -102,6 +102,7 @@ ja:
           approval: 仮登録の承認
           deny: 仮登録の非承認
           reset_password: パスワード再設定のご案内
+          change_password: パスワード変更通知
     view:
       new_password: 新しいパスワード
       new_password_again: 新しいパスワード（入力確認）

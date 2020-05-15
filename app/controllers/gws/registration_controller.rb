@@ -36,6 +36,14 @@ class Gws::RegistrationController < ApplicationController
     Gws::Registration::Mailer.notify_mail(user, site, request.protocol, request.host_with_port).deliver_now
   end
 
+  def send_user_password_mail(user, site)
+    Gws::Registration::Mailer.user_password_mail(user, site).deliver_now
+  end
+
+  def send_admin_password_mail(user, site)
+    Gws::Registration::Mailer.admin_password_mail(user, site).deliver_now
+  end
+
   def create_token(item)
     item.token = SecureRandom.urlsafe_base64(12)
     item.expiration_date = 60.minutes.from_now
@@ -195,13 +203,13 @@ class Gws::RegistrationController < ApplicationController
     @item.in_password_again = params[:item][:new_password_again]
     @item.encrypt_password
 
-    require 'pry'
-    binding.pry
-
     unless @item.update
       render :change_password
       return
     end
+
+    send_user_password_mail(@item, @cur_site)
+    send_admin_password_mail(@item, @cur_site)
 
     redirect_to confirm_password_gws_registration_index_path
   end

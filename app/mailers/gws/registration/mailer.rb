@@ -54,4 +54,23 @@ class Gws::Registration::Mailer < ActionMailer::Base
 
     mail from: sender, to: user.email
   end
+
+  # パスワード変更通知をユーザーに送る
+  def user_password_mail(user, site)
+    @user = user
+    @group = Gws::Group.site(site).first
+    sender = @group.registration_sender_address
+
+    mail from: sender, to: user.email
+  end
+
+  # パスワード変更通知を管理者に送る
+  def admin_password_mail(user, site)
+    @user = user
+    @site = site
+    @group = Gws::Group.site(site).first
+    receiver = @group.registration_sender_address
+
+    mail from: user.email, to: receiver
+  end
 end
