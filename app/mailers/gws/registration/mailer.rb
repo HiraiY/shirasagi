@@ -7,7 +7,7 @@ class Gws::Registration::Mailer < ActionMailer::Base
   # 仮登録ページへの案内メールを送る
   def verification_mail(user, protocol, host)
     @user = user
-    @page_url = url_helpers.gws_registration_index_url(protocol: protocol, host: host, site: user.site_id)
+    @page_url = url_helpers.verify_gws_registration_index_url(protocol: protocol, host: host, site: user.site_id)
     @group = Gws::Group.where(_id: user.site_id).first
     sender = @group.registration_sender_address
 

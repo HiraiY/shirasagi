@@ -2,4 +2,4 @@
 
 下記のURLより、仮登録の申請をしてください。
 - URL
-  <%= "#{@page_url}/verify?#{ { token: @user.token }.to_query }" %>
+  <%= "#{@page_url}?#{ { token: @user.token }.to_query }" %>

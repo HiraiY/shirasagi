@@ -31,15 +31,15 @@ SS::Application.routes.draw do
     match "logout" => "login#logout", as: :logout, via: [:get, :delete]
     match "login"  => "login#login", as: :login, via: [:get, :post]
     post "access_token"  => "login#access_token", as: :access_token
-    resources :registration do
+    resources :registration, only: [:index, :new] do
       match :confirm, on: :collection, via: [:get, :post]
-      match :interim, on: :collection, via: [:get, :post]
-      match :verify, on: :collection, via: [:get, :post]
-      match :registration, on: :collection, via: [:get, :post]
+      match :interim, on: :collection, via: [:post]
+      match :verify, on: :collection, via: [:get]
+      match :registration, on: :collection, via: [:post]
       match :reset_password, on: :collection, via: [:get, :post]
-      match :confirm_reset_password, on: :collection, via: [:get, :post]
+      match :confirm_reset_password, on: :collection, via: [:get]
       match :change_password, on: :collection, via: [:get, :post]
-      match :confirm_password, on: :collection, via: [:get, :post]
+      match :confirm_password, on: :collection, via: [:get]
     end
   end
 
