@@ -50,7 +50,7 @@ class Gws::RegistrationController < ApplicationController
   end
 
   def token_disabled?(item)
-    return false if item.expiration_date.blank?
+    return false if item.try(:expiration_date).blank?
     return item.expiration_date < Time.zone.now
   end
 
@@ -171,6 +171,8 @@ class Gws::RegistrationController < ApplicationController
     group = Gws::Group.site(@cur_site).first
     sender = group.set_sender_email
     user_email = user.email
+    create_token(user)
+    user.save
 
     Gws::Registration::Mailer.reset_password_mail(user, request.protocol, request.host_with_port).deliver_now
 
@@ -181,8 +183,8 @@ class Gws::RegistrationController < ApplicationController
   end
 
   def change_password
-    @item = Gws::User.site(@cur_site).and_enabled.find_by_secure_id(params[:token]) rescue nil
-    raise "404" unless @item.present?
+    @item = Gws::User.site(@cur_site).and_enabled.and_token(params[:token]).first rescue nil
+    raise "404" unless @item.present? || token_disabled?(@item)
 
     return if request.get?
 
@@ -195,11 +197,13 @@ class Gws::RegistrationController < ApplicationController
     end
 
     if @item.errors.present?
-      render action: :verify
+      render action: :change_password
       return
     end
 
     @item.encrypt_password
+    @item.token = nil
+    @item.expiration_date = nil
 
     unless @item.update
       render :change_password

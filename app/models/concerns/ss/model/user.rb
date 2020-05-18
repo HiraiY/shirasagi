@@ -57,6 +57,9 @@ module SS::Model::User
     field :temporary, type: String, default: nil
     field :approval_mail_sent, type: DateTime
 
+    field :token, type: String
+    field :expiration_date, type: DateTime
+
     belongs_to :organization, class_name: "SS::Group"
     belongs_to :switch_user, class_name: "SS::User"
 
@@ -66,6 +69,7 @@ module SS::Model::User
     permit_params :account_start_date, :account_expiration_date, :session_lifetime
     permit_params :restriction, :lock_state, :temporary, :approval_mail_sent
     permit_params :organization_id, :organization_uid, :switch_user_id
+    permit_params :token, :expiration_date
 
     validates :name, presence: true, length: { maximum: 40 }
     validates :kana, length: { maximum: 40 }
@@ -99,6 +103,7 @@ module SS::Model::User
     scope :and_unlocked, -> do
       self.and('$or' => [{ lock_state: 'unlocked' }, { :lock_state.exists => false }])
     end
+    scope :and_token, ->(token) { where(token: token.to_s)}
   end
 
   module ClassMethods
