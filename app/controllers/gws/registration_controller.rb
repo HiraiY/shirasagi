@@ -185,22 +185,17 @@ class Gws::RegistrationController < ApplicationController
 
     return if request.get?
 
-    if params[:item][:new_password].blank?
-      # @item.errors.add I18n.t("gws.view.new_password"), :not_input
+    @item.in_password = params[:item][:new_password]
+
+    if @item.in_password.blank?
+      @item.errors.add :in_password, :not_input
       render action: :change_password
       return
-    elsif params[:item][:new_password_again].blank?
-      # @item.errors.add I18n.t("gws.view.new_password_again"), :not_input
-      render action: :change_password
-      return
-    elsif params[:item][:new_password] != params[:item][:new_password_again]
-      # @item.errors.add I18n.t("gws.view.new_password"), :mismatch
+    elsif @item.in_password != params[:item][:new_password_again]
+      @item.errors.add :in_password, :mismatch
       render action: :change_password
       return
     end
-
-    @item.in_password = params[:item][:new_password]
-    @item.in_password_again = params[:item][:new_password_again]
     @item.encrypt_password
 
     unless @item.update
