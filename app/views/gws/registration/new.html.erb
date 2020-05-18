@@ -4,9 +4,9 @@
     <%= error_messages_for :item, header_message: false %>
     <%= render partial: "new", locals: { f: f, confirm: false } %>
     <footer class="send">
-      <%= f.submit t("member.buttons.confirm"), name: :submit, class: "btn-primary" %>
+      <%= f.submit t("gws/registration.buttons.confirm"), name: :submit, class: "btn-primary" %>
     </footer>
-    <div>パスワードをお忘れの場合は、<%= link_to "こちら", reset_password_gws_registration_index_path %>のリンクからパスワードを再設定してください。</div>
+    <div>パスワードをお忘れの場合は、<%= link_to I18n.t("gws/registration.view.here"), reset_password_gws_registration_index_path %>のリンクからパスワードを再設定してください。</div>
   </div>
 <% end %>
 </section>

@@ -47,14 +47,6 @@ module Gws::Model::Registration
     self.password = SS::Crypt.crypt(in_password)
   end
 
-  def verification_token
-    SS::Crypt.encrypt(email)
-  end
-
-  def state_options
-    %w(disabled enabled temporary).map { |m| [ I18n.t("cms.options.member_state.#{m}"), m ] }.to_a
-  end
-
   private
 
   def send_verification_mail

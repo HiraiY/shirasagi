@@ -1,11 +1,11 @@
 <section class="main-box">
 <%= form_for :item, url: interim_gws_registration_index_path, html: { method: "POST" } do |f| %>
-  <div class="member-registration-form confirm">
+  <div class="gws-registration-form confirm">
     <%= error_messages_for :item, header_message: false %>
     <%= render partial: "confirm", locals: { f: f, confirm: false }  %>
     <footer class="send">
-      <%= f.submit I18n.t("member.buttons.register"), name: :submit, class: "btn-primary" %>
-      <%= f.submit I18n.t("member.buttons.back"), name: :back, class: "btn-default" %>
+      <%= f.submit I18n.t("gws/registration.buttons.register"), name: :submit, class: "btn-primary" %>
+      <%= f.submit I18n.t("gws/registration.buttons.back"), name: :back, class: "btn-default" %>
     </footer>
   </div>
 <% end %>

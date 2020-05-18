@@ -1,4 +1,22 @@
 ja:
+  gws/registration:
+    view:
+      here: こちら
+      new_password: 新しいパスワード
+      new_password_again: 新しいパスワード（入力確認）
+      change_password: パスワードを変更します。
+    views:
+      reset_password:
+        description: |-
+          ご登録されている以下のメールアドレスにパスワードの再設定用のURLをお送りします。
+    buttons:
+      send: 送信する
+      confirm: 確認画面へ
+      register: 登録
+      back: 戻る
+      change_password: パスワードを変更
+    links:
+      new: 新規登録
 
   modules:
     gws/registration: 仮登録
@@ -29,3 +47,27 @@ ja:
         - 仮登録時の所属グループを設定します。
       default_role_id:
         - 仮登録時の権限/ロールを設定します。
+
+  errors:
+    messages:
+      not_input: を入力してください。
+      input_again: をもう一度入力してください。
+      mismatch: が一致しません。
+      in_registerd: は登録されています。
+      not_registerd: は登録されていません。
+      already_registerd: は、確認済みです。
+      password_short: "は%{count}文字以上にしてください。"
+      password_short_upcase: "は英大文字（A-Z）を%{count}文字以上含むようにしてください。"
+      password_short_downcase: "は英小文字（a-z）を%{count}文字以上含むようにしてください。"
+      password_short_digit: "は数字（0-9）を%{count}文字以上含むようにしてください。"
+      password_short_symbol: "は記号を%{count}文字以上含むようにしてください。"
+      password_contains_prohibited_chars: "は使用禁止文字が含まれています。"
+      password_min_change_chars: "は以前のものから%{count}文字以上違う文字を含むようにしてください。"
+      password_alphabet_only: に英字のみの文字は使用できません。
+      password_numeric_only: に数字のみの文字は使用できません。
+      password_include_email: にメールアドレスが含まれています。
+      password_include_name: に氏名が含まれています。
+      password_include_kana: によみがなが含まれています。
+      please_confirm_personal_data_protection: 個人情報の保護に同意してください。
+      name_long: "は%{count}文字以内にしてください。"
+
