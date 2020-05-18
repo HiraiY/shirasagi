@@ -111,10 +111,11 @@ class Gws::RegistrationController < ApplicationController
     end
     if @item.in_password_again.blank?
       @item.errors.add :in_password_again, :not_input
-      render action: :verify
-      return
     elsif @item.in_password != @item.in_password_again
       @item.errors.add :password, :mismatch
+    end
+
+    if @item.errors.present?
       render action: :verify
       return
     end
@@ -189,13 +190,15 @@ class Gws::RegistrationController < ApplicationController
 
     if @item.in_password.blank?
       @item.errors.add :in_password, :not_input
-      render action: :change_password
-      return
     elsif @item.in_password != params[:item][:new_password_again]
       @item.errors.add :in_password, :mismatch
-      render action: :change_password
+    end
+
+    if @item.errors.present?
+      render action: :verify
       return
     end
+
     @item.encrypt_password
 
     unless @item.update
