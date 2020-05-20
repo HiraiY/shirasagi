@@ -5,43 +5,27 @@ module Gws::Addon::Registration::GroupSetting
   set_addon_type :organization
 
   included do
-    field :registration_sender_name, type: String
-    field :registration_sender_email, type: String
+    field :approver_name, type: String
+    field :approver_email, type: String
 
-    belongs_to :registration_sender_user, class_name: 'SS::User'
+    belongs_to :approver, class_name: 'SS::User'
     belongs_to :default_group, class_name: "SS::Group"
 
     embeds_ids :groups, class_name: "Gws::Group"
     embeds_ids :default_roles, class_name: "Gws::Role"
 
-    permit_params :registration_sender_name, :registration_sender_email
-    permit_params :registration_sender_user_id, :default_group_id, default_role_ids: []
+    permit_params :approver_name, :approver_email
+    permit_params :approver_id, :default_group_id, default_role_ids: []
 
-    validates :registration_sender_email, email: true
+    validates :set_approver_email, email: true
   end
 
-  def registration_sender_address
-    @sender_address ||= begin
-      if registration_sender_user.present? && registration_sender_user.active? && registration_sender_user.email.present?
-        "#{registration_sender_user.name} <#{registration_sender_user.email}>"
-      elsif registration_sender_email.present?
-        if registration_sender_name.present?
-          "#{registration_sender_name} <#{registration_sender_email}>"
-        else
-          registration_sender_email
-        end
-      else
-        SS.config.mail.default_from
-      end
-    end
-  end
-
-  def registration_receiver_address
-    @receiver_address ||= begin
-      if registration_sender_user.present? && registration_sender_user.active? && registration_sender_user.email.present?
-        registration_sender_user.email
-      elsif registration_sender_email.present?
-          registration_sender_email
+  def set_approver_email
+    @approver_email ||= begin
+      if approver.present? && approver.active? && approver.email.present?
+        approver.email
+      elsif approver_email.present?
+        approver_email
       else
         SS.config.mail.default_from
       end
@@ -50,10 +34,10 @@ module Gws::Addon::Registration::GroupSetting
 
   def set_sender_email
     @sender_email ||= begin
-      if registration_sender_user.present? && registration_sender_user.active? && registration_sender_user.email.present?
-        registration_sender_user.email
-      elsif registration_sender_email.present?
-          registration_sender_email
+      if sender_user.present? && sender_user.active? && sender_user.email.present?
+        sender_user.email
+      elsif sender_email.present?
+        sender_email
       else
         SS.config.mail.default_from
       end

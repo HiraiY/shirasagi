@@ -15,6 +15,48 @@ describe "gws_registration", type: :feature, dbscope: :example do
   let(:login_path) { gws_login_path(site: site) }
   let(:logout_path) { gws_logout_path(site: site) }
   let(:main_path) { gws_portal_path(site: site) }
+  let(:chars) { (" ".."~").to_a }
+  let(:upcases) { ("A".."Z").to_a }
+  let(:downcases) { ("a".."z").to_a }
+  let(:digits) { ("0".."9").to_a }
+  let(:symbols) { chars - upcases - downcases - digits }
+  let(:prohibited_chars) { chars.sample(rand(4..6)) }
+  let!(:setting) do
+    Sys::Setting.create(
+      password_min_use: "enabled", password_min_length: rand(16..20),
+      password_min_upcase_use: "enabled", password_min_upcase_length: rand(2..4),
+      password_min_downcase_use: "enabled", password_min_downcase_length: rand(2..4),
+      password_min_digit_use: "enabled", password_min_digit_length: rand(2..4),
+      password_min_symbol_use: "enabled", password_min_symbol_length: rand(2..4),
+      password_prohibited_char_use: "enabled", password_prohibited_char: prohibited_chars.join,
+      password_min_change_char_use: "enabled", password_min_change_char_count: rand(3..5)
+    )
+  end
+  let(:upcase_only_password) { (upcases - prohibited_chars).sample(setting.password_min_length).join }
+  let(:downcase_only_password) { (downcases - prohibited_chars).sample(setting.password_min_length).join }
+  let(:digit_only_password) { (digits - prohibited_chars).sample(setting.password_min_length).join }
+  let(:symbol_only_password) { (symbols - prohibited_chars).sample(setting.password_min_length).join }
+  let(:password_contained_prohibited_chars) { prohibited_chars.join }
+  let(:password1) do
+    etra_length = setting.password_min_length
+    - setting.password_min_upcase_length - setting.password_min_downcase_length
+    - setting.password_min_digit_length - setting.password_min_symbol_length
+
+    password = ""
+    password << (upcases - prohibited_chars).sample(setting.password_min_upcase_length).join
+    password << (downcases - prohibited_chars).sample(setting.password_min_downcase_length).join
+    password << (digits - prohibited_chars).sample(setting.password_min_digit_length).join
+    password << (symbols - prohibited_chars).sample(setting.password_min_symbol_length).join
+    password << (chars - prohibited_chars).sample(etra_length).join
+    password
+  end
+  let(:insufficient_password) do
+    prev_chars = password1.split("").uniq
+    password = ""
+    password << prev_chars.sample(setting.password_min_length - setting.password_min_change_char_count + 1).join
+    password << (chars - prev_chars - prohibited_chars).sample(setting.password_min_change_char_count - 1).join
+    password
+  end
 
   context "new" do
     it do
@@ -29,15 +71,14 @@ describe "gws_registration", type: :feature, dbscope: :example do
       visit gws_edit_path
       expect(current_path).to eq gws_edit_path
 
-      find("#addon-gws-agents-addons-registration-group_setting").click
-      # find("#item_registration_sender_user_id").click
-      # puts page.html
+      find(".addon-gws-registration-group-setting").click
+      # find(".approver_id").click
       # click_on gws_user.name
       # click_on "グループを選択する"
       # wait_for_cbox do
       #   click_on group.name
       # end
-      choose "管理者"
+      # choose "管理者"
       click_button "保存"
 
       visit new_path
@@ -77,6 +118,7 @@ describe "gws_registration", type: :feature, dbscope: :example do
         fill_in "item[in_password]", with: password
         fill_in "item[in_password_again]", with: password
         click_button "登録"
+        puts page.html
       end
       expect(page).to have_content "仮登録の申請をしました。"
       expect(ActionMailer::Base.deliveries.length).to eq 2
@@ -90,7 +132,6 @@ describe "gws_registration", type: :feature, dbscope: :example do
       click_on "編集する"
 
       select "承認", from: "item[temporary]"
-      puts page.html
     end
   end
 end

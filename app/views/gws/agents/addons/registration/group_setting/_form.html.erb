@@ -1,25 +1,25 @@
 <%= jquery do %> SS_AddonTabs.hide(".addon-gws-registration-group-setting"); <% end %>
 <dl class="see addon-gws-registration-group-setting">
-  <dt><%= @model.t :registration_sender_name %><%= @model.tt :registration_sender_name %></dt>
-  <dd><%= f.text_field :registration_sender_name %></dd>
+  <dt><%= @model.t :approver_name %><%= @model.tt :approver_name %></dt>
+  <dd><%= f.text_field :approver_name %></dd>
 
-  <dt><%= @model.t :registration_sender_email %><%= @model.tt :registration_sender_email %></dt>
-  <dd><%= f.text_field :registration_sender_email %></dd>
+  <dt><%= @model.t :approver_email %><%= @model.tt :approver_email %></dt>
+  <dd><%= f.text_field :approver_email %></dd>
 
 </dl>
-<dl class="see registration_sender_user">
-  <dt><%= @model.t :registration_sender_user_id %><%= @model.tt :registration_sender_user_id %></dt>
+<dl class="see approver">
+  <dt><%= @model.t :approver_id %><%= @model.tt :approver_id %></dt>
   <dd>
-    <%= f.hidden_field 'registration_sender_user_id', value: '', class: 'hidden-ids' %>
+    <%= f.hidden_field 'approver_id', value: '', class: 'hidden-ids' %>
     <%= link_to t('ss.apis.users.index'), gws_apis_users_path(single: true), class: 'ajax-box' %>
   </dd>
   <dd>
     <table class="index ajax-selected">
       <thead><tr><th class="name"><%= Gws::User.t :name %></th><th class="deselect"></th></tr></thead>
       <tbody>
-        <% if item = @item.registration_sender_user %>
+        <% if item = @item.approver %>
           <tr data-id="<%= item.id %>">
-            <td><%= f.hidden_field 'registration_sender_user_id', value: item.id, id: nil %> <%= item.name %></td>
+            <td><%= f.hidden_field 'approver_id', value: item.id, id: nil %> <%= item.name %></td>
             <td><%= link_to t('ss.buttons.delete'), '#', class: 'deselect btn' %></td>
           </tr>
         <% end %>

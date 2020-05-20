@@ -32,23 +32,23 @@ ja:
   mongoid:
     attributes:
       gws/addon/registration/group_setting:
-        registration_sender_name: 差出人名
-        registration_sender_email: 差出人メールアドレス
-        registration_sender_user_id: 差出ユーザー
+        approver_name: 承認者名
+        approver_email: 承認者メールアドレス
+        approver_id: 承認者
         default_group_id: 所属グループ
         default_role_ids: 権限/ロール
 
   tooltip:
     gws/addon/registration/group_setting:
-      registration_sender_name:
-        - システムから送信されるメールの既定の差出人名を入力します。
-      registration_sender_email: |-
-        システムから送信されるメールの既定の差出人メールアドレスを入力します。
+      approver_name:
+        - システムから送信されるメールの既定の承認者名を入力します。
+      approver_email: |-
+        システムから送信されるメールの既定の承認者メールアドレスを入力します。
         未入力の場合、システム設定のメールアドレス（例: noreply@example.jp）が使用されます。
-      registration_sender_user_id: |-
-        差出ユーザーを選択します。
-        仮登録での差出人として使用されます。
-        また、差出人ユーザーと差出人メールアドレスの両方が設定されている場合、差出人ユーザーの方が優先的に使用されます。
+      approver_id: |-
+        承認者を選択します。
+        仮登録での承認者として使用されます。
+        また、承認者と承認者メールアドレスの両方が設定されている場合、差承認者の方が優先的に使用されます。
       default_group_id:
         - 仮登録時の所属グループを設定します。
       default_role_ids:
