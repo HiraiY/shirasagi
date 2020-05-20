@@ -13,6 +13,10 @@
   <dt><%= @model.t :default_group_id %></dt>
   <dd><%= @item.default_group.name if @item.default_group.present?%></dd>
 
-  <dt><%= @model.t :default_role_id %></dt>
-  <dd><%= Gws::Role.site(@cur_site).where(_id: @item.default_role_id).first.name if @item.default_role_id.present? %></dd>
+  <dt><%= @model.t :default_role_ids %></dt>
+  <dd>
+    <% @item.default_roles.site(@cur_site).order_by(name: 1).each do |role| %>
+      <div><%= link_to role.name, gws_role_path(id: role) %></div>
+    <% end %>
+  </dd>
 </dl>

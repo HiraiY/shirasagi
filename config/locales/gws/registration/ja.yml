@@ -36,7 +36,7 @@ ja:
         registration_sender_email: 差出人メールアドレス
         registration_sender_user_id: 差出ユーザー
         default_group_id: 所属グループ
-        default_role_id: 権限/ロール
+        default_role_ids: 権限/ロール
 
   tooltip:
     gws/addon/registration/group_setting:
@@ -51,7 +51,7 @@ ja:
         また、差出人ユーザーと差出人メールアドレスの両方が設定されている場合、差出人ユーザーの方が優先的に使用されます。
       default_group_id:
         - 仮登録時の所属グループを設定します。
-      default_role_id:
+      default_role_ids:
         - 仮登録時の権限/ロールを設定します。
 
   errors:

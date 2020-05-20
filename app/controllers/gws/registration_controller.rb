@@ -130,10 +130,8 @@ class Gws::RegistrationController < ApplicationController
       group_ids << @item.site_id
     end
     user.group_ids = group_ids
-    if Gws::Group.site(@cur_site).first.default_role_id.present?
-      gws_role_ids = []
-      gws_role_ids << Gws::Group.site(@cur_site).first.default_role_id
-      user.gws_role_ids = gws_role_ids
+    if Gws::Group.site(@cur_site).first.default_role_ids.present?
+      user.gws_role_ids = Gws::Group.site(@cur_site).first.default_role_ids
     end
     user.save
     send_notify_mail(user, @cur_site)

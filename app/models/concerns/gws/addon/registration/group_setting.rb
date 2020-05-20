@@ -7,15 +7,15 @@ module Gws::Addon::Registration::GroupSetting
   included do
     field :registration_sender_name, type: String
     field :registration_sender_email, type: String
-    field :default_role_id, type: Integer
 
     belongs_to :registration_sender_user, class_name: 'SS::User'
     belongs_to :default_group, class_name: "SS::Group"
 
     embeds_ids :groups, class_name: "Gws::Group"
+    embeds_ids :default_roles, class_name: "Gws::Role"
 
-    permit_params :registration_sender_name, :registration_sender_email, :default_role_id
-    permit_params :registration_sender_user_id, :default_group_id
+    permit_params :registration_sender_name, :registration_sender_email
+    permit_params :registration_sender_user_id, :default_group_id, default_role_ids: []
 
     validates :registration_sender_email, email: true
   end
