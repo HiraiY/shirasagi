@@ -8,7 +8,8 @@ describe "gws_registration", type: :feature, dbscope: :example do
   let(:email) { "#{unique_id}@example.jp" }
   let(:name) { unique_id }
   let(:password) { "abc123" }
-  let(:sender_email) { "noreply@example.jp" }
+  let(:sender_email) { group.sender_address }
+  let(:approver_email) { group.set_approver_email }
   let(:gws_site_path) { gws_site_path(site: site) }
   let(:gws_edit_path) { edit_gws_site_path(site: site) }
   let(:new_path) { new_gws_registration_path(site: site) }
@@ -23,13 +24,13 @@ describe "gws_registration", type: :feature, dbscope: :example do
   let(:prohibited_chars) { chars.sample(rand(4..6)) }
   let!(:setting) do
     Sys::Setting.create(
-      password_min_use: "enabled", password_min_length: rand(16..20),
-      password_min_upcase_use: "enabled", password_min_upcase_length: rand(2..4),
-      password_min_downcase_use: "enabled", password_min_downcase_length: rand(2..4),
-      password_min_digit_use: "enabled", password_min_digit_length: rand(2..4),
-      password_min_symbol_use: "enabled", password_min_symbol_length: rand(2..4),
-      password_prohibited_char_use: "enabled", password_prohibited_char: prohibited_chars.join,
-      password_min_change_char_use: "enabled", password_min_change_char_count: rand(3..5)
+      password_min_use: "disabled", password_min_length: rand(16..20),
+      password_min_upcase_use: "disabled", password_min_upcase_length: rand(2..4),
+      password_min_downcase_use: "disabled", password_min_downcase_length: rand(2..4),
+      password_min_digit_use: "disabled", password_min_digit_length: rand(2..4),
+      password_min_symbol_use: "disabled", password_min_symbol_length: rand(2..4),
+      password_prohibited_char_use: "disabled", password_prohibited_char: prohibited_chars.join,
+      password_min_change_char_use: "disabled", password_min_change_char_count: rand(3..5),
     )
   end
   let(:upcase_only_password) { (upcases - prohibited_chars).sample(setting.password_min_length).join }
@@ -68,10 +69,11 @@ describe "gws_registration", type: :feature, dbscope: :example do
       end
       expect(current_path).to eq main_path
 
-      visit gws_edit_path
-      expect(current_path).to eq gws_edit_path
+      # 仮登録設定
+      # visit gws_edit_path
+      # expect(current_path).to eq gws_edit_path
 
-      find(".addon-gws-registration-group-setting").click
+      # find(".addon-gws-registration-group-setting").click
       # find(".approver_id").click
       # click_on gws_user.name
       # click_on "グループを選択する"
@@ -79,8 +81,9 @@ describe "gws_registration", type: :feature, dbscope: :example do
       #   click_on group.name
       # end
       # choose "管理者"
-      click_button "保存"
+      # click_button "保存"
 
+      # 仮登録
       visit new_path
 
       within "form" do
@@ -123,15 +126,25 @@ describe "gws_registration", type: :feature, dbscope: :example do
       expect(page).to have_content "仮登録の申請をしました。"
       expect(ActionMailer::Base.deliveries.length).to eq 2
       notify_mail = ActionMailer::Base.deliveries.last
-      expect(notify_mail.from.first).to eq email
-      expect(notify_mail.to.first).to eq sender_email
+      expect(notify_mail.from.first).to eq sender_email
+      expect(notify_mail.to.first).to eq approver_email
       expect(notify_mail.subject).to eq "[仮登録申請]#{name} - #{site.name}"
       expect(notify_mail.body.raw_source).to have_content URI.extract(notify_mail.body.raw_source, ["http"]).first
       url = URI.extract(notify_mail.body.raw_source, ["http"]).first
-      visit url
-      click_on "編集する"
 
+      # 仮登録ユーザー作成
+      visit url
+      expect(page).to have_content name
+      expect(page).to have_content email
+      expect(page).to have_content "利用停止"
+      expect(page).to have_content "承認待ち"
+
+      # 仮登録承認
+      click_on "編集する"
       select "承認", from: "item[temporary]"
+      click_button "保存"
+      expect(page).to have_content "利用可"
+      expect(page).to have_content "承認"
     end
   end
 end
