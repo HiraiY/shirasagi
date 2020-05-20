@@ -103,6 +103,8 @@ ja:
           deny: 仮登録の非承認
           reset_password: パスワード再設定のご案内
           change_password: パスワード変更通知
+    temporary:
+      blank: 承認待ちのユーザーはいません
 
   date:
     formats:

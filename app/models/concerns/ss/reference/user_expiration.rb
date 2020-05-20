@@ -19,6 +19,10 @@ module SS::Reference::UserExpiration
         { :account_expiration_date.exists => true, :account_expiration_date.lt => date }
       ])
     }
+    scope :temporary, ->(temporary) {
+      return where({}) if temporary.blank? || temporary == 'temporary'
+      where(temporary: temporary)
+    }
   end
 
   def active?
@@ -38,6 +42,10 @@ module SS::Reference::UserExpiration
 
   def search_state_options
     %w(enabled disabled all).map { |m| [ I18n.t("ss.options.state.#{m}"), m ] }
+  end
+
+  def search_temporary_options
+    %w(temporary request approval deny).map { |m| [ I18n.t("ss.options.temporary.#{m}"), m ] }
   end
 
   def disable

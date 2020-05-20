@@ -49,7 +49,9 @@ SS::Application.routes.draw do
     resource  :site
     resources :groups, concerns: [:deletion, :download, :import]
     resources :custom_groups, concerns: [:deletion]
-    resources :users, concerns: [:deletion, :download, :import, :webmail_import, :lock_and_unlock]
+    resources :users, concerns: [:deletion, :download, :import, :webmail_import, :lock_and_unlock] do
+      match :temporary, on: :collection, via: [:get]
+    end
     resources :user_titles, concerns: [:deletion]
     resources :roles, concerns: [:deletion, :download, :import]
     resources :sys_notices, only: [:index, :show]

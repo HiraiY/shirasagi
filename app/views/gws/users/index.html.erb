@@ -16,6 +16,9 @@ SS_Clipboard.renderCopy();
   <% if item.tel_label.present? %>
     <span class="tel"><%= item.tel_label %></span>
   <% end %>
+  <% if item.temporary.present? %>
+    <span class="temporary"><%= I18n.t("ss.options.user_temporary.#{item.temporary}") %></span>
+  <% end %>
 <% end %>
 
 <%= render file: "gws/crud/index" %>

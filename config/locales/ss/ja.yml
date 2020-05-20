@@ -56,6 +56,7 @@ ja:
       input: 入力する
       delete: 削除する
       import: インポート
+      temporary: 承認待ち一覧
       reply: 返信する
       back: 戻る
       back_to_show: 詳細へ戻る
@@ -269,6 +270,11 @@ ja:
         silence: 通知しない
         force_silence: 通知しない（全体管理）
         deleted: 削除済み
+      temporary:
+        temporary: (仮登録)
+        request: 承認待ち
+        approval: 承認
+        deny: 非承認
       resizing:
         320x240: 320x240 (QVGA横)
         240x320: 240x320 (QVGA縦)
