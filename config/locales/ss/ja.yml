@@ -30,6 +30,8 @@ ja:
     default_here_label: "詳細はこちら⇒"
     errors: エラー
     wave_dash: ～
+    registration: ユーザー新規登録
+    reset_password: パスワード変更
 
     views:
       login/login:

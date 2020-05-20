@@ -39,9 +39,11 @@
     <% end %>
 
     <% if params[:site].present? %>
-      <%= link_to "新規登録", new_gws_registration_path %>
+      <%= link_to t("ss.registration"), new_gws_registration_path %><br>
+      <%= link_to t("ss.reset_password"), reset_password_gws_registration_index_path %>
     <% elsif Gws::Group.organizations.active.count == 1 %>
-      <%= link_to "新規登録", new_gws_registration_path(site: Gws::Group.organizations.active.first) %>
+      <%= link_to t("ss.registration"), new_gws_registration_path(site: Gws::Group.organizations.active.first) %><br>
+      <%= link_to t("ss.reset_password"), reset_password_gws_registration_index_path(site: Gws::Group.organizations.active.first) %>
     <% end %>
 
     <% sso = Sys::Auth::Base.where(state: "enabled").order_by(order: 1).to_a %>
