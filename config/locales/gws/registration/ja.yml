@@ -9,6 +9,12 @@ ja:
       reset_password:
         description: |-
           ご登録されている以下のメールアドレスにパスワードの再設定用のURLをお送りします。
+      password_min_use: "パスワードは%{count}文字以上にしてください。"
+      password_min_upcase_use: "パスワードは英大文字（A-Z）を%{count}文字以上含むようにしてください。"
+      password_min_downcase_use: "パスワードは英小文字（a-z）を%{count}文字以上含むようにしてください。"
+      password_min_digit_use: "パスワードは数字（0-9）を%{count}文字以上含むようにしてください。"
+      password_min_symbol_use: "パスワードは記号を%{count}文字以上含むようにしてください。"
+      password_prohibited_char_use: "パスワードの使用禁止文字(%{char})"
     buttons:
       send: 送信する
       confirm: 確認画面へ

@@ -3,6 +3,7 @@
   <div class="gws-registration-verify columns">
     <%= error_messages_for :item, header_message: false %>
     <%= render partial: "verify", locals: { f: f, confirm: false }  %>
+    <%= render partial: "validation_messages" %>
     <footer class="send">
       <%= f.submit I18n.t("gws/registration.buttons.register"), name: :submit, class: "btn-primary" %>
     </footer>

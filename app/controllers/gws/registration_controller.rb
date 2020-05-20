@@ -106,14 +106,6 @@ class Gws::RegistrationController < ApplicationController
     elsif @item.name.length > 40
       @item.errors.add :name, :name_long, count: 40
     end
-    if @item.in_password.blank?
-      @item.errors.add :in_password, :not_input
-    end
-    if @item.in_password_again.blank?
-      @item.errors.add :in_password_again, :not_input
-    elsif @item.in_password != @item.in_password_again
-      @item.errors.add :password, :mismatch
-    end
 
     if @item.errors.present?
       render action: :verify
