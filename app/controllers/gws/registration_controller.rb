@@ -174,7 +174,7 @@ class Gws::RegistrationController < ApplicationController
 
   def change_password
     @item = Gws::User.site(@cur_site).and_enabled.and_token(params[:token]).first rescue nil
-    raise "404" unless @item.present? || token_disabled?(@item)
+    raise "404" if @item.blank? || token_disabled?(@item)
 
     return if request.get?
 
