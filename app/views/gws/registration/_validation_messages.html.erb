@@ -1,26 +1,28 @@
 <% @setting = Sys::Setting.first %>
-<ul>
-  <% if @setting.password_min_use == "enabled" %>
-    <li><%= I18n.t("gws/registration.views.password_min_use", count: @setting.password_min_length) %></li>
-  <% end %>
+<% if @setting.present? %>
+  <ul>
+    <% if @setting.password_min_use == "enabled" %>
+      <li><%= I18n.t("gws/registration.views.password_min_use", count: @setting.password_min_length) %></li>
+    <% end %>
 
-  <% if @setting.password_min_upcase_use == "enabled" %>
-    <li><%= I18n.t("gws/registration.views.password_min_upcase_use", count: @setting.password_min_upcase_length) %></li>
-  <% end %>
+    <% if @setting.password_min_upcase_use == "enabled" %>
+      <li><%= I18n.t("gws/registration.views.password_min_upcase_use", count: @setting.password_min_upcase_length) %></li>
+    <% end %>
 
-  <% if @setting.password_min_downcase_use == "enabled" %>
-    <li><%= I18n.t("gws/registration.views.password_min_downcase_use", count: @setting.password_min_downcase_length) %></li>
-  <% end %>
+    <% if @setting.password_min_downcase_use == "enabled" %>
+      <li><%= I18n.t("gws/registration.views.password_min_downcase_use", count: @setting.password_min_downcase_length) %></li>
+    <% end %>
 
-  <% if @setting.password_min_digit_use == "enabled" %>
-    <li><%= I18n.t("gws/registration.views.password_min_digit_use", count: @setting.password_min_digit_length) %></li>
-  <% end %>
+    <% if @setting.password_min_digit_use == "enabled" %>
+      <li><%= I18n.t("gws/registration.views.password_min_digit_use", count: @setting.password_min_digit_length) %></li>
+    <% end %>
 
-  <% if @setting.password_min_symbol_use == "enabled" %>
-    <li><%= I18n.t("gws/registration.views.password_min_symbol_use", count: @setting.password_min_symbol_length) %></li>
-  <% end %>
+    <% if @setting.password_min_symbol_use == "enabled" %>
+      <li><%= I18n.t("gws/registration.views.password_min_symbol_use", count: @setting.password_min_symbol_length) %></li>
+    <% end %>
 
-  <% if @setting.password_prohibited_char_use == "enabled" %>
-    <li><%= I18n.t("gws/registration.views.password_prohibited_char_use", char: @setting.password_prohibited_char) %></li>
-  <% end %>
-</ul>
+    <% if @setting.password_prohibited_char_use == "enabled" %>
+      <li><%= I18n.t("gws/registration.views.password_prohibited_char_use", char: @setting.password_prohibited_char) %></li>
+    <% end %>
+  </ul>
+<% end %>
