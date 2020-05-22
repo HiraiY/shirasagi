@@ -9,12 +9,36 @@ ja:
       reset_password:
         description: |-
           ご登録されている以下のメールアドレスにパスワードの再設定用のURLをお送りします。
+        sent_mail: |-
+          %{sender} から %{user_email} にパスワード再設定の案内を送りました。
+          1時間以内に変更を完了しないと無効となります。
+          しばらく待ってもメールが届かない場合は、%{sender} からのメールが着信拒否されていないか確認の上、
+          もう一度パスワード再設定案内メールを送信してください。
       password_min_use: "パスワードは%{count}文字以上にしてください。"
       password_min_upcase_use: "パスワードは英大文字（A-Z）を%{count}文字以上含むようにしてください。"
       password_min_downcase_use: "パスワードは英小文字（a-z）を%{count}文字以上含むようにしてください。"
       password_min_digit_use: "パスワードは数字（0-9）を%{count}文字以上含むようにしてください。"
       password_min_symbol_use: "パスワードは記号を%{count}文字以上含むようにしてください。"
       password_prohibited_char_use: "パスワードの使用禁止文字(%{char})"
+      confirm_password:
+        password_changed: |-
+          パスワードを変更しました。
+          メールアドレスとパスワードで、ログインしてください。
+      registration:
+        confirm_email_address: |-
+          %{sender} から登録案内メールを %{email} に送りました。
+          1時間以内に登録を完了しないと無効となります。
+          しばらく待ってもメールが届かない場合は、 %{sender} からのメールが着信拒否されていないか確認の上、
+          もう一度登録をしてください。
+        registration: |-
+          仮登録の申請をしました。
+          承認されるのをお待ちください。
+        new:
+          title: 入力されたメールアドレスにユーザー登録用のURLをお送りします。
+        confirm:
+          title: 下記のメールアドレスでお間違いありませんか？
+        verify:
+          title: ユーザーの登録申請をします。
     buttons:
       send: 送信する
       confirm: 確認画面へ

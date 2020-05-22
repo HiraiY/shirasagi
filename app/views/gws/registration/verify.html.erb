@@ -1,5 +1,6 @@
 <section class="main-box">
-<%= form_for :item, url: registration_gws_registration_index_path, html: { method: "POST" } do |f| %>
+  <%= simple_format I18n.t('gws/registration.views.registration.verify.title') %>
+  <%= form_for :item, url: registration_gws_registration_index_path, html: { method: "POST" } do |f| %>
   <div class="gws-registration-verify columns">
     <%= error_messages_for :item, header_message: false %>
     <%= render partial: "verify", locals: { f: f, confirm: false }  %>
