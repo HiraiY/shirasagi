@@ -235,6 +235,9 @@ this.Map_Form = (function () {
 
   Map_Form.renderMarkers = function () {
     var i, len, markerBounds;
+    var set_center_position = $('.set_center_position').val();
+    set_center_position = set_center_position.split(',').map(Number);
+    var set_zoom_level = $(".set_zoom_level").val();
     markerBounds = new google.maps.LatLngBounds();
     if (Googlemaps_Map.markers) {
       var ref = Googlemaps_Map.markers;
@@ -254,6 +257,9 @@ this.Map_Form = (function () {
           map: Googlemaps_Map.map
         });
         Map_Form.attachMessage(Map_Form.dataID);
+        if (set_center_position != "") {
+          loc = new google.maps.LatLng(set_center_position[0], set_center_position[1])
+        }
         markerBounds.extend(loc);
       }
       Map_Form.dataID += 1;
@@ -261,6 +267,23 @@ this.Map_Form = (function () {
 
     if (!Googlemaps_Map.markers || Googlemaps_Map.markers.length === 0) {
       Googlemaps_Map.map.setCenter(new google.maps.LatLng(Googlemaps_Map.center[0], Googlemaps_Map.center[1]));
+    } else if (set_center_position != "" && set_zoom_level != "") {
+      Googlemaps_Map.map.setCenter(new google.maps.LatLng(set_center_position[0], set_center_position[1]));
+      Googlemaps_Map.map.setZoom(parseInt(set_zoom_level));
+    } else if (set_center_position != "" && set_zoom_level == "") {
+      Googlemaps_Map.map.setCenter(new google.maps.LatLng(set_center_position[0], set_center_position[1]));
+      google.maps.event.addListenerOnce(Googlemaps_Map.map, "idle", function() {
+        if (Googlemaps_Map.map.getZoom() > Googlemaps_Map.zoom) {
+          Googlemaps_Map.map.setZoom(Googlemaps_Map.zoom);
+        }
+      });
+    } else if (set_center_position == "" && set_zoom_level != "") {
+      Googlemaps_Map.map.fitBounds(markerBounds);
+      google.maps.event.addListenerOnce(Googlemaps_Map.map, "idle", function() {
+        if (Googlemaps_Map.map.getZoom() > Googlemaps_Map.zoom) {
+          Googlemaps_Map.map.setZoom(parseInt(set_zoom_level));
+        }
+      });
     } else {
       Googlemaps_Map.map.fitBounds(markerBounds);
       google.maps.event.addListenerOnce(Googlemaps_Map.map, "idle", function(){

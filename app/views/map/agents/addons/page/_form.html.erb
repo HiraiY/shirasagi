@@ -1,4 +1,18 @@
 <%
+  if @item.center_setting == "designated_location" && @item.set_center_position.present?
+    set_center_position = @item.set_center_position
+  end
+
+  if @item.zoom_setting == "designated_level" && @item.set_zoom_level.present?
+    set_zoom_level = @item.set_zoom_level
+  end
+%>
+
+
+<input type="hidden", class="set_center_position", value="<%= set_center_position %>">
+<input type="hidden", class="set_zoom_level", value="<%= set_zoom_level %>">
+
+<%
   addon ||= local_assigns.fetch(:addon, {})
   addon[:display_body] = "hide"
 %>
@@ -17,10 +31,11 @@
     <span>
       <%= f.radio_button :center_setting, :auto, checked: "checked" %>
       <%= f.label :auto %>
-      <%= f.radio_button :center_setting, :manual %>
+      <%= f.radio_button :center_setting, :designated_location %>
       <%= f.label :designated_location %>
-      <%= f.text_field :set_center_position %>
+      <%= f.text_field :set_center_position, class: "center-input" %>
       <%= button_tag "追加", { type: :button, class: "set-center_position btn" } %>
+      <%= hidden_field_tag "set_center_position", nil, class: "center-loc" %>
     </span>
   </div>
   <div class="zoom-level">
@@ -28,7 +43,7 @@
     <span>
       <%= f.radio_button :zoom_setting, :auto, checked: "checked" %>
       <%= f.label :auto %>
-      <%= f.radio_button :zoom_setting, :manual %>
+      <%= f.radio_button :zoom_setting, :designated_level %>
       <%= f.label :designated_level %>
       <%= f.number_field  :set_zoom_level, min: 1, max: 21 %>
     </span>

@@ -1,4 +1,18 @@
 <%
+  if @item.center_setting == "designated_location" && @item.set_center_position.present?
+    set_center_position = @item.set_center_position
+  end
+
+  if @item.zoom_setting == "designated_level" && @item.set_zoom_level.present?
+    set_zoom_level = @item.set_zoom_level
+  end
+%>
+
+
+<input type="hidden", class="set_center_position", value="<%= set_center_position %>">
+<input type="hidden", class="set_zoom_level", value="<%= set_zoom_level %>">
+
+<%
   return if @item.map_points.blank?
 
   addon ||= local_assigns.fetch(:addon, {})
