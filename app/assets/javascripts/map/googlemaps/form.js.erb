@@ -111,6 +111,9 @@ this.Map_Form = (function () {
       cln.find(".set-marker").on('click', function () {
         return Map_Form.createMarker(cln);
       });
+      cln.find(".set-center_position").on('click', function () {
+        return Map_Form.createCenter(cln);
+      });
       cln.find(".marker-name").on('keypress', function (e) {
         if (e.which === 13) {
           return false;
@@ -233,6 +236,26 @@ this.Map_Form = (function () {
     }
   };
 
+  Map_Form.createCenter = function (ele) {
+    var dataId, loc;
+    loc = null;
+    debugger
+    if ($(".mod-map .clicked").val() !== "") {
+      loc = $(".mod-map .clicked").val();
+    } else if ($(".center-input").val() !== "") {
+      if (Map_Form.validateLoc($(".center-input"))) {
+        loc = $(".center-input").val();
+      } else {
+        alert("<%= I18n.t('map.alert.invalid_location').join('\n') %>");
+      }
+    }
+    if (!loc) {
+      return;
+    }
+    $(".center-input").val(loc);
+    debugger
+  };
+
   Map_Form.renderMarkers = function () {
     var i, len, markerBounds;
     var set_center_position = $('.set_center_position').val();
@@ -320,6 +343,10 @@ this.Map_Form = (function () {
     });
     $(".mod-map .set-marker").on('click', function (e) {
       Map_Form.createMarker($(this).closest("dd.marker"));
+      return false;
+    });
+    $(".mod-map .set-center_position").on('click', function (e) {
+      Map_Form.createCenter($(this).closest("dd.marker"));
       return false;
     });
     $(".mod-map .location-search button").on('click', function (e) {
