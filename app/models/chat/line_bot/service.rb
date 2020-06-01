@@ -260,7 +260,11 @@ class Chat::LineBot::Service
   end
 
   def answer(event)
-    if event.message["text"].eql?(I18n.t("chat.line_bot.service.search_location"))
+    if Chat::Node::Bot.site(@cur_site).and_public.first.present?
+      facility_search = Chat::Node::Bot.site(@cur_site).and_public.first.facility_search
+    end
+
+    if event.message["text"].eql?(facility_search)
       send_location(event)
     else
       template = []

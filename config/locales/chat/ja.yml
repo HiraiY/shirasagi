@@ -123,6 +123,7 @@ ja:
         question: フィードバック
         chat_success: フィードバック返答(はい)
         chat_retry: フィードバック返答(いいえ)
+        facility_search: 施設検索テキスト
         intent_ids: シナリオ
         chat_category_ids: シナリオカテゴリー
 
@@ -181,6 +182,8 @@ ja:
         - フィードバックに対して"はい"を押された場合に表示される文章を設定できます。
       chat_retry:
         - フィードバックに対して"いいえ"を押された場合に表示される文章を設定できます。
+      facility_search:
+        - Lineで施設を検索する時のテキストを設定できます。
 
   job:
     models:
