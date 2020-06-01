@@ -30,7 +30,7 @@ ja:
       line_report: Lineのレポート
     line_report:
       phrase/input: 入力されたフレーズ
-      used_time: 利用時間帯
+      used_time: 時間帯別利用者数
       phrase/called: 使用されたフレーズ
       phrase/name: フレーズ名
       phrase/frequency: 使用回数
