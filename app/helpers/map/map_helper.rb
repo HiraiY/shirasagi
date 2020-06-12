@@ -229,19 +229,7 @@ module Map::MapHelper
     jquery { s.join("\n").html_safe }
   end
 
-  def render_marker_info(item)
-    h = []
-    h << %(<div class="maker-info" data-id="#{item.id}">)
-    h << %(<p class="name">#{item.name}</p>)
-    h << %(<p class="address">#{item.address}</p>)
-    h << %(<p class="show">#{link_to t('ss.links.show'), item.url}</p>)
-    h << %(</div>)
-    event_info(h, item)
-
-    h.join("\n")
-  end
-
-  def render_event_info(event, map_point)
+  def render_map_point_info(event, map_point)
     if event_end_date(event).present?
       if event_end_date(event) >= Time.zone.today
         h = []
@@ -261,7 +249,13 @@ module Map::MapHelper
     end
   end
 
-  def event_info(h, item)
+  def render_facility_info(item)
+    h = []
+    h << %(<div class="maker-info" data-id="#{item.id}">)
+    h << %(<p class="name">#{item.name}</p>)
+    h << %(<p class="address">#{item.address}</p>)
+    h << %(<p class="show">#{link_to t('ss.links.show'), item.url}</p>)
+    h << %(</div>)
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id).order(event_dates: "ASC")
     if events.present?
       event_count = 0
@@ -289,6 +283,7 @@ module Map::MapHelper
         h << %(</div>)
       end
     end
+    h.join("\n")
   end
 
   def event_end_date(event)
