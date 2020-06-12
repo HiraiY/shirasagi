@@ -12,6 +12,7 @@ ja:
     filter_all: 全て
     date_range_delimiter: ～
     keyword: キーワード
+    count: 件
     dates:
       setting: 開催期間
       start_date: 開始
