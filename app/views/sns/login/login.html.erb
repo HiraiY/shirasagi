@@ -41,13 +41,13 @@
     <% if params[:site].present? %>
       <%= link_to t("ss.registration"), new_gws_registration_path %><br>
       <%= link_to t("ss.reset_password"), reset_password_gws_registration_index_path %>
-    <% elsif Gws::Group.organizations.active.count == 1 %>
-      <%= link_to t("ss.registration"), new_gws_registration_path(site: Gws::Group.organizations.active.first) %><br>
-      <%= link_to t("ss.reset_password"), reset_password_gws_registration_index_path(site: Gws::Group.organizations.active.first) %>
+    <% elsif (gws_organizations = Gws::Group.organizations.and_gws_use.active).count == 1 %>
+      <%= link_to t("ss.registration"), new_gws_registration_path(site: gws_organizations.first) %><br>
+      <%= link_to t("ss.reset_password"), reset_password_gws_registration_index_path(site: gws_organizations.first) %>
     <% end %>
 
-    <% sso = Sys::Auth::Base.where(state: "enabled").order_by(order: 1).to_a %>
-    <% if sso.present? %>
+    <% ssos = Sys::Auth::Base.where(state: "enabled").order_by(order: 1).to_a %>
+    <% if ssos.present? %>
       <ul class="sso">
         <% ssos.each do |sso| %>
           <% sso = sso.becomes_with_model %>

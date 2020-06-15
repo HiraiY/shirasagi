@@ -65,14 +65,14 @@ module ApplicationHelper
   end
 
   def jquery(&block)
-    javascript_tag do
+    javascript_tag(defer: true) do
       "$(function() {\n#{capture(&block)}\n});".html_safe
     end
   end
 
   # @deprecated
   def coffee(&block)
-    javascript_tag do
+    javascript_tag(defer: true) do
       CoffeeScript.compile(capture(&block)).html_safe
     end
   end
