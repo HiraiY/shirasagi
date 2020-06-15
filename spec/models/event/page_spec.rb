@@ -63,7 +63,7 @@ describe Event::Page, dbscope: :example do
     context "when dates is given" do
       let(:today) { Time.zone.today }
       subject { described_class.search(dates: [today]) }
-      it { expect(subject.selector.to_h).to include("event_dates" => {"$gte" => today, "$lte" => today}) }
+      it { expect(subject.selector.to_h).to include("event_dates" => {"$in" => (today..today).map { |d| d.mongoize }}) }
     end
 
     context "when dates is given 3 dates" do
@@ -75,7 +75,7 @@ describe Event::Page, dbscope: :example do
       subject { described_class.search(dates: days) }
       it do
         expect(subject.selector.to_h).to include(
-          "event_dates" => {"$gte" => days.first, "$lte" => days.last}
+          "event_dates" => {"$in" => (days.first..days.last).map { |d| d.mongoize }}
         )
       end
     end
@@ -88,7 +88,7 @@ describe Event::Page, dbscope: :example do
       subject { described_class.search(dates: days) }
       it do
         expect(subject.selector.to_h).to include(
-          "event_dates" => {"$gte" => days.first, "$lte" => days.last}
+          "event_dates" => {"$in" => (days.first..days.last).map { |d| d.mongoize }}
         )
       end
     end
