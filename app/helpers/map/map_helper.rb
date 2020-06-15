@@ -229,7 +229,7 @@ module Map::MapHelper
     jquery { s.join("\n").html_safe }
   end
 
-  def marker_info(item)
+  def render_marker_info(item)
     h = []
     h << %(<div class="maker-info" data-id="#{item.id}">)
     h << %(<p class="name">#{item.name}</p>)
@@ -264,7 +264,7 @@ module Map::MapHelper
   end
 
   def render_facility_info(item)
-    h = marker_info(item)
+    h = render_marker_info(item)
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id).order(event_dates: "ASC")
     if events.present?
       event_count = 0
@@ -300,7 +300,7 @@ module Map::MapHelper
   end
 
   def monthly_facility_info(item, dates)
-    h = marker_info(item)
+    h = render_marker_info(item)
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id)
     if events.present?
       events = events.where(:event_dates.in => dates).
@@ -330,10 +330,12 @@ module Map::MapHelper
 
   def render_event_info(item, map_point)
     h = []
-    h << %(<div class="maker-info">)
-    h << %(<p class="name">#{map_point[:name]}</p>)
-    h << %(<p class="name">#{map_point[:text]}</p>)
-    h << %(</div>)
+    if map_point[:name].present? || map_point[:text].present?
+      h << %(<div class="maker-info">)
+      h << %(<p class="name">#{map_point[:name]}</p>)
+      h << %(<p class="name">#{map_point[:text]}</p>)
+      h << %(</div>)
+    end
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id).order(event_dates: "ASC")
     if events.present?
       event_count = 0
