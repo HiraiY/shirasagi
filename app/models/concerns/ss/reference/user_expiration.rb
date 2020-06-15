@@ -45,7 +45,7 @@ module SS::Reference::UserExpiration
   end
 
   def search_temporary_options
-    %w(temporary request approval deny).map { |m| [ I18n.t("ss.options.temporary.#{m}"), m ] }
+    %w(request approval deny).map { |m| [ I18n.t("ss.options.temporary.#{m}"), m ] }
   end
 
   def disable

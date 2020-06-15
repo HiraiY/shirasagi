@@ -4,7 +4,7 @@
     <%= render partial: "gws/apis/users/group_dropdown_normal", locals: { f: f } %>
     <%= f.text_field :keyword, style: "width: 180px;" %>
     <%= f.select :state, @model.new.search_state_options %>
-    <%= f.select :temporary, @model.new.search_temporary_options %>
+    <%= f.select :temporary, @model.new.search_temporary_options, include_blank: "" %>
     <input type="submit" value="<%= t('ss.buttons.search') %>" class="btn" />
   <% end %>
 </div>

@@ -8,6 +8,7 @@ class Gws::UserCsv::Importer
   attr_accessor :cur_site
   attr_accessor :cur_user
   attr_accessor :webmail_support
+  attr_accessor :in_protocol, :in_host
   attr_reader :imported
 
   permit_params :in_file, :webmail_support

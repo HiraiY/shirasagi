@@ -294,7 +294,6 @@ ja:
         force_silence: 通知しない（全体管理）
         deleted: 削除済み
       temporary:
-        temporary: (仮登録)
         request: 承認待ち
         approval: 承認
         deny: 非承認
