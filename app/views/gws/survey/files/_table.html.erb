@@ -57,7 +57,7 @@
                 <td></td>
                 <td></td>
               <% else %>
-                <td><div><%= item.user_long_name %></div></td>
+                <td><div><%= gws_public_user_long_name(item.user_long_name) %></div></td>
                 <td><div><%= I18n.l(item.updated) %></div></td>
               <% end %>
             <% end %>

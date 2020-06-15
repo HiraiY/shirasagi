@@ -8,7 +8,7 @@
   <dd><%= @item.approver_email %></dd>
 
   <dt><%= @model.t :approver_id %></dt>
-  <dd><%= @item.approver.try(:long_name) %></dd>
+  <dd><%= gws_public_user_long_name(@item.approver.try(:long_name)) %></dd>
 
   <dt><%= @model.t :default_group_id %></dt>
   <dd><%= @item.default_group.name if @item.default_group.present?%></dd>
