@@ -89,6 +89,7 @@ ja:
       event/ical_import: ical取り込み
       event/ical_link: iCal情報
       event/facility: 施設
+      event/search/page_list: リスト表示
 
   cms:
     nodes:
