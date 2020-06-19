@@ -1,0 +1,31 @@
+<dl class="see mod-guide-procedure">
+  <dt><%= @model.t :procedure_ids %><%= @model.tt :procedure_ids %></dt>
+  <dd>
+    <%= f.hidden_field "procedure_ids[]", value: "", class: "hidden-ids" %>
+    <%
+      page_params = {}
+      if @cur_node
+        page_params[:s] = { node: @cur_node }
+      end
+    %>
+    <%= link_to t("guide.apis.procedures.index"), guide_apis_procedures_path(page_params), class: "ajax-box" %>
+  </dd>
+  <dd>
+    <table class="index ajax-selected">
+      <thead>
+        <tr>
+          <th class="name"><%= @model.t :name %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @item.procedures.each do |page| %>
+        <tr data-id="<%= page.id %>">
+          <td><%= f.hidden_field "procedure_ids[]", value: page.id %> <%= page.name %></td>
+          <td><%= link_to t("ss.buttons.delete"), "#", class: "deselect btn" %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </dd>
+</dl>

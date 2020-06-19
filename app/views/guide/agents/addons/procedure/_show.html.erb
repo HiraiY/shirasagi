@@ -1,0 +1,6 @@
+<% return "" if @item.procedures.blank? %>
+
+<dl class="see">
+  <dt><%= @model.t :procedure_ids %></dt>
+  <dd><%=br @item.procedures.pluck(:name) %></dd>
+</dl>

@@ -1,0 +1,9 @@
+<%= form_for :item, url: "#{@cur_node.url}guide.html", html: { method: "POST" } do |f| %>
+  <div class="guide-node-form">
+    <%= error_messages_for :item, header_message: false %>
+    <%= sanitize(@cur_node.guide_index_html) %>
+    <footer class="send">
+      <%= f.submit t("guide.links.start_guide"), name: :submit %>
+    </footer>
+  </div>
+<% end %>

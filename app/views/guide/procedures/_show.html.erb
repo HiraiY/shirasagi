@@ -1,0 +1,31 @@
+<%= code_editor "##{addon[:id]} .html", mode: :html, readonly: true %>
+
+<dl class="see">
+  <dt><%= @model.t :name %></dt>
+  <dd><%= @item.name %></dd>
+
+  <dt><%= @model.t :link_url %></dt>
+  <dd><%= @item.link_url %></dd>
+
+  <dt><%= @model.t :html %></dt>
+  <dd>
+    <% if @item.html.present? %>
+      <%= text_area_tag :html, @item.html, class: "html" %>
+    <% end %>
+  </dd>
+
+  <dt><%= @model.t :procedure_location %></dt>
+  <dd><%=br @item.procedure_location %></dd>
+
+  <dt><%= @model.t :belongings %></dt>
+  <dd><%= @item.belongings %></dd>
+
+  <dt><%= @model.t :procedure_applicant %></dt>
+  <dd><%= @item.procedure_applicant %></dd>
+
+  <dt><%= @model.t :remarks %></dt>
+  <dd><%=br @item.remarks %></dd>
+
+  <dt><%= @model.t :order %></dt>
+  <dd><%= @item.order %></dd>
+</dl>

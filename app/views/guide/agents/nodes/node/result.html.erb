@@ -1,0 +1,8 @@
+<div class="guide-node-form">
+  <div class="procedure-count"><%= t("guide.procedures_needed", count: @procedures.count) %></div>
+  <div class="guide-nodes nodes">
+    <%= render_procedure_list %>
+  </div>
+  <div class="show-answer"><%= link_to t('guide.links.show_answer'), @answer_uri.to_s %></div>
+  <div class="back-to-first"><%= link_to t('guide.links.back_to_first'), @cur_node.url %></div>
+</div>
