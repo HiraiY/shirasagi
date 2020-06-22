@@ -101,4 +101,27 @@ module Garbage::Node
       super
     end
   end
+
+  class AreaList
+    include Cms::Model::Node
+    include Cms::Addon::NodeSetting
+    include Cms::Addon::Meta
+    include Cms::Addon::Release
+    include Cms::Addon::GroupPermission
+    include History::Addon::Backup
+
+    default_scope ->{ where(route: "garbage/area_list") }
+  end
+
+  class Area
+    include Cms::Model::Node
+    include Cms::Addon::NodeSetting
+    include Cms::Addon::Meta
+    include Garbage::Addon::Collection
+    include Cms::Addon::Release
+    include Cms::Addon::GroupPermission
+    include History::Addon::Backup
+
+    default_scope ->{ where(route: "garbage/area") }
+  end
 end

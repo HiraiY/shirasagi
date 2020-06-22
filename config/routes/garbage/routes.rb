@@ -22,6 +22,8 @@ Rails.application.routes.draw do
     resources :nodes, concerns: [:deletion, :download, :import]
     resources :searches, concerns: :deletion
     resources :categories, concerns: :deletion
+    resources :area_lists, concerns: [:deletion, :download, :import]
+    resources :areas, concerns: :deletion
   end
 
   namespace "garbage", path: ".s:site/garbage" do
@@ -37,5 +39,7 @@ Rails.application.routes.draw do
 
     get "search/(index.:format)" => "public#index", cell: "nodes/search"
     get "search/(result.:format)" => "public#result", cell: "nodes/search"
+    get "area_list/(index.:format)" => "public#index", cell: "nodes/area_list"
+    get "area/(index.:format)" => "public#index", cell: "nodes/area"
   end
 end

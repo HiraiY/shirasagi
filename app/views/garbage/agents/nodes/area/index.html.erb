@@ -1,0 +1,27 @@
+<table class="columns column">
+  <caption><%= @cur_node.name %></caption>
+  <thead>
+  <tr>
+    <th><%= t('garbage.area_name') %></th>
+    <th><%= t('garbage.category.name') %></th>
+    <th><%= t('garbage.collection') %></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><%= @cur_node.name %></td>
+    <% @cur_node.garbage_type.each do |item| %>
+      <% if @cur_node.garbage_type[0] == item  %>
+        <td><%= item[:field] %></td>
+        <td><%= item[:value] %></td>
+      <% else %>
+        <tr>
+          <td></td>
+          <td><%= item[:field] %></td>
+          <td><%= item[:value] %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tr>
+  </tbody>
+</table>

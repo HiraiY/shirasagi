@@ -4,5 +4,7 @@ module Garbage
     Cms::Node.plugin "garbage/page"
     Cms::Node.plugin "garbage/search"
     Cms::Node.plugin "garbage/category"
+    Cms::Node.plugin "garbage/area_list"
+    Cms::Node.plugin "garbage/area"
   end
 end
