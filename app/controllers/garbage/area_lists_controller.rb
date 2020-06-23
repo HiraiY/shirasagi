@@ -25,24 +25,29 @@ class Garbage::AreaListsController < ApplicationController
 
     csv = CSV.generate do |data|
       headers = [
-        t('garbage.area_name'),
-        t('garbage.center')
+        @model.t("name"),
+        @model.t("center")
       ]
       items.first.garbage_type.each do |type|
         headers << type[:field]
       end
       headers << @model.t(:filename)
+      headers << @model.t(:layout)
+      headers <<  @model.t(:groups)
       data << headers
 
       items.each do |item|
         row = []
         row << item.name
         row << item.center
-        items.first.garbage_type.each do |type|
+        item.garbage_type.each do |type|
           row << type[:value]
         end
         row << item.basename
+        row << item.layout.try(:name)
+        row << item.groups.pluck(:name).join("_n")
         data << row
+
       end
     end
 
@@ -55,7 +60,7 @@ class Garbage::AreaListsController < ApplicationController
   public
 
   def download
-    send_csv @cur_node.children.map(&:becomes_with_route)
+    send_csv @cur_node.children.sort(id: "ASC").map(&:becomes_with_route)
   end
 
   def import

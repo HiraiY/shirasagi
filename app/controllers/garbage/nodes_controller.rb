@@ -34,18 +34,22 @@ class Garbage::NodesController < ApplicationController
         @model.t(:kana),
         @model.t(:filename),
         @model.t(:layout),
-        @model.t(:groups)
+        @model.t(:groups),
+        @model.t(:order)
       ]
       items.each do |item|
-        row = []
-        row << item.categories.pluck(:name).join("\n")
-        row << item.name
-        row << item.remark
-        row << item.kana
-        row << item.basename
-        row << item.layout.try(:name)
-        row << item.groups.pluck(:name).join("_n")
-        data << row
+        item.categories.pluck(:name).each do |category|
+          row = []
+          row << category
+          row << item.name
+          row << item.remark
+          row << item.kana
+          row << item.basename
+          row << item.layout.try(:name)
+          row << item.groups.pluck(:name).join("_n")
+          row << item.order
+          data << row
+        end
       end
     end
 
@@ -58,7 +62,7 @@ class Garbage::NodesController < ApplicationController
   public
 
   def download
-    send_csv @cur_node.children.map(&:becomes_with_route)
+    send_csv @cur_node.children.sort(order: "ASC").map(&:becomes_with_route)
   end
 
   def import

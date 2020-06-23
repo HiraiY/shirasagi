@@ -62,8 +62,8 @@ class Garbage::Node::AreaImporter
   end
 
   def set_page_attributes(row, item)
-    item.name   = row[I18n.t('garbage.area_name')].to_s.strip
-    item.center = row[I18n.t('garbage.center')].to_s.strip
+    item.name   = row[model.t("name")].to_s.strip
+    item.center = row[model.t("center")].to_s.strip
     row_last = row.index(model.t("filename"))
     garbage_type = []
     row.headers[2...row_last].zip(row[2...row_last]) do |key, value|
@@ -72,16 +72,9 @@ class Garbage::Node::AreaImporter
     end
 
     item.garbage_type = garbage_type
-    set_page_categories(row, item)
+    item.layout = Cms::Layout.site(site).where(name: row[model.t("layout")].to_s.strip).first
     set_page_groups(row, item)
-
     item
-  end
-
-  def set_page_categories(row, item)
-    @st_categories ||= node.becomes_with_route.st_categories.map{ |c| [c.name, c.id] }.to_h
-    categories = row[model.t("category_ids")].to_s.strip.split("\n")
-    item.category_ids = categories.map{ |c| @st_categories[c] }.compact
   end
 
   def set_page_groups(row, item)
