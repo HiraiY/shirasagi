@@ -5,7 +5,7 @@
   </div>
 
   <div class="category">
-    <h2><%= t("garbage.category.setting") %></h2>
+    <h2><%= t("garbage.category.select") %></h2>
     <%= select_tag 'category_ids[]',  options_for_select(@options, @category_ids.first), include_blank: "" %>
   </div>
 

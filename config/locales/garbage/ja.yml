@@ -10,7 +10,7 @@ ja:
       setting: 分別区分設定
       index: 分別区分を設定する
       search: ゴミ品目の分別区分を検索
-      setting: 分別区分を選択
+      select: 分別区分を選択
 
     search: ゴミ品目検索
     result: 検索結果
@@ -54,6 +54,7 @@ ja:
       garbage/node/page:
         name: 品目名
         remark: 出し方・ワンポイント
+        kana: ふりがな
         field: 項目名
         category_ids: カテゴリー
       garbage/node/area:
@@ -77,6 +78,12 @@ ja:
           #{name} ゴミ品目名が表示されます。
           #{categories} ゴミの分別区分が表示されます。
           #{remark} 出し方・ワンポイントが表示されます。
+
+    garbage/node/page:
+      kana:
+        - ふりがなを設定します。
+        - 品目名を平仮名にしたときの1文字目を、平仮名で入力してください。
+        - 品目名が「鉛筆」の場合、「え」と入力します。
 
     garbage/node/search:
       loop_html: *garbage_node_loop_html

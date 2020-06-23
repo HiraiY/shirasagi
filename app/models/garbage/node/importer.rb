@@ -33,7 +33,7 @@ class Garbage::Node::Importer
   end
 
   def import_csv(file)
-    table = CSV.read(file.path, headers: true, encoding: 'SJIS:UTF-8')
+    table = CSV.read(file.path, headers: true, encoding: 'BOM|UTF-8')
     table.each_with_index do |row, i|
       begin
         name = update_row(row)
