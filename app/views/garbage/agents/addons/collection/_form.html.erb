@@ -50,16 +50,16 @@
   <dt class="field"><%= @item.t :field %><%= @item.tt :field %></dt>
   <dd class="value"><%= @item.t :value %><%= @item.tt :value %></dd>
 
+  <% category_options = @cur_node.becomes_with_route.parent.try(:becomes_with_route).st_categories.pluck(:name) %>
   <% if @item.garbage_type.blank? %>
-    <dt><%= text_field_tag "item[garbage_type][][field]" %></dt>
+    <dt><%= select_tag "item[garbage_type][][field]", options_for_select(category_options), include_blank: true %></dt>
     <dd>
       <%= text_field_tag "item[garbage_type][][value]", nil, placeholder: "例) 月1" %>
       <%= button_tag @item.t(:del_info), {type: :button, class: "clear btn"} %>
     </dd>
   <% end %>
-
   <% @item.garbage_type.each do |info| %>
-    <dt><%= text_field_tag "item[garbage_type][][field]", info[:field] %></dt>
+    <dt><%= select_tag "item[garbage_type][][field]", options_for_select(category_options, info[:field]), include_blank: true %></dt>
     <dd>
       <%= text_field_tag "item[garbage_type][][value]", info[:value] %>
       <%= button_tag @item.t(:del_info), {type: :button, class: "clear btn"} %>
