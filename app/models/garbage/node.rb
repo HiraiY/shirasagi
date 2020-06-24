@@ -125,4 +125,28 @@ module Garbage::Node
 
     default_scope ->{ where(route: "garbage/area") }
   end
+
+  class CenterList
+    include Cms::Model::Node
+    include Cms::Addon::NodeSetting
+    include Cms::Addon::Meta
+    include Cms::Addon::NodeList
+    include Cms::Addon::Release
+    include Cms::Addon::GroupPermission
+    include History::Addon::Backup
+
+    default_scope ->{ where(route: "garbage/center_list") }
+  end
+
+  class Center
+    include Cms::Model::Node
+    include Cms::Addon::NodeSetting
+    include Cms::Addon::Meta
+    include Garbage::Addon::Center
+    include Cms::Addon::Release
+    include Cms::Addon::GroupPermission
+    include History::Addon::Backup
+
+    default_scope ->{ where(route: "garbage/center") }
+  end
 end

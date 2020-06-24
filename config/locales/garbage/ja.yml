@@ -30,6 +30,9 @@ ja:
     area_name: 地名
     collection: 収集日
     center: センター
+    center_name: センター名
+    rest_start: 休止開始日
+    rest_end: 休止停止日
 
   modules:
     garbage: ゴミDB
@@ -38,7 +41,8 @@ ja:
       garbage/additional_info: 追加情報
       garbage/category: ゴミの分別区分
       garbage/category_setting: ゴミの分別区分
-      garbage/collection: ゴミ回収
+      garbage/collection: ゴミ回収設定
+      garbage/center: センター設定
 
   cms:
     nodes:
@@ -48,6 +52,8 @@ ja:
       garbage/search: ゴミ品目検索
       garbage/area_list: 地区リスト
       garbage/area: 地区
+      garbage/center_list: センターリスト
+      garbage/center: センター
 
   mongoid:
     attributes:
@@ -58,12 +64,17 @@ ja:
         field: 項目名
         category_ids: カテゴリー
       garbage/node/area:
+        name: 地名
         center: センター
         field: 分別区分
         value: 収集日
         add_info: 追加
         del_info: 削除
         garbage_type: ゴミの種類
+      garbage/node/center:
+        name: 名称
+        rest_start: 休止開始日
+        rest_end: 休止停止日
 
   job:
     models:
@@ -108,3 +119,8 @@ ja:
         -
         - 毎月第1週月曜の場合は、月1と記述します。
         - 毎月収集が無いゴミは対象月をコロン(:)の後に指定できます。 例えば、4、6、8、10、12、2月の偶数月の第2火曜、第4金曜の場合には、 火2 金4:4 6 8 10 12 2 のように記述します。
+    garbage/node/center:
+      rest_start:
+        - センターの休止開始日を設定します。
+      rest_end:
+        - センターの休止停止日を設定します。

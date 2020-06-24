@@ -24,6 +24,8 @@ Rails.application.routes.draw do
     resources :categories, concerns: :deletion
     resources :area_lists, concerns: [:deletion, :download, :import]
     resources :areas, concerns: :deletion
+    resources :center_lists, concerns: [:deletion, :download, :import]
+    resources :centers, concerns: :deletion
   end
 
   namespace "garbage", path: ".s:site/garbage" do
@@ -41,5 +43,7 @@ Rails.application.routes.draw do
     get "search/(result.:format)" => "public#result", cell: "nodes/search"
     get "area_list/(index.:format)" => "public#index", cell: "nodes/area_list"
     get "area/(index.:format)" => "public#index", cell: "nodes/area"
+    get "center_list/(index.:format)" => "public#index", cell: "nodes/center_list"
+    get "center/(index.:format)" => "public#index", cell: "nodes/center"
   end
 end
