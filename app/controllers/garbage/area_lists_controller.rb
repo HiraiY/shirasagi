@@ -12,6 +12,11 @@ class Garbage::AreaListsController < ApplicationController
     { cur_user: @cur_user, cur_site: @cur_site, cur_node: @cur_node }
   end
 
+  def redirect_url
+    diff = (@item.route.pluralize != "garbage/areas")
+    diff ? node_node_path(cid: @cur_node, id: @item.id) : { action: :show, id: @item.id }
+  end
+
   def set_task
     @task = Cms::Task.find_or_create_by name: task_name, site_id: @cur_site.id, node_id: @cur_node.id
   end
