@@ -5,15 +5,12 @@ ja:
     search: ゴミ品目検索
     item: 品目
     remark: 出し方・ワンポイント
-    category: 分別区分
     category:
       name: 分別区分
       setting: 分別区分設定
       index: 分別区分を設定する
       search: ゴミ品目の分別区分を検索
-      setting: 分別区分を選択
-
-    search: ゴミ品目検索
+      select: 分別区分を選択
     result: 検索結果
     count: 件の品目がヒットしました。
     first_to_last: 件の品目を表示しています。
@@ -35,6 +32,9 @@ ja:
     rest_start: 休止開始日
     rest_end: 休止停止日
     description: ゴミの区分
+    remarks: 備考
+    remark_id: ID
+    attention: 注意事項
 
   modules:
     garbage: ゴミDB
@@ -46,6 +46,7 @@ ja:
       garbage/collection: ゴミ回収設定
       garbage/center: センター設定
       garbage/description: ゴミ区分
+      garbage/remark: 備考
 
   cms:
     nodes:
@@ -59,6 +60,8 @@ ja:
       garbage/center: センター
       garbage/description_list: ゴミ区分リスト
       garbage/description: ゴミ区分
+      garbage/remark_list: 備考リスト
+      garbage/remark: 備考
 
   mongoid:
     attributes:
@@ -84,6 +87,9 @@ ja:
         category: 分別区分
         style: スタイル
         bgcolor: 背景色
+      garbage/node/remark:
+        remark_id: ID
+        attention: 注意事項
 
   job:
     models:
@@ -140,3 +146,8 @@ ja:
         - 5374アプリで分別区分の表示を設定します。
       bgcolor:
         - 5374アプリで分別区分の背景色を設定します。
+    garbage/node/remark:
+      remark_id:
+        - 5374アプリで注意事項を表示する対象を設定します。
+      attention:
+        - 5374アプリで表示する注意事項を設定します。

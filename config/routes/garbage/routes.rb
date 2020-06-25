@@ -28,6 +28,8 @@ Rails.application.routes.draw do
     resources :centers, concerns: :deletion
     resources :description_lists, concerns: [:deletion, :download, :import]
     resources :descriptions, concerns: :deletion
+    resources :remark_lists, concerns: [:deletion, :download, :import]
+    resources :remarks, concerns: :deletion
   end
 
   namespace "garbage", path: ".s:site/garbage" do
@@ -49,5 +51,7 @@ Rails.application.routes.draw do
     get "center/(index.:format)" => "public#index", cell: "nodes/center"
     get "description_list/(index.:format)" => "public#index", cell: "nodes/description_list"
     get "description/(index.:format)" => "public#index", cell: "nodes/description"
+    get "remark_list/(index.:format)" => "public#index", cell: "nodes/remark_list"
+    get "remark/(index.:format)" => "public#index", cell: "nodes/remark"
   end
 end

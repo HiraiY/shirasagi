@@ -10,5 +10,7 @@ module Garbage
     Cms::Node.plugin "garbage/center"
     Cms::Node.plugin "garbage/description_list"
     Cms::Node.plugin "garbage/description"
+    Cms::Node.plugin "garbage/remark_list"
+    Cms::Node.plugin "garbage/remark"
   end
 end
