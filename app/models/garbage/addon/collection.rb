@@ -8,7 +8,7 @@ module Garbage::Addon
       field :garbage_type, type: Cms::Extensions::GarbageType
 
       permit_params :center, :garbage_type
-      permit_params garbage_type: [ :field, :value ]
+      permit_params garbage_type: [ :field, :value, :view ]
 
       validates :garbage_type, presence: true
     end

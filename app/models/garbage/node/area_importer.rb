@@ -62,15 +62,14 @@ class Garbage::Node::AreaImporter
   end
 
   def set_page_attributes(row, item)
-    item.name    = row[model.t("name")].to_s.strip
-    item.center  = row[model.t("center")].to_s.strip
-    row_last     = row.index(model.t("filename"))
+    item.name      = row[model.t("name")].to_s.strip
+    item.center    = row[model.t("center")].to_s.strip
+    filename_index = row.index(model.t("filename"))
     garbage_type = []
-    row.headers[2...row_last].zip(row[2...row_last]) do |key, value|
-      hash = {field: key, value: value}
+    row.headers[2...filename_index].zip(row[2...filename_index], row[-row.headers[2...filename_index].length..-1]) do |key, value, view|
+      hash = { field: key, value: value, view: view }
       garbage_type << hash
     end
-
     item.garbage_type = garbage_type
     item.layout = Cms::Layout.site(site).where(name: row[model.t("layout")].to_s.strip).first
     set_page_groups(row, item)

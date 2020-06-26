@@ -39,6 +39,9 @@ class Garbage::AreaListsController < ApplicationController
       headers << @model.t(:filename)
       headers << @model.t(:layout)
       headers << @model.t(:groups)
+      items.first.garbage_type.each do |type|
+        headers << type[:field] + t('garbage.view')
+      end
       data << headers
 
       items.each do |item|
@@ -51,8 +54,10 @@ class Garbage::AreaListsController < ApplicationController
         row << item.basename
         row << item.layout.try(:name)
         row << item.groups.pluck(:name).join("_n")
+        item.garbage_type.each do |type|
+          row << type[:view]
+        end
         data << row
-
       end
     end
 
