@@ -5,9 +5,7 @@
       dd = $(".garbage-type dd:last").clone(true);
       dt = $(".garbage-type dt:last").clone(true);
       dd.find("input").val("");
-      dd.find("input").val("");
-      dt.find("input").val("");
-      dt.find("input").val("");
+      dt.find("option").attr("selected", false);
       $(".garbage-type dd:last").after(dt);
       $(".garbage-type dt:last").after(dd);
     }
@@ -30,11 +28,11 @@
     } else {
       if (dt.find("input").val() !== "" || dd.find("input").val() !== "") {
         if (confirm('<%= t("cms.confirm.delete_item") %>')) {
-          dt.find("input").val("");
+          dt.find("option").attr("selected", false);
           dd.find("input").val("");
         }
       } else {
-        dt.find("input").val("");
+        dt.find("option").attr("selected", false);
         dd.find("input").val("");
       }
       return false;
