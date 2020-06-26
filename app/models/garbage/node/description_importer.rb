@@ -63,9 +63,9 @@ class Garbage::Node::DescriptionImporter
 
   def set_page_attributes(row, item)
     item.category = row[model.t("category")].to_s.strip
-    item.style = row[model.t("style")].to_s.strip
-    item.bgcolor = row[model.t("bgcolor")].to_s.strip
-    item.name = row[model.t("name")].to_s.strip
+    item.style    = row[model.t("style")].to_s.strip
+    item.bgcolor  = row[model.t("bgcolor")].to_s.strip
+    item.name     = row[model.t("name")].to_s.strip
     set_page_groups(row, item)
     item
   end

@@ -38,7 +38,7 @@ class Garbage::AreaListsController < ApplicationController
       end
       headers << @model.t(:filename)
       headers << @model.t(:layout)
-      headers <<  @model.t(:groups)
+      headers << @model.t(:groups)
       data << headers
 
       items.each do |item|

@@ -18,6 +18,7 @@
 
 <div class="cms-nodes nodes">
   <% @cur_node.children.each do |node| %>
+    <% next if !node.route.match?(/garbage\/area_list|garbage\/node/) %>
     <article class="item-<%= node.filename %>">
       <header>
         <%= link_to node.name, node.url %>

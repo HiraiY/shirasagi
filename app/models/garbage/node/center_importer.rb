@@ -62,11 +62,11 @@ class Garbage::Node::CenterImporter
   end
 
   def set_page_attributes(row, item)
-    item.name   = row[model.t("name")].to_s.strip
+    item.name       = row[model.t("name")].to_s.strip
     item.rest_start = row[model.t("rest_start")].to_s.strip
-    item.rest_end = row[model.t("rest_end")].to_s.strip
-    item.rest_end = row[model.t("rest_end")].to_s.strip
-    item.layout = Cms::Layout.site(site).where(name: row[model.t("layout")].to_s.strip).first
+    item.rest_end   = row[model.t("rest_end")].to_s.strip
+    item.rest_end   = row[model.t("rest_end")].to_s.strip
+    item.layout     = Cms::Layout.site(site).where(name: row[model.t("layout")].to_s.strip).first
     set_page_groups(row, item)
     item
   end

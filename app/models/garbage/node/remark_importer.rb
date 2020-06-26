@@ -62,7 +62,7 @@ class Garbage::Node::RemarkImporter
   end
 
   def set_page_attributes(row, item)
-    item.name = row[model.t("name")].to_s.strip
+    item.name      = row[model.t("name")].to_s.strip
     item.remark_id = row[model.t("remark_id")].to_s.strip
     item.attention = row[model.t("attention")].to_s.strip
     set_page_groups(row, item)

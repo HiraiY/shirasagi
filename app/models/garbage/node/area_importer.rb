@@ -62,9 +62,9 @@ class Garbage::Node::AreaImporter
   end
 
   def set_page_attributes(row, item)
-    item.name   = row[model.t("name")].to_s.strip
-    item.center = row[model.t("center")].to_s.strip
-    row_last = row.index(model.t("filename"))
+    item.name    = row[model.t("name")].to_s.strip
+    item.center  = row[model.t("center")].to_s.strip
+    row_last     = row.index(model.t("filename"))
     garbage_type = []
     row.headers[2...row_last].zip(row[2...row_last]) do |key, value|
       hash = {field: key, value: value}
