@@ -54,7 +54,7 @@
   <% if @item.garbage_type.blank? %>
     <dt><%= select_tag "item[garbage_type][][field]", options_for_select(category_options), include_blank: true %></dt>
     <dd>
-      <%= text_field_tag "item[garbage_type][][value]", nil, placeholder: "例) 月1" %>
+      <%= text_field_tag "item[garbage_type][][value]", nil, placeholder: t('garbage.placeholder.garbage_type') %>
       <%= button_tag @item.t(:del_info), {type: :button, class: "clear btn"} %>
     </dd>
   <% end %>

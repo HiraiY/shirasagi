@@ -35,6 +35,11 @@ ja:
     remarks: 備考
     remark_id: ID
     attention: 注意事項
+    import:
+      invalid_file: CSV形式のファイルを選択してください。
+    placeholder:
+      kana: "例: あ"
+      garbage_type: "例: 月1"
 
   modules:
     garbage: ゴミDB

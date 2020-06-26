@@ -86,7 +86,7 @@ class Garbage::AreaListsController < ApplicationController
     begin
       file = params[:item].try(:[], :file)
       if file.nil? || ::File.extname(file.original_filename) != ".csv"
-        raise I18n.t("facility.import.invalid_file")
+        raise I18n.t("garbage.import.invalid_file")
       end
       if !Garbage::Node::AreaImporter.valid_csv?(file)
         raise I18n.t("errors.messages.malformed_csv")

@@ -9,6 +9,8 @@ module Garbage::Addon
 
       permit_params :center, :garbage_type
       permit_params garbage_type: [ :field, :value ]
+
+      validates :garbage_type, presence: true
     end
   end
 end
