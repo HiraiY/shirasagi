@@ -66,6 +66,7 @@ class Garbage::Node::Importer
     item.layout = Cms::Layout.site(site).where(name: row[model.t("layout")].to_s.strip).first
     item.remark = row[model.t("remark")].to_s.strip
     item.order  = row[model.t("order")].to_s.strip
+    item.kana  = row[model.t("kana")].to_s.strip
 
     set_page_categories(row, item)
     set_page_groups(row, item)
