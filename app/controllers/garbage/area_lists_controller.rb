@@ -104,7 +104,7 @@ class Garbage::AreaListsController < ApplicationController
       ss_file.save
 
       # call job
-      Garbage::Area::ImportJob.bind(site_id: @cur_site, node_id: @cur_node, user_id: @cur_user).perform_later(ss_file.id)
+      Garbage::AreaImportJob.bind(site_id: @cur_site, node_id: @cur_node, user_id: @cur_user).perform_later(ss_file.id)
     rescue => e
       @item.errors.add :base, e.to_s
     end

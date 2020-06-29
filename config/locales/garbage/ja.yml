@@ -11,6 +11,7 @@ ja:
       index: 分別区分を設定する
       search: ゴミ品目の分別区分を検索
       select: 分別区分を選択
+    category_list: カテゴリーリスト
     result: 検索結果
     count: 件の品目がヒットしました。
     first_to_last: 件の品目を表示しています。
@@ -30,8 +31,7 @@ ja:
     center: センター
     center_name: センター名
     rest_start: 休止開始日
-    rest_end: 休止停止日
-    description: ゴミの区分
+    rest_end: 休止終了日
     remarks: 備考
     remark_id: ID
     attention: 注意事項
@@ -52,21 +52,20 @@ ja:
       garbage/category_setting: ゴミの分別区分
       garbage/collection: ゴミ回収設定
       garbage/center: センター設定
-      garbage/description: ゴミ区分
+      garbage/description: スタイル設定
       garbage/remark: 備考
 
   cms:
     nodes:
       garbage/page: ゴミ品目
       garbage/node: ゴミ品目リスト
+      garbage/category_list: カテゴリーリスト
       garbage/category: ゴミ品目カテゴリー
       garbage/search: ゴミ品目検索
       garbage/area_list: 地区リスト
       garbage/area: 地区
       garbage/center_list: センターリスト
       garbage/center: センター
-      garbage/description_list: ゴミ区分リスト
-      garbage/description: ゴミ区分
       garbage/remark_list: 備考リスト
       garbage/remark: 備考
 
@@ -90,9 +89,8 @@ ja:
       garbage/node/center:
         name: 名称
         rest_start: 休止開始日
-        rest_end: 休止停止日
-      garbage/node/description:
-        category: 分別区分
+        rest_end: 休止終了日
+      garbage/node/category:
         style: スタイル
         bgcolor: 背景色
       garbage/node/remark:
@@ -148,10 +146,8 @@ ja:
       rest_start:
         - センターの休止開始日を設定します。
       rest_end:
-        - センターの休止停止日を設定します。
-    garbage/node/description:
-      category:
-        - 分別区分を設定します。
+        - センターの休止終了日を設定します。
+    garbage/node/category:
       style:
         - 5374アプリで分別区分の表示を設定します。
       bgcolor:

@@ -69,11 +69,23 @@ module Garbage::Node
     end
   end
 
+  class CategoryList
+    include Cms::Model::Node
+    include Cms::Addon::NodeSetting
+    include Cms::Addon::Meta
+    include Cms::Addon::NodeList
+    include Cms::Addon::GroupPermission
+    include History::Addon::Backup
+
+    default_scope ->{ where(route: "garbage/category_list") }
+  end
+
   class Category
     include Cms::Model::Node
     include Cms::Addon::NodeSetting
     include Cms::Addon::Meta
     include Cms::Addon::NodeList
+    include Garbage::Addon::Description
     include Cms::Addon::Release
     include Cms::Addon::GroupPermission
     include History::Addon::Backup
@@ -148,28 +160,6 @@ module Garbage::Node
     include History::Addon::Backup
 
     default_scope ->{ where(route: "garbage/center") }
-  end
-
-  class DescriptionList
-    include Cms::Model::Node
-    include Cms::Addon::NodeSetting
-    include Cms::Addon::Meta
-    include Cms::Addon::NodeList
-    include Cms::Addon::GroupPermission
-    include History::Addon::Backup
-
-    default_scope ->{ where(route: "garbage/description_list") }
-  end
-
-  class Description
-    include Cms::Model::Node
-    include Cms::Addon::NodeSetting
-    include Garbage::Addon::Description
-    include Cms::Addon::Release
-    include Cms::Addon::GroupPermission
-    include History::Addon::Backup
-
-    default_scope ->{ where(route: "garbage/description") }
   end
 
   class RemarkList

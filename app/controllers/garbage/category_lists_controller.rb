@@ -1,10 +1,10 @@
-class Garbage::DescriptionListsController < ApplicationController
+class Garbage::CategoryListsController < ApplicationController
   include Cms::BaseFilter
   include Cms::NodeFilter
 
-  model Garbage::Node::Description
+  model Garbage::Node::Category
 
-  navi_view "garbage/description_lists/nav"
+  navi_view "garbage/category_lists/nav"
 
   private
 
@@ -13,7 +13,7 @@ class Garbage::DescriptionListsController < ApplicationController
   end
 
   def redirect_url
-    diff = (@item.route.pluralize != "garbage/descriptions")
+    diff = (@item.route.pluralize != "garbage/categories")
     diff ? node_node_path(cid: @cur_node, id: @item.id) : { action: :show, id: @item.id }
   end
 
@@ -22,7 +22,7 @@ class Garbage::DescriptionListsController < ApplicationController
   end
 
   def task_name
-    "garbage:import_node_descriptions"
+    "garbage:import_node_categories"
   end
 
   def send_csv(items)
@@ -30,24 +30,24 @@ class Garbage::DescriptionListsController < ApplicationController
 
     csv = CSV.generate do |data|
       data << [
-        @model.t("category"),
+        @model.t("name"),
         "sublabel",
         "description",
         @model.t("style"),
         @model.t("bgcolor"),
-        @model.t("name"),
         @model.t("basename"),
+        @model.t("layout"),
         @model.t("groups")
       ]
       items.each do |item|
         row = []
-        row << item.category
+        row << item.name
         row << nil
         row << nil
         row << item.style
         row << item.bgcolor
-        row << item.name
         row << item.basename
+        row << item.layout.try(:name)
         row << item.groups.pluck(:name).join("_n")
         data << row
       end
@@ -62,7 +62,7 @@ class Garbage::DescriptionListsController < ApplicationController
   public
 
   def download
-    send_csv @cur_node.children.map(&:becomes_with_route)
+    send_csv @cur_node.children.sort(id: "ASC").map(&:becomes_with_route)
   end
 
   def import
@@ -85,18 +85,18 @@ class Garbage::DescriptionListsController < ApplicationController
       if file.nil? || ::File.extname(file.original_filename) != ".csv"
         raise I18n.t("garbage.import.invalid_file")
       end
-      if !Garbage::Node::DescriptionImporter.valid_csv?(file)
+      if !Garbage::Node::CategoryImporter.valid_csv?(file)
         raise I18n.t("errors.messages.malformed_csv")
       end
 
       # save csv to use in job
       ss_file = SS::File.new
       ss_file.in_file = file
-      ss_file.model = "garbage/description"
+      ss_file.model = "garbage/category"
       ss_file.save
 
       # call job
-      Garbage::Description::ImportJob.bind(site_id: @cur_site, node_id: @cur_node, user_id: @cur_user).perform_later(ss_file.id)
+      Garbage::CategoryImportJob.bind(site_id: @cur_site, node_id: @cur_node, user_id: @cur_user).perform_later(ss_file.id)
     rescue => e
       @item.errors.add :base, e.to_s
     end

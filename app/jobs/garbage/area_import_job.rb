@@ -1,4 +1,4 @@
-class Garbage::Area::ImportJob < Cms::ApplicationJob
+class Garbage::AreaImportJob < Cms::ApplicationJob
   include Job::SS::TaskFilter
 
   self.task_class = Cms::Task

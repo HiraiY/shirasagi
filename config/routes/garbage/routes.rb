@@ -21,13 +21,12 @@ Rails.application.routes.draw do
     resources :pages, concerns: :deletion
     resources :nodes, concerns: [:deletion, :download, :import]
     resources :searches, concerns: :deletion
+    resources :category_lists, concerns: [:deletion, :download, :import]
     resources :categories, concerns: :deletion
     resources :area_lists, concerns: [:deletion, :download, :import]
     resources :areas, concerns: :deletion
     resources :center_lists, concerns: [:deletion, :download, :import]
     resources :centers, concerns: :deletion
-    resources :description_lists, concerns: [:deletion, :download, :import]
-    resources :descriptions, concerns: :deletion
     resources :remark_lists, concerns: [:deletion, :download, :import]
     resources :remarks, concerns: :deletion
   end
@@ -41,16 +40,14 @@ Rails.application.routes.draw do
   node "garbage" do
     get "page/(index.:format)" => "public#index", cell: "nodes/page"
     get "node/(index.:format)" => "public#index", cell: "nodes/node"
+    get "category_list/(index.:format)" => "public#index", cell: "nodes/category_list"
     get "category/(index.:format)" => "public#index", cell: "nodes/category"
-
     get "search/(index.:format)" => "public#index", cell: "nodes/search"
     get "search/(result.:format)" => "public#result", cell: "nodes/search"
     get "area_list/(index.:format)" => "public#index", cell: "nodes/area_list"
     get "area/(index.:format)" => "public#index", cell: "nodes/area"
     get "center_list/(index.:format)" => "public#index", cell: "nodes/center_list"
     get "center/(index.:format)" => "public#index", cell: "nodes/center"
-    get "description_list/(index.:format)" => "public#index", cell: "nodes/description_list"
-    get "description/(index.:format)" => "public#index", cell: "nodes/description"
     get "remark_list/(index.:format)" => "public#index", cell: "nodes/remark_list"
     get "remark/(index.:format)" => "public#index", cell: "nodes/remark"
   end

@@ -86,7 +86,7 @@ class Garbage::RemarkListsController < ApplicationController
       ss_file.save
 
       # call job
-      Garbage::Remark::ImportJob.bind(site_id: @cur_site, node_id: @cur_node, user_id: @cur_user).perform_later(ss_file.id)
+      Garbage::RemarkImportJob.bind(site_id: @cur_site, node_id: @cur_node, user_id: @cur_user).perform_later(ss_file.id)
     rescue => e
       @item.errors.add :base, e.to_s
     end

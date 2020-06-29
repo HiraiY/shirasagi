@@ -1,8 +1,4 @@
 <dl class="see mod-garbage-description">
-  <% category_options = @cur_node.becomes_with_route.parent.try(:becomes_with_route).st_categories.pluck(:name) %>
-  <dt><%= @model.t :category %><%= @model.tt :category %></dt>
-  <dd><%= f.select :category, category_options, include_blank: true %></dd>
-
   <dt><%= @model.t :style %><%= @model.tt :style %></dt>
   <dd><%= f.text_field :style, include_blank: true %></dd>
 

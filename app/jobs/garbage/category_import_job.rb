@@ -1,9 +1,9 @@
-class Garbage::Remark::ImportJob < Cms::ApplicationJob
+class Garbage::CategoryImportJob < Cms::ApplicationJob
   include Job::SS::TaskFilter
 
   self.task_class = Cms::Task
-  self.task_name = "garbage:import_node_remarks"
-  self.controller = Garbage::Agents::Tasks::Node::RemarksController
+  self.task_name = "garbage:import_node_categories"
+  self.controller = Garbage::Agents::Tasks::Node::CategoriesController
   self.action = :import
 
   def perform(ss_file_id)

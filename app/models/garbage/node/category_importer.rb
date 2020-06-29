@@ -1,7 +1,7 @@
-class Garbage::Node::DescriptionImporter
+class Garbage::Node::CategoryImporter
   include Cms::CsvImportBase
 
-  self.required_headers = [ ::Garbage::Node::Description.t(:filename) ]
+  self.required_headers = [ ::Garbage::Node::Category.t(:filename) ]
 
   attr_reader :site, :node, :user
 
@@ -21,7 +21,7 @@ class Garbage::Node::DescriptionImporter
   private
 
   def model
-    ::Garbage::Node::Description
+    ::Garbage::Node::Category
   end
 
   def put_log(message)
@@ -62,10 +62,10 @@ class Garbage::Node::DescriptionImporter
   end
 
   def set_page_attributes(row, item)
-    item.category = row[model.t("category")].to_s.strip
-    item.style    = row[model.t("style")].to_s.strip
-    item.bgcolor  = row[model.t("bgcolor")].to_s.strip
-    item.name     = row[model.t("name")].to_s.strip
+    item.name    = row[model.t("name")].to_s.strip
+    item.style = row[model.t("style")].to_s.strip
+    item.bgcolor = row[model.t("bgcolor")].to_s.strip
+    item.layout = Cms::Layout.site(site).where(name: row[model.t("layout")].to_s.strip).first
     set_page_groups(row, item)
     item
   end
