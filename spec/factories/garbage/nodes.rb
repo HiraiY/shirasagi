@@ -18,4 +18,8 @@ FactoryBot.define do
   factory :garbage_node_category, class: Garbage::Node::Category, traits: [:cms_node] do
     route "garbage/category"
   end
+
+  factory :garbage_node_category_list, class: Garbage::Node::CategoryList, traits: [:cms_node] do
+    route "garbage/category_list"
+  end
 end
