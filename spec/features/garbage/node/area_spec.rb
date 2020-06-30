@@ -1,9 +1,32 @@
 require 'spec_helper'
 
 describe "garbage_node_areas", type: :feature, dbscope: :example, js: true do
-  let(:site) { cms_site }
-  let(:node) { create :garbage_node_area_list }
-  let(:item) { create :garbage_node_area, filename: "#{node.filename}/name" }
+  let(:site)   { cms_site }
+
+  let!(:search_node) do
+    create(
+      :garbage_node_search,
+      filename: "search",
+      st_category_ids: [category1.id, category2.id]
+    )
+  end
+  let!(:node) do
+    create(
+      :garbage_node_area_list,
+      filename: "search/list",
+    )
+  end
+
+  let!(:category1) { create :garbage_node_category, name: "category1"}
+  let!(:category2) { create :garbage_node_category, name: "category2"}
+
+  let!(:item) do
+    create(
+      :garbage_node_area,
+      name: "item",
+      filename: "search/list/item",
+    )
+  end
 
   let(:index_path) { garbage_area_lists_path site.id, node }
   let(:new_path) { new_garbage_area_list_path site.id, node }
@@ -11,6 +34,7 @@ describe "garbage_node_areas", type: :feature, dbscope: :example, js: true do
   let(:edit_path) { edit_garbage_area_list_path site.id, node, item }
   let(:delete_path) { delete_garbage_area_list_path site.id, node, item }
   let(:import_path) { import_garbage_area_lists_path site.id, node }
+  let(:area_edit_path) { edit_garbage_area_path site.id, area_node, item }
 
   context "with auth" do
     before { login_cms_user }
@@ -72,6 +96,54 @@ describe "garbage_node_areas", type: :feature, dbscope: :example, js: true do
         end
       end
       expect(page).to have_content I18n.t("ss.notice.started_import")
+    end
+
+    it "#garbage_type" do
+      visit edit_path
+      within "form#item-form" do
+        select category1.name, from: "item_garbage_type__field"
+        fill_in "item[garbage_type][][value]", with: "月"
+        fill_in "item[garbage_type][][view]", with: "毎週月曜日"
+        click_button I18n.t('ss.buttons.save')
+      end
+      item.reload
+      expect(item.garbage_type.length).to eq 1
+      expect(page).to have_content item.garbage_type.first[:field]
+      expect(page).to have_content item.garbage_type.first[:value]
+      expect(page).to have_content item.garbage_type.first[:view]
+
+      visit edit_path
+      within "form#item-form" do
+        find(".add-info").click
+        all("#item_garbage_type__field").last.select category2.name
+        all("#item_garbage_type__value").last.set "火"
+        all("#item_garbage_type__view").last.set "毎週火曜日"
+        click_button I18n.t('ss.buttons.save')
+      end
+      item.reload
+      expect(item.garbage_type.length).to eq 2
+      expect(page).to have_content item.garbage_type.last[:field]
+      expect(page).to have_content item.garbage_type.last[:value]
+      expect(page).to have_content item.garbage_type.last[:view]
+
+      visit edit_path
+      accept_confirm do
+        first(".clear").click
+      end
+      click_button I18n.t('ss.buttons.save')
+      item.reload
+      expect(item.garbage_type.length).to eq 1
+      expect(page).to have_content category2.name
+      expect(page).to have_content "火"
+      expect(page).to have_content "毎週火曜日"
+
+      visit edit_path
+      accept_confirm do
+        first(".clear").click
+      end
+      click_button I18n.t('ss.buttons.save')
+      item.reload
+      expect(item.garbage_type.length).to eq 0
     end
   end
 end
