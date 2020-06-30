@@ -100,6 +100,10 @@ ja:
   job:
     models:
       garbage/import_job: ゴミ品目インポート
+      garbage/area_import_job: 地区インポート
+      garbage/category_import_job: カテゴリーインポート
+      garbage/center_import_job: センターインポート
+      garbage/remark_import_job: 備考インポート
 
   tooltip:
     garbage/node/node:

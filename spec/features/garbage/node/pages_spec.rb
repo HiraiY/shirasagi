@@ -22,8 +22,6 @@ describe "garbage_node_pages", type: :feature, dbscope: :example, js: true do
 
     it "#new" do
       visit new_path
-      require 'pry'
-      binding.pry
       within "form#item-form" do
         fill_in "item[name]", with: "sample"
         fill_in "item[basename]", with: "sample"
