@@ -59,11 +59,11 @@ class Gws::Reminder
   end
 
   def same_name_items
-    model.camelize.constantize.where(:name => name, :deleted.exists => false)
+    model.camelize.constantize.where(:site_id => site.id, :name => name, :deleted.exists => false)
   end
 
   def same_repeat_items
-    model.camelize.constantize.where(:repeat_plan_id => repeat_plan_id, :deleted.exists => false)
+    model.camelize.constantize.where(:site_id => site.id, :repeat_plan_id => repeat_plan_id, :deleted.exists => false)
   end
 
   def url_lazy

@@ -6,7 +6,7 @@ module Gws::Addon
     attr_accessor :in_reminder_conditions
 
     included do
-      permit_params in_reminder_conditions: [:user_id, :state, :interval, :interval_type, :base_time]
+      permit_params in_reminder_conditions: [:user_id, :state, :start_or_end, :interval, :interval_type, :base_time]
 
       after_save :save_reminders, if: -> { in_reminder_conditions }
       after_save :update_reminders, if: -> { in_reminder_conditions.nil? }
@@ -31,6 +31,12 @@ module Gws::Addon
 
     def reminder_notify_state_options
       I18n.t("gws/reminder.options.notify_state").map do |k, v|
+        [ v, k.to_s ]
+      end
+    end
+
+    def reminder_start_or_end_options
+      I18n.t("gws/reminder.options.start_or_end").map do |k, v|
         [ v, k.to_s ]
       end
     end
@@ -74,12 +80,18 @@ module Gws::Addon
         if allday == "allday"
           base_at = Time.zone.parse("#{start_at.strftime("%Y/%m/%d")} #{cond["base_time"]}")
         else
-          base_at = start_at
+          base_at = (cond["start_or_end"] == "end_at") ? end_at : start_at
           cond.delete("base_time")
         end
 
         cond["interval"] = cond["interval"].to_i
-        cond["notify_at"] = base_at - (cond["interval"].send cond["interval_type"])
+
+        if cond["interval_type"] == "today"
+          cond["notify_at"] = base_at
+        else
+          cond["notify_at"] = base_at - (cond["interval"].send cond["interval_type"])
+        end
+
         cond
       end
       conditions = conditions.uniq { |cond| [cond["notify_at"], cond["state"]] }
@@ -103,6 +115,7 @@ module Gws::Addon
         notification = reminder.notifications.new
         notification.notify_at = cond["notify_at"]
         notification.state = cond["state"]
+        notification.start_or_end = cond["start_or_end"]
         notification.interval = cond["interval"]
         notification.interval_type = cond["interval_type"]
         notification.base_time = cond["base_time"]
@@ -166,10 +179,15 @@ module Gws::Addon
         if allday == "allday"
           base_at = Time.zone.parse("#{start_at.strftime("%Y/%m/%d")} #{notification.base_time}")
         else
-          base_at = start_at
+          base_at = (notification.start_or_end == "end_at") ? end_at : start_at
         end
 
-        notification.notify_at = base_at - (notification.interval.send notification.interval_type)
+        if notification.interval_type == "today"
+          notification.notify_at = base_at
+        else
+          notification.notify_at = base_at - (notification.interval.send notification.interval_type)
+        end
+
         if notification.notify_at < Time.zone.now
           notification.delivered_at = nil
         else

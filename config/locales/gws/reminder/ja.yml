@@ -13,6 +13,9 @@ ja:
         disabled: 通知しない
         enabled: 通知する
         mail: メール通知
+      start_or_end:
+        start_at: 開始
+        end_at: 終了
       interval_type:
         minutes: 分前
         hours: 時間前
@@ -21,6 +24,7 @@ ja:
       interval_type_allday:
         days: 日前
         weeks: 週前
+        today: 当日
       base_time:
         "8:00": "午前 8:00"
         "8:30": "午前 8:30"

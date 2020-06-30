@@ -98,6 +98,7 @@ ja:
       send_email: メールを作成する
       send_message: メッセージを作成する
       copy_email_address: メールアドレスをコピー
+      return: 返却済みに変更する
     buttons:
       save: 保存
       new: 新規作成
@@ -200,6 +201,7 @@ ja:
       unset_seen_all: 未読にしました。
       set_star_all: スターをつけました。
       unset_star_all: スターをはずしました。
+      returned: 返却しました。
 
     info:
       soft_delete: データの実削除ではなく無効状態として保存されます。

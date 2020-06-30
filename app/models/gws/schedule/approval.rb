@@ -2,7 +2,7 @@ class Gws::Schedule::Approval
   include SS::Document
   include Gws::Reference::User
 
-  embedded_in :schedule, inverse_of: :approvals
+  embedded_in :schedule, class_name: 'Gws::Schedule::Plan', inverse_of: :approvals
   field :approval_state, type: String
   belongs_to :facility, class_name: 'Gws::Facility::Item'
 

@@ -1,0 +1,18 @@
+<dl class="see">
+  <dt><%= @model.t :name %></dt>
+  <dd>
+    <span style="padding-right: 10px;"><%= @item.name %></span>
+    <%= link_to t("modules.gws/schedule"), gws_facility_schedule_show_path(facility: @item.id), class: "calendar-name btn" %>
+  </dd>
+
+  <dt><%= @model.t :category_id %></dt>
+  <dd><%= tryb { @item.category.name } %></dd>
+
+  <dt><%= @model.t :user_ids %></dt>
+  <dd><%= @item.users.map(&:long_name).join(", ") %></dd>
+
+  <% if @item.image %>
+    <dt><%= @model.t :image_id %></dt>
+    <dd><%= image_tag(@item.image.url) %></dd>
+  <% end %>
+</dl>

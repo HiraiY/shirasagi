@@ -3,6 +3,7 @@ module Gws::Addon::Schedule::Approval
   extend SS::Addon
 
   included do
+    attr_accessor :in_reset_approval
     field :approval_state, type: String
 
     embeds_ids :approval_members, class_name: "Gws::User"
@@ -12,6 +13,9 @@ module Gws::Addon::Schedule::Approval
     permit_params approval_member_ids: []
 
     #validates :approval_check_state, inclusion: { in: %w(disabled enabled), allow_blank: true }
+
+    before_validation :set_approval_state
+    after_validation :destroy_approvals, if: -> { in_reset_approval }
   end
 
   def approval_state_options
@@ -25,8 +29,10 @@ module Gws::Addon::Schedule::Approval
   end
 
   def reset_approvals
-    @reset_approvals = true
-    self.approval_state = approval_present? ? 'request' : nil
+    @in_reset_approval = approval_state.present? ? approval_state : "unknown"
+  end
+
+  def destroy_approvals
     self.approvals = []
   end
 
@@ -56,8 +62,12 @@ module Gws::Addon::Schedule::Approval
     approvals.where(cond).order_by(created: 1).first || approvals.new(cond)
   end
 
-  def update_approval_state
-    set(approval_state: current_approval_state)
+  def set_approval_state
+    if in_reset_approval.present?
+      self.approval_state = approval_present? ? 'request' : nil
+    elsif approvals.present?
+      self.approval_state = current_approval_state
+    end
   end
 
   def current_approval_state

@@ -2,9 +2,15 @@ ja:
   gws/facility:
     category: カテゴリー
     manage_columns: 追加入力を管理する
+    views:
+      required_approval: 要承認
+      on_loan: 貸出中
+    notice:
+      on_loan: 以下の予定により、貸出中です。
     prompts:
       minutes: 分
       days: 日先まで
+      etc: '(その他 %{count}件)'
     navi:
       item: 設備設定
       usage: 設備利用率
@@ -25,6 +31,15 @@ ja:
       purpose: 利用目的
     errors:
       require_approver: 予約承認には管理ユーザーの登録が必要です。
+    options:
+      manage_state:
+        readable: 閲覧可能な設備
+        manage: 管理中の設備
+      loan_state:
+        returned: 返却済み
+        on_loan: 貸出中
+        overdue: 期限超過
+
   gws/facility/item:
     csv:
       id: ID
@@ -42,6 +57,7 @@ ja:
       reservation_start_date: 予約可能期間（開始）
       reservation_end_date: 予約可能期間（終了）
       approval_check_state: 予約承認
+      loan_state: 返却
       reservable_group_names: 予約可能グループ
       reservable_member_names: 予約可能ユーザー
       readable_setting_range: 公開範囲
@@ -52,6 +68,9 @@ ja:
       permission_level: 権限レベル
 
       approval_check_state_datas:
+        enabled: 有効
+        disabled: 無効
+      loan_state_datas:
         enabled: 有効
         disabled: 無効
       readable_setting_range_datas:
@@ -130,6 +149,7 @@ ja:
       gws/facility/item:
         name: 設備名
         order: 並び順
+        image_id: 写真
         category_id: カテゴリー
         activation_date: 有効期限（開始）
         expiration_date: 有効期限（終了）
@@ -140,6 +160,7 @@ ja:
         reservation_start_date: 予約可能期間（開始）
         reservation_end_date: 予約可能期間（終了）
         approval_check_state: 予約承認
+        loan_state: 返却
         html: 設備概要
       gws/facility/category:
         name: カテゴリー名
@@ -186,6 +207,8 @@ ja:
         - 予約可能期間の指定がない場合は空にしておきます。
       approval_check_state:
         - 予約に管理ユーザーの承認を必要とします。
+      loan_state:
+        - 返却が必要か設定します。
     gws/facility/category:
       name:
         - カテゴリー名を入力します。

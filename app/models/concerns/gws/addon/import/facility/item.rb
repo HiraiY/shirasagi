@@ -29,6 +29,7 @@ module Gws::Addon::Import::Facility
             line << datetime_to_text(item.activation_date)
             line << datetime_to_text(item.expiration_date)
             line << approval_check_state_datas_value_to_text(item.approval_check_state)
+            line << loan_state_datas_value_to_text(item.loan_state)
             line << type_datas_value_to_text(item.text_type)
             line << item.text
             attrs = %i(
@@ -75,7 +76,7 @@ module Gws::Addon::Import::Facility
         headers = %w(
           id name category_id order min_minutes_limit max_minutes_limit
           max_days_limit reservation_start_date reservation_end_date
-          activation_date expiration_date approval_check_state type html
+          activation_date expiration_date approval_check_state loan_state type html
         )
         headers += columns_headers
         headers += %w(
@@ -157,6 +158,11 @@ module Gws::Addon::Import::Facility
         I18n.t("gws/facility/item.csv.type_datas.#{type_datas}")
       end
 
+      def loan_state_datas_value_to_text(loan_state)
+        return if loan_state.blank?
+        I18n.t("gws/facility/item.csv.approval_check_state_datas.#{loan_state}")
+      end
+
       def approval_check_state_datas_value_to_text(approval_check_state)
         return if approval_check_state.blank?
         I18n.t("gws/facility/item.csv.approval_check_state_datas.#{approval_check_state}")
@@ -211,6 +217,7 @@ module Gws::Addon::Import::Facility
       activation_date = row[header_t("activation_date")].to_s.strip
       expiration_date = row[header_t("expiration_date")].to_s.strip
       approval_check_state = row[header_t("approval_check_state")].to_s.strip
+      loan_state = row[header_t("loan_state")].to_s.strip
 
       reservable_group_names = row[header_t("reservable_group_names")].to_s.strip.split("\n")
       reservable_member_names = row[header_t("reservable_member_names")].to_s.strip.split("\n")
@@ -266,6 +273,7 @@ module Gws::Addon::Import::Facility
       item.permission_level = permission_level
 
       item.approval_check_state = approval_check_state_datas_text_to_value(approval_check_state)
+      item.loan_state = loan_state_datas_text_to_value(loan_state)
       if item.save
         @imported += 1
         @cur_form = item
@@ -448,6 +456,13 @@ module Gws::Addon::Import::Facility
     def approval_check_state_datas_text_to_value(approval_check_state_datas)
       k, _v = I18n.t("gws/facility/item.csv.approval_check_state_datas").find do |key, value|
         approval_check_state_datas.match(value)
+      end
+      k.to_s
+    end
+
+    def loan_state_datas_text_to_value(loan_state_datas)
+      k, _v = I18n.t("gws/facility/item.csv.loan_state_datas").find do |key, value|
+        loan_state_datas.match(value)
       end
       k.to_s
     end

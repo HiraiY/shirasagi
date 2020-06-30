@@ -15,5 +15,9 @@ module Gws::Facility
     Gws::Role.permission :delete_private_gws_facility_categories, module_name: 'gws/facility'
 
     Gws::Role.permission :use_private_gws_facility_plans, module_name: 'gws/facility'
+
+    Gws.module_usable :facility do |site, user|
+      user.gws_role_permit_any?(site, :use_private_gws_facility_plans)
+    end
   end
 end

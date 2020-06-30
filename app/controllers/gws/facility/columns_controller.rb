@@ -3,7 +3,7 @@ class Gws::Facility::ColumnsController < ApplicationController
   include Gws::CrudFilter
   include Gws::ColumnFilter
 
-  navi_view "gws/schedule/main/navi"
+  navi_view "gws/facility/main/navi"
 
   self.form_model = Gws::Facility::Item
 

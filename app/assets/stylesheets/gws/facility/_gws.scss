@@ -17,3 +17,18 @@
     text-align: center;
   }
 }
+
+.list-items {
+  .list-item {
+    .state {
+      &.state-on_loan {
+        background-color: #426ba9;
+        color: #fff;
+      }
+      &.state-overdue {
+        background-color: #c82635;
+        color: #fff;
+      }
+    }
+  }
+}

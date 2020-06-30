@@ -10,6 +10,12 @@ class Gws::Schedule::MainController < ApplicationController
       return
     end
 
+    if params.dig(:path).present?
+      uri = URI(params.dig(:path))
+      redirect_to uri.to_s
+      return
+    end
+
     if Gws::Schedule::Plan.allowed?(:use, @cur_user, site: @cur_site)
       if @cur_site.schedule_personal_tab_visible?
         redirect_to gws_schedule_plans_path(calendar: { date: redirection_date })

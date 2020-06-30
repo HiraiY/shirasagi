@@ -1,0 +1,35 @@
+<nav class="mod-navi current-navi">
+  <h2><%= link_to @cur_site.menu_facility_label || t('modules.gws/facility'), gws_facility_main_path, class: "icon-facility" %></h2>
+  <h3><%= link_to t('gws/schedule.tabs.facility'), gws_facility_schedule_path %></h3>
+
+  <% if @cur_user.gws_role_permit_any?(@cur_site, :use_private_gws_facility_plans) %>
+    <h3><%= link_to "予定一覧", gws_facility_plans_path(state: "all") %></h3>
+  <% end %>
+
+  <% if @cur_user.gws_role_permit_any?(@cur_site, :use_private_gws_facility_plans) %>
+    <h3><%= link_to "承認依頼された予定", gws_facility_plans_path(state: "approve") %></h3>
+  <% end %>
+
+  <% if @cur_user.gws_role_permit_any?(@cur_site, :use_private_gws_facility_plans) %>
+    <h3><%= link_to "承認申請した予定", gws_facility_plans_path(state: "request") %></h3>
+  <% end %>
+
+  <% if @cur_user.gws_role_permit_any?(@cur_site, :use_private_gws_facility_plans) %>
+    <h3><%= link_to "貸出中の予定", gws_facility_plans_path(state: "loan") %></h3>
+  <% end %>
+
+  <% if Gws::Schedule::Plan.allowed?(:trash, @cur_user, site: @cur_site) %>
+    <h3><%= link_to t('ss.links.trash'), gws_facility_trashes_path, class: 'trash' %></h3>
+  <% end %>
+
+  <% if Gws::Facility::Category.allowed?(:read, @cur_user, site: @cur_site) %>
+    <h3><%= link_to t('gws/facility.navi.category'), gws_facility_categories_path, class: "management" %></h3>
+  <% end %>
+  <% if Gws::Facility::Item.allowed?(:read, @cur_user, site: @cur_site) %>
+    <h3><%= link_to t('gws/facility.navi.item'), gws_facility_items_path, class: "management" %></h3>
+    <h3><%= link_to t('gws/facility.navi.usage'), gws_facility_usage_main_path, class: "management" %></h3>
+    <h3><%= link_to t('gws/facility.navi.state'), gws_facility_state_main_path, class: "management" %></h3>
+  <% end %>
+</nav>
+
+<%= render partial: 'gws/main/navi' %>

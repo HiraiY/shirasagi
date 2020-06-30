@@ -5,6 +5,15 @@
   <dt><%= @model.t :category_id %></dt>
   <dd><%= tryb { @item.category.name } %></dd>
 
+  <% if @item.image %>
+  <dt><%= @model.t :image_id %></dt>
+  <dd>
+    <%= link_to @item.image.url do %>
+      <%= image_tag(@item.image.thumb_url) %>
+    <% end %>
+  </dd>
+  <% end %>
+
   <dt><%= @model.t :order %></dt>
   <dd><%= @item.order %></dd>
 
@@ -48,4 +57,7 @@
 
   <dt><%= @model.t :approval_check_state %></dt>
   <dd><%= @item.label :approval_check_state %></dd>
+
+  <dt><%= @model.t :loan_state %></dt>
+  <dd><%= @item.label :loan_state %></dd>
 </dl>

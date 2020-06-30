@@ -23,7 +23,17 @@
 
   <% @items.each_with_index do |item, idx| %>
     <div class="calendar-multiple-header" id="cal-<%= item.id %>-header">
-      <%= link_to item.name, gws_schedule_facility_plans_path(facility: item.id), class: "calendar-name" %>
+      <%= link_to item.name, gws_facility_apis_item_path(id: item), class: "calendar-name ajax-box" %>
+
+      <% if item.approval_check? %>
+        <span class="approval-check"><%= t("gws/facility.views.required_approval") %></span>
+      <% end %>
+
+      <% if item.on_loan? %>
+      <span class="calendar-text">
+        <%= link_to t("gws/facility.views.on_loan"), gws_facility_apis_plans_on_loan_path(facility: item), { class: "on-loan ajax-box" } %>
+      </span>
+      <% end %>
 
       <% if item.reservable?(@cur_user) %>
         <%= link_to t('gws/schedule.links.add_plan'), new_gws_schedule_facility_plan_path(facility: item.id), class: 'add-plan' %>

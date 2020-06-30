@@ -40,9 +40,14 @@
       $(ele).closest("tr").find(".interval").attr("step", 1);
     }
   };
+  var setIntervalClass = function(ele) {
+    $(ele).closest("tr").find(".interval").attr("class", "interval");
+    $(ele).closest("tr").find(".interval").addClass($(ele).val());
+  };
   var changeIntervalStep = function(newItem) {
     $(newItem).find(".interval_type").change(function() {
       setIntervalStep(this);
+      setIntervalClass(this);
     });
   };
   var sort1 = new SS_SortableForm('#reminder-conditions', { limit: 5, onInsert: changeIntervalStep });
@@ -55,7 +60,10 @@
   <% end %>
 
   $(".gws-addon-reminder table tr").each(function() { changeIntervalStep(this); });
-  $(".gws-addon-reminder table tr .interval_type").each(function() { setIntervalStep(this); });
+  $(".gws-addon-reminder table tr .interval_type").each(function() {
+    setIntervalStep(this);
+    setIntervalClass(this);
+  });
 <% end %>
 
 <dl class="see gws-addon-reminder">
@@ -69,6 +77,10 @@
         <td>
           <%= select_tag 'item[in_reminder_conditions][][state]', options_for_select(@item.reminder_notify_state_options),
             'class' => 'state', 'data-name' => 'item[in_reminder_conditions][][state]' %>
+        </td>
+        <td>
+          <%= select_tag 'item[in_reminder_conditions][][start_or_end]', options_for_select(@item.reminder_start_or_end_options),
+             'class' => 'start_or_end', 'data-name' => 'item[in_reminder_conditions][][start_or_end]' %>
         </td>
         <td>
           <%= number_field_tag 'item[in_reminder_conditions][][interval]', 10, step: 10, min: 0,

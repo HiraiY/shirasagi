@@ -1,0 +1,22 @@
+<% return if @item.loaned_facilities.blank? %>
+
+<dl class="see mod-gws-schedule-facility_loan">
+  <% if @item.return_item_at.present? %>
+    <dt><%= @item.t(:return_item_at) %></dt>
+    <dd><%= @item.return_item_at.strftime("%Y/%m/%d %H:%M") %></dd>
+  <% else %>
+    <dt><%= t("gws/facility.views.on_loan") %></dt>
+    <td>
+      <%=
+        link_to t("ss.links.return"),
+          gws_facility_apis_plans_return_item_path(
+            facility: @item.loaned_facilities.first,
+            id: @item,
+            redirect_to: gws_facility_plan_path(state: "all", id: @item.id)
+          ),
+          method: "post",
+          class: "return-item btn"
+      %>
+    </td>
+  <% end %>
+</dl>

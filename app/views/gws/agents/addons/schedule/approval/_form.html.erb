@@ -1,3 +1,5 @@
+<% return if @item.facility_ids.present? %>
+
 <dl class="see gws-addon-schedule-approval">
   <dt><%= @model.t :approval_member_ids %><%= @model.tt :approval_member_ids %></dt>
   <dd>

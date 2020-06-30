@@ -1,3 +1,14 @@
+<%= jquery do %>
+SS.ajaxForm("form#item-form", {
+  success: function() {
+    location.reload();
+  },
+  error: function (data, status) {
+    alert(["== Error =="].concat(data.responseJSON).join("\n"));
+  }
+});
+<% end %>
+
 <%= form_for :item, url: { action: :update }, html: { id: 'item-form', method: :put, autocomplete: :off } do |f| %>
   <%= error_messages_for :item %>
 
@@ -15,7 +26,7 @@
     <dd><%= text_field_tag('comment[text]', nil, style: 'width: 40em;') %></dd>
   </dl>
 
-  <%= f.hidden_field('facility_id') %>
+  <%= f.hidden_field("facility_id", value: @cur_facility.id) if @cur_facility %>
   <%= hidden_field_tag('redirect_to', params[:redirect_to]) %>
 
   <footer class="send">

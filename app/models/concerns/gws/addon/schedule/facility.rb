@@ -4,7 +4,6 @@ module Gws::Addon::Schedule::Facility
 
   included do
     embeds_ids :facilities, class_name: "Gws::Facility::Item"
-
     permit_params facility_ids: []
 
     validate :validate_facility_time, if: ->{ facilities.present? }
@@ -72,12 +71,27 @@ module Gws::Addon::Schedule::Facility
   end
 
   def validate_facility_double_booking
-    plans = self.class.ne(id: id).without_deleted.where(site_id: site_id).any_in(facility_ids: facility_ids)
+    checked_facility_ids = facilities.where(approval_check_state: "enabled").pluck(:id) # 承認必要の設備
+    unchecked_facility_ids = facilities.where(:approval_check_state.ne => "enabled").pluck(:id) # 承認不要の設備
+
+    plans = self.class.ne(id: id).without_deleted.where(site_id: site_id)
+
     if allday?
       plans = plans.where(:end_at.gt => start_on.in_time_zone.beginning_of_day, :start_at.lt => end_on.in_time_zone.end_of_day)
     else
       plans = plans.where(:end_at.gt => start_at, :start_at.lt => end_at)
     end
+
+    if approval_state == "deny" || approval_state == "unknown"
+      cond = { facility_ids: { "$in" => unchecked_facility_ids } }
+    else
+      cond = { "$or" => [
+        { facility_ids: { "$in" => checked_facility_ids }, approval_state: "approve" },
+        { facility_ids: { "$in" => unchecked_facility_ids } }
+      ]}
+    end
+
+    plans = plans.and(cond)
     return if plans.blank?
 
     errors.add :base, I18n.t('gws/schedule.errors.double_booking_facility')
@@ -106,6 +120,20 @@ module Gws::Addon::Schedule::Facility
       min = site.facility_min_hour
       max = site.facility_max_hour
       errors.add :base, I18n.t('gws/schedule.errors.over_than_facility_hours', min: min_hour, max: max_hour)
+    end
+  end
+
+  def validate_facility_on_loan
+    facilities.each do |facility|
+      next if !facility.on_loan?
+
+      if facility.approval_check_state == "enabled"
+        if approval_state == "approve"
+          errors.add :base, I18n.t('gws/schedule.errors.on_loan_facility')
+        end
+      else
+        errors.add :base, I18n.t('gws/schedule.errors.on_loan_facility')
+      end
     end
   end
 end

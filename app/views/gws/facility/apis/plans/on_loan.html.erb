@@ -1,0 +1,39 @@
+<div style="margin-bottom: 10px;"><%= t("gws/facility.notice.on_loan") %></div>
+
+<% manage = @facility.user_ids.include?(@cur_user.id) %>
+
+<table class="index">
+  <thead>
+    <tr>
+      <th><%= @model.t :name %></th>
+      <th></th>
+      <th><%= @model.t :user_id %></th>
+      <% if manage %>
+        <th></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+  <% @items.each do |item| %>
+    <% readable = item.readable?(@cur_user, site: @cur_site) %>
+    <tr>
+      <td>
+        <% if readable %>
+          <%= item.name %>
+        <% else %>
+          <%= I18n.t("gws/schedule.private_plan") %>
+        <% end %>
+      </td>
+      <td><%= term(item) %></td>
+      <td>
+        <% if readable %>
+          <%= item.user_long_name %>
+        <% end %>
+      </td>
+      <% if manage %>
+        <td><%= link_to t("ss.links.return"), { action: :return_item, id: item }, method: "post", class: "return-item btn" %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

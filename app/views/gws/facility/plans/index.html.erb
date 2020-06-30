@@ -1,0 +1,56 @@
+<% render_list_item = proc do |item| %>
+  <li class="list-item">
+    <nav class="tap-menu">
+      <%= link_to t('ss.links.show'), { action: :show, id: item } if item.allowed?(:read, @cur_user, site: @cur_site) %>
+      <%= link_to t('ss.links.edit'), { action: :edit, id: item } if item.allowed?(:edit, @cur_user, site: @cur_site) %>
+      <%= link_to t('ss.links.delete'), { action: :soft_delete, id: item } if item.allowed?(:delete, @cur_user, site: @cur_site) %>
+    </nav>
+
+    <label class="check"><input type="checkbox" name="ids[]" value="<%= item.id %>" /></label>
+
+    <div class="info">
+      <% if item.readable?(@cur_user, site: @cur_site) %>
+        <% title = item.try(:name) || item.try(:title) || item.try(:filename) || "##{item.id}" %>
+        <%= link_to title, { action: :show, id: item }, class: "title" %>
+      <% else %>
+        <%= I18n.t("gws/schedule.private_plan") %>
+      <% end %>
+
+      <span class="state state-<%= item.loan_state %>">
+        <% if item.loan_state.present? %>
+          <%= item.label(:loan_state) %>
+        <% elsif item.approval_state.present? %>
+          <%= item.label(:approval_state) %>
+        <% end %>
+      </span>
+      <div class="meta">
+        <span class="datetime"><%= item.updated.strftime("%Y/%m/%d %H:%M") %></span>
+        <span class="facilities">
+          <% facilities = item.facilities.to_a %>
+          <% if facilities.size > 1 %>
+            <%= "#{facilities.first.name} #{t("gws/facility.prompts.etc", count: facilities.size - 1)}" %>
+          <% else %>
+            <%= facilities.first.name %>
+          <% end %>
+        </span>
+        <span class="datetime"><%= term(item) %></span>
+
+        <% if item.readable?(@cur_user, site: @cur_site) %>
+          <span class="user"><%= item.user_long_name %></span>
+        <% end %>
+      </div>
+    </div>
+  </li>
+<% end %>
+
+<div class="index">
+  <%= render file: "_list_head" %>
+
+  <ul class="list-items">
+    <% @items.each do |item| %>
+      <% render_list_item.call(item) %>
+    <% end %>
+  </ul>
+</div>
+
+<%= paginate @items if @items.try(:current_page) %>
