@@ -13,7 +13,7 @@ class Guide::Column
 
   permit_params :name, :question, :order
   validates :name, presence: true, length: { maximum: 40 }
-  validates :question, presence: true
+  validates :question, presence: true, uniqueness: { scope: :site_id }
 
   default_scope -> { order_by(order: 1, name: 1) }
 

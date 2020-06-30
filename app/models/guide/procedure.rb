@@ -59,6 +59,40 @@ class Guide::Procedure
       end
       criteria
     end
+
+    def to_csv(site, encode = nil)
+      CSV.generate do |data|
+        data << header
+        self.site(site).each { |item| data << row(item) }
+      end
+    end
+
+    private
+
+    def header
+      %w(
+        id name link_url html procedure_location belongings procedure_applicant remarks order applicable_column_ids
+        not_applicable_column_ids
+      ).map { |e| t e }
+    end
+
+    def row(item)
+      item.site ||= site
+
+      [
+        item.id,
+        item.name,
+        item.link_url,
+        item.html,
+        item.procedure_location,
+        item.belongings,
+        item.procedure_applicant,
+        item.remarks,
+        item.order,
+        item.applicable_columns.pluck(:question).join("\n"),
+        item.not_applicable_columns.pluck(:question).join("\n")
+      ]
+    end
   end
 
   def template_variable_handler_name(name, issuer)

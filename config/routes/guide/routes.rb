@@ -7,9 +7,18 @@ Rails.application.routes.draw do
     delete :destroy_all, on: :collection, path: ''
   end
 
+  concern :download do
+    get :download, on: :collection
+  end
+
+  concern :import do
+    get :import, on: :collection
+    post :import, on: :collection
+  end
+
   namespace "guide", path: ".s:site/guide" do
     resources :columns, concerns: [:deletion]
-    resources :procedures, concerns: [:deletion]
+    resources :procedures, concerns: [:deletion, :download, :import]
 
     namespace "apis" do
       get "columns" => "columns#index"

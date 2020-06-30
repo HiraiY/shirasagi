@@ -5,5 +5,6 @@ module Guide
     Cms::Role.permission :read_guide_procedures
     Cms::Role.permission :edit_guide_procedures
     Cms::Role.permission :delete_guide_procedures
+    Cms::Role.permission :import_guide_procedures
   end
 end

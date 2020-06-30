@@ -18,7 +18,7 @@
         <% columns.each do |column| %>
           <fieldset class="column">
             <label>
-              <% if columns.count != 1 %>
+              <% if columns.pluck(:id).count != 1 %>
                 <%= hidden_field_tag("item[column_ids][#{column.id}]", '') %>
                 <%= check_box_tag("item[column_ids][#{column.id}]", 1, @data[column.id.to_s].present?, {}) %>
               <% end %>
@@ -29,7 +29,7 @@
       </div>
     </div>
     <footer class="send">
-      <% if columns.count == 1 %>
+      <% if columns.pluck(:id).count == 1 %>
         <%= f.submit t("guide.links.applicable"), name: :submit %>
         <%= f.submit t("guide.links.not_applicable"), name: :submit %>
       <% else %>

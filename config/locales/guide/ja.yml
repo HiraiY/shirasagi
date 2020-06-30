@@ -155,3 +155,7 @@ ja:
             &lt;dd>{{ item.procedure_location }}&lt;/dd>
           &lt;/dl>
           {% endfor %}
+
+  job:
+    models:
+      guide/procedure/import_job: 手続きインポート

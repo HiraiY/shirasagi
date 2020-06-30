@@ -105,6 +105,9 @@ class Guide::Agents::Nodes::NodeController < ApplicationController
   end
 
   def answer
+    @columns = Guide::Column.in(id: @data.keys).
+      order_by(order: 1, name: 1)
+
     if request.get?
       @result_uri = URI.parse("#{@cur_node.url}result.html")
       @result_uri.query = { data: SS::Crypt.encrypt(@data.to_json.to_s) }.to_query
