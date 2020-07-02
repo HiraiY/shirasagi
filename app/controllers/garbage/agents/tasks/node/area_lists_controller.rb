@@ -5,7 +5,7 @@ class Garbage::Agents::Tasks::Node::AreaListsController < ApplicationController
     # generate_node @node
 
     if generate_node_csv @node
-      @task.log "area_days.csv" if @task
+      @task.log "#{@node.url}area_days.csv" if @task
     end
   end
 

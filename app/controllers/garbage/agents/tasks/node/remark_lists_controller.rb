@@ -5,7 +5,7 @@ class Garbage::Agents::Tasks::Node::RemarkListsController < ApplicationControlle
     # generate_node @node
 
     if generate_node_csv @node
-      @task.log "remarks.csv" if @task
+      @task.log "#{@node.url}remarks.csv" if @task
     end
   end
 

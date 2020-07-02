@@ -5,7 +5,7 @@ class Garbage::Agents::Tasks::Node::CenterListsController < ApplicationControlle
     # generate_node @node
 
     if generate_node_csv @node
-      @task.log "center.csv" if @task
+      @task.log "#{@node.url}center.csv" if @task
     end
   end
 

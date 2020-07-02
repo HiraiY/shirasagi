@@ -5,7 +5,7 @@ class Garbage::Agents::Tasks::Node::CategoryListsController < ApplicationControl
     # generate_node @node
 
     if generate_node_csv @node
-      @task.log "description.csv" if @task
+      @task.log "#{@node.url}description.csv" if @task
     end
   end
 
