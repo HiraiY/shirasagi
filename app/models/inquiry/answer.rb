@@ -18,12 +18,16 @@ class Inquiry::Answer
   field :closed, type: DateTime, default: nil
   field :state, type: String, default: "open"
   field :comment, type: String
+  field :contact_group_id, type: Integer
+  field :page_id, type: Integer
 
   belongs_to :node, foreign_key: :node_id, class_name: "Inquiry::Node::Form"
+  belongs_to :contact_group, class_name: "SS::Group"
+  belongs_to :page, class_name: "Cms::Page"
   embeds_many :data, class_name: "Inquiry::Answer::Data"
 
   permit_params :id, :node_id, :remote_addr, :user_agent, :captcha, :captcha_key
-  permit_params :state, :comment
+  permit_params :state, :comment, :contact_group_id, :page_id
 
   apply_simple_captcha
 

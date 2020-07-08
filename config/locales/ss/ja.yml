@@ -414,6 +414,7 @@ ja:
       ss/site_usage: 使用量
       ss/logo_setting: ロゴ設定
       ss/release: 公開設定
+      ss/inquiry_setting: お問い合わせフォーム設定
 
   activemodel:
     attributes:
@@ -740,6 +741,8 @@ ja:
         close_date: 公開終了日時(予約)
       ss/lockable:
         lock_until: ロック期限日時
+      ss/addon/inquiry_setting:
+        inquiry_form_id: お問い合わせフォーム
 
   tooltip:
     ss/model/user:
@@ -1080,6 +1083,10 @@ ja:
         - 市町村名（漢字）を設定します。
       city_kana:
         - 市町村名（カナ）を設定します。
+
+    ss/addon/inquiry_setting:
+      inquiry_form_id:
+        - グループ共通のお問い合わせフォームを設定します。
 
     ss:
       contrast_ratio:

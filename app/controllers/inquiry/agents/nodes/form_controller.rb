@@ -74,18 +74,37 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
     @answer.set_data(@data)
   end
 
+  def set_group
+    @group = Cms::Group.where(id: params[:group]).first if params[:group]
+    raise "404" if params[:group] && @group.blank?
+  end
+
+  def set_page
+    @page = Cms::Page.where(id: params[:page]).first if params[:page]
+    raise "404" if params[:page] && @page.blank?
+  end
+
   public
 
   def new
+    set_group
+    set_page
+    if @group && @page
+      raise "404" if @page.contact_group_id != @group.id
+    end
   end
 
   def confirm
+    set_group
+    set_page
     if !@answer.valid?
       render action: :new
     end
   end
 
   def create
+    set_group
+    set_page
     if !@answer.valid? || params[:submit].blank?
       render action: :new
       return
@@ -100,9 +119,22 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
       end
     end
 
+    if @group
+      @answer.contact_group_id = @group.id
+    end
+
+    if @page
+      @answer.page_id = @page.id
+    end
+
     @answer.save
     if @cur_node.notify_mail_enabled?
-      @to.each { |notice_email| Inquiry::Mailer.notify_mail(@cur_site, @cur_node, @answer, notice_email).deliver_now }
+      if @group
+        notice_email = SS::Group.find(id: @group.id).contact_email
+        Inquiry::Mailer.notify_mail(@cur_site, @cur_node, @answer, notice_email).deliver_now
+      else
+        @to.each { |notice_email| Inquiry::Mailer.notify_mail(@cur_site, @cur_node, @answer, notice_email).deliver_now }
+      end
     end
     if @cur_node.reply_mail_enabled?
       # `try` method doesn't work as you think because mail is an instance of Delegator.

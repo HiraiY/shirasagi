@@ -147,6 +147,7 @@ ja:
         created: 作成日時
         state: 状態
         comment: コメント
+        page: ページ
 
       inquiry/addon/feedback_setting:
         upper_html: 上部HTML
