@@ -130,7 +130,7 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
     @answer.save
     if @cur_node.notify_mail_enabled?
       if @group
-        notice_email = SS::Group.find(id: @group.id).contact_email
+        notice_email = @group.contact_email
         Inquiry::Mailer.notify_mail(@cur_site, @cur_node, @answer, notice_email).deliver_now
       else
         @to.each { |notice_email| Inquiry::Mailer.notify_mail(@cur_site, @cur_node, @answer, notice_email).deliver_now }
