@@ -89,6 +89,9 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
   def new
     set_group
     set_page
+    if @group || @page
+      raise "404" if @cur_site.inquiry_form != @cur_node
+    end
     if @group && @page
       raise "404" if @page.contact_group_id != @group.id
     end
@@ -119,8 +122,10 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
       end
     end
 
+    @answer.group_ids = @cur_node.group_ids
     if @group
-      @answer.contact_group_id = @group.id
+      group_ids = [] << @group.id
+      @answer.group_ids = group_ids
     end
 
     if @page

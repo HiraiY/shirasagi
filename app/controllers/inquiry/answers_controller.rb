@@ -19,7 +19,7 @@ class Inquiry::AnswersController < ApplicationController
     columns = @cur_node.becomes_with_route("inquiry/form").columns.order_by(order: 1).pluck(:name)
     headers = %w(id state comment).map { |key| @model.t(key) }
     headers += columns
-    headers += %w(source_url source_name created).map { |key| @model.t(key) }
+    headers += %w(source_url source_name page contact_group created).map { |key| @model.t(key) }
     csv = CSV.generate do |data|
       data << headers
       items.each do |item|
@@ -40,6 +40,8 @@ class Inquiry::AnswersController < ApplicationController
         end
         row << item.source_full_url
         row << item.source_name
+        row << item.page.try(:name)
+        row << item.contact_group.try(:name)
         row << item.updated.strftime("%Y/%m/%d %H:%M")
 
         data << row
@@ -68,6 +70,7 @@ class Inquiry::AnswersController < ApplicationController
 
     @state = params.dig(:s, :state).presence || "unclosed"
     @items = @model.site(@cur_site).
+      allow(:read, @cur_user).
       where(node_id: @cur_node.id).
       search(params[:s]).
       state(@state).
@@ -77,22 +80,50 @@ class Inquiry::AnswersController < ApplicationController
 
   def show
     raise "403" unless @cur_node.allowed?(:read, @cur_user, site: @cur_site)
+    raise "403" unless @item.allowed?(:read, @cur_user, site: @cur_site)
     render
   end
 
-  def delete
+  def edit
     raise "403" unless @cur_node.allowed?(:edit, @cur_user, site: @cur_site)
+    raise "403" unless @item.allowed?(:edit, @cur_user, site: @cur_site)
+  end
+
+  def delete
+    raise "403" unless @cur_node.allowed?(:delete, @cur_user, site: @cur_site)
+    raise "403" unless @item.allowed?(:delete, @cur_user, site: @cur_site)
     render
   end
 
   def destroy
-    raise "403" unless @cur_node.allowed?(:edit, @cur_user, site: @cur_site)
+    raise "403" unless @cur_node.allowed?(:delete, @cur_user, site: @cur_site)
+    raise "403" unless @item.allowed?(:delete, @cur_user, site: @cur_site)
     render_destroy @item.destroy
+  end
+
+  def destroy_all
+    raise "403" unless @cur_node.allowed?(:delete, @cur_user, site: @cur_site)
+    raise "400" if @selected_items.blank?
+
+    entries = @selected_items
+    @items = []
+
+    entries.each do |item|
+      item = item.becomes_with_route rescue item
+      if item.allowed?(:delete, @cur_user, site: @cur_site, node: @cur_node)
+        next if item.destroy
+      else
+        item.errors.add :base, :auth_error
+      end
+      @items << item
+    end
+    render_destroy_all(entries.size != @items.size)
   end
 
   def download
     raise "403" unless @cur_node.allowed?(:read, @cur_user, site: @cur_site)
     @items = @model.site(@cur_site).
+      allow(:read, @cur_user).
       where(node_id: @cur_node.id).
       search(params[:s]).
       order_by(updated: -1)
