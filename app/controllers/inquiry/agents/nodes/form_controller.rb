@@ -129,7 +129,8 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
     end
 
     if @page
-      @answer.page_id = @page.id
+      @answer.inquiry_page_url = @page.url
+      @answer.inquiry_page_name = @page.name
     end
 
     @answer.save

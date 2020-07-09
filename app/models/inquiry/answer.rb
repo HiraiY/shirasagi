@@ -20,14 +20,14 @@ class Inquiry::Answer
   field :closed, type: DateTime, default: nil
   field :state, type: String, default: "open"
   field :comment, type: String
-  field :page_id, type: Integer
+  field :inquiry_page_url, type: String
+  field :inquiry_page_name, type: String
 
   belongs_to :node, foreign_key: :node_id, class_name: "Inquiry::Node::Form"
-  belongs_to :page, class_name: "Cms::Page"
   embeds_many :data, class_name: "Inquiry::Answer::Data"
 
   permit_params :id, :node_id, :remote_addr, :user_agent, :captcha, :captcha_key
-  permit_params :state, :comment, :page_id
+  permit_params :state, :comment, :inquiry_page_url, :inquiry_page_name
 
   apply_simple_captcha
 
@@ -151,6 +151,18 @@ class Inquiry::Answer
     if source_url.present?
       uri = URI.parse(site.full_url)
       uri.path = source_url
+      uri.to_s
+    end
+  end
+
+  def inquiry_page_content
+    self.class.find_content(@cur_site || site, inquiry_page_url)
+  end
+
+  def inquiry_page_full_url
+    if inquiry_page_url.present?
+      uri = URI.parse(site.full_url)
+      uri.path = inquiry_page_url
       uri.to_s
     end
   end
