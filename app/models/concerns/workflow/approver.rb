@@ -162,7 +162,7 @@ module Workflow::Approver
     true
   end
 
-  def approve_workflow_approver_state(user_or_id, comment: nil, file_ids: nil)
+  def approve_workflow_approver_state(user_or_id, comment: nil, file_ids: nil, delegatee: nil)
     level = workflow_current_level
     return if level.nil?
 
@@ -175,6 +175,7 @@ module Workflow::Approver
         approver[:state] = WORKFLOW_STATE_APPROVE
         approver[:comment] = comment
         approver[:file_ids] = file_ids
+        approver[:delegatee_id] = delegatee.id if delegatee
       end
     end
 
@@ -192,7 +193,7 @@ module Workflow::Approver
     end
   end
 
-  def pull_up_workflow_approver_state(user_or_id, comment: nil, file_ids: nil)
+  def pull_up_workflow_approver_state(user_or_id, comment: nil, file_ids: nil, delegatee: nil)
     user_id = user_or_id.id if user_or_id.respond_to?(:id)
     user_id ||= user_or_id.to_i
 
@@ -210,13 +211,14 @@ module Workflow::Approver
         approver[:state] = WORKFLOW_STATE_APPROVE
         approver[:comment] = comment
         approver[:file_ids] = file_ids
+        approver[:delegatee_id] = delegatee.id if delegatee
       end
     end
 
     self.workflow_approvers = Workflow::Extensions::WorkflowApprovers.new(copy)
   end
 
-  def remand_workflow_approver_state(user_or_id, comment = nil)
+  def remand_workflow_approver_state(user_or_id, comment = nil, delegatee = nil)
     level = workflow_current_level
     return if level.nil?
 
@@ -229,6 +231,7 @@ module Workflow::Approver
         if approver[:user_id] == user_id
           approver[:state] = WORKFLOW_STATE_REMAND
           approver[:comment] = comment
+          approver[:delegatee_id] = delegatee.id if delegatee
         elsif approver[:state] == WORKFLOW_STATE_REQUEST
           approver[:state] = WORKFLOW_STATE_OTHER_REMANDED
           approver[:comment] = ''

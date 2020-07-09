@@ -213,6 +213,8 @@ ja:
     approve_private_gws_affair_overtime_files: 時間外申請の承認（全て）
     reroute_other_gws_affair_overtime_files: 時間外申請の経路変更（所有）
     reroute_private_gws_affair_overtime_files: 時間外申請の経路変更（全て）
+    delegate_all_gws_affair_overtime_files: 時間外申請の代理承認（全て）
+    delegate_private_gws_affair_overtime_files: 時間外申請の代理承認（自所属）
     read_other_gws_affair_leave_files: 休暇申請の閲覧（全て）
     read_private_gws_affair_leave_files: 休暇申請の閲覧（所有）
     edit_other_gws_affair_leave_files: 休暇申請の編集（全て）

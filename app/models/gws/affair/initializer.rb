@@ -23,6 +23,8 @@ module Gws::Affair
     Gws::Role.permission :approve_other_gws_affair_overtime_files, module_name: 'gws/affair'
     Gws::Role.permission :reroute_private_gws_affair_overtime_files, module_name: 'gws/affair'
     Gws::Role.permission :reroute_other_gws_affair_overtime_files, module_name: 'gws/affair'
+    Gws::Role.permission :delegate_private_gws_affair_overtime_files, module_name: 'gws/affair'
+    Gws::Role.permission :delegate_all_gws_affair_overtime_files, module_name: 'gws/affair'
 
     Gws::Role.permission :read_other_gws_affair_leave_files, module_name: 'gws/affair'
     Gws::Role.permission :read_private_gws_affair_leave_files, module_name: 'gws/affair'

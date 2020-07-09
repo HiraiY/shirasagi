@@ -131,11 +131,16 @@ class Gws::Workflow::PagesController < ApplicationController
     save_level = @item.workflow_current_level
     comment = params[:remand_comment]
     file_ids = params[:workflow_file_ids]
+    delegator_id = params[:workflow_delegator_id]
+    if delegator_id.present?
+      delegator = @item.approver_user_class.site(@cur_site).active.find(delegator_id) rescue nil
+    end
     opts = { comment: comment, file_ids: file_ids }
+    opts[:delegatee] = @cur_user if delegator
     if params[:action] == 'pull_up_update'
-      @item.pull_up_workflow_approver_state(@cur_user, opts)
+      @item.pull_up_workflow_approver_state(delegator || @cur_user, opts)
     else
-      @item.approve_workflow_approver_state(@cur_user, opts)
+      @item.approve_workflow_approver_state(delegator || @cur_user, opts)
     end
 
     if @item.finish_workflow?
@@ -196,7 +201,12 @@ class Gws::Workflow::PagesController < ApplicationController
   def remand_update
     raise "403" unless @item.allowed?(:approve, @cur_user)
 
-    @item.remand_workflow_approver_state(@cur_user, params[:remand_comment])
+    delegator_id = params[:workflow_delegator_id]
+    if delegator_id.present?
+      delegator = @item.approver_user_class.site(@cur_site).active.find(delegator_id) rescue nil
+    end
+
+    @item.remand_workflow_approver_state(delegator || @cur_user, params[:remand_comment], delegator ? @cur_user : nil)
     if !@item.save
       render json: @item.errors.full_messages, status: :unprocessable_entity
     end

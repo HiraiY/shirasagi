@@ -1,0 +1,32 @@
+<% workflow_approver = @item.find_workflow_request_to(@delegator) %>
+<% addon_id = "workflow-approve-#{Time.zone.now.to_i}" %>
+
+<section class="mod-workflow-approve">
+  <form>
+    <%= render "ss/crud/addon", addon: { id: addon_id, head: "#{t("workflow.buttons.approve_by_delegatee")}/#{t("workflow.buttons.remand_by_delegatee")}#{@model.tt :approve_remand}".html_safe } do %>
+      <%= hidden_field :workflow, :delegator_id, value: @delegator.id %>
+      <%= text_area :remand, :comment, value: "" %>
+      <% if @ss_mode == :gws && @item.workflow_approver_attachment_enabled_at?(workflow_approver[:level]) %>
+        <div class="upload">
+          <span class="upload-menu-new">
+            <%= link_to t('workflow.links.approver_file_upload'), sns_apis_temp_files_path(@cur_user), class: "ajax-box btn btn-file-upload" %>
+          </span>
+          <div class="upload-drop-area">
+            <span class="upload-drop-notice"><%= t('workflow.notice.approver_file_droppable') %></span>
+          </div>
+          <div id="selected-files"></div>
+        </div>
+      <% end %>
+      <div class="buttons">
+        <% if workflow_approver[:state] == 'request' %>
+          <%= button_tag t("workflow.buttons.approve_by_delegatee"), { updatetype: :approve, class: "update-item btn-primary" } %>
+          <%= button_tag t("workflow.buttons.remand_by_delegatee"), { updatetype: :remand, class: "update-item btn-default" } %>
+        <% end %>
+      </div>
+    <% end %>
+  </form>
+</section>
+
+<%= jquery do %>
+  var workflow = $.colorbox.element().data("instance");
+<% end %>

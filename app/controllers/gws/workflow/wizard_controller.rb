@@ -96,4 +96,11 @@ class Gws::Workflow::WizardController < ApplicationController
 
     render file: 'reroute', layout: false
   end
+
+  def approve_by_delegatee
+    @level = Integer(params[:level])
+    @delegator = @item.approver_user_class.site(@cur_site).active.find(params[:delegator_id]) rescue nil
+
+    render file: 'approve_by_delegatee', layout: false
+  end
 end

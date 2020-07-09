@@ -50,6 +50,7 @@ Rails.application.routes.draw do
     get "/wizard/:id/reroute" => "wizard#reroute"
     post "/wizard/:id/reroute" => "wizard#do_reroute"
     match "/wizard/:id" => "wizard#index", via: [:get, :post]
+    get "/wizard/:id/approveByDelegatee" => "wizard#approve_by_delegatee"
 
     namespace "apis" do
       get "delegatees" => "delegatees#index"

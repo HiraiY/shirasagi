@@ -57,6 +57,16 @@ SS_Workflow = function (el, options) {
     return false;
   });
 
+  this.$el.on("click", ".workflow-approve-by-delegatee", function (e) {
+    var $this = $(this);
+    var level = $this.data('level');
+    var userId = $this.data('user-id');
+
+    pThis.approveByDelegatee(level, userId);
+    e.preventDefault();
+    return false;
+  });
+
   $('.mod-workflow-approve .btn-file-upload').data('on-select', function($item) {
     $.colorbox.close();
     pThis.onUploadFileSelected($item);
@@ -166,6 +176,7 @@ SS_Workflow.prototype = {
     var workflow_comment = $("#workflow_comment").prop("value");
     var workflow_pull_up = $("#workflow_pull_up").prop("value");
     var workflow_on_remand = $("#workflow_on_remand").prop("value");
+    var workflow_delegator_id = $("#workflow_delegator_id").prop("value");
     var remand_comment = $("#remand_comment").prop("value");
     var forced_update_option;
     if (updatetype == "request") {
@@ -182,6 +193,7 @@ SS_Workflow.prototype = {
         workflow_comment: workflow_comment,
         workflow_pull_up: workflow_pull_up,
         workflow_on_remand: workflow_on_remand,
+        workflow_delegator_id: workflow_delegator_id,
         workflow_approvers: approvers,
         workflow_required_counts: required_counts,
         workflow_approver_attachment_uses: this.collectApproverAttachmentUses(),
@@ -368,6 +380,19 @@ SS_Workflow.prototype = {
           }
         });
       }
+    });
+  },
+  approveByDelegatee: function(level, userId) {
+    var uri = this.composeWorkflowUrl('wizard');
+    uri += "/approveByDelegatee";
+    var param = $.param({ level: level, delegator_id: userId, request_url: this.options.request_url });
+    uri += "?" + param;
+
+    $('<a/>').attr('href', uri).data("instance", this).colorbox({
+      fixed: true,
+      width: "90%",
+      height: "90%",
+      open: true
     });
   },
   fileSelectViewUrl: function(id) {

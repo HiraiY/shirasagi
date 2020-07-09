@@ -1,12 +1,21 @@
-<%= jquery do %>
-  var options = {};
-  options.request_url = "<%= request.path %>";
-  options.workflow_node = "workflow" + "<%= @cur_node? @cur_node.id : "" %>";
-  options.user_id = <%= @cur_user.id %>;
-  options.errors = {};
-  options.errors.not_select = "<%= @model.t :workflow_approvers %><%= t("errors.messages.not_select") %>";
+<%
+  @allowed_delegation ||= proc do |user|
+    break true if @cur_user.gws_role_permit_any?(@cur_site, :delegate_all_gws_workflow_files)
 
-  var workflow = new SS_Workflow('.mod-workflow', options);
+    break false unless @cur_user.gws_role_permit_any?(@cur_site, :delegate_private_gws_workflow_files)
+    break false unless user
+    (@cur_user.groups.in_group(@cur_site).pluck(:id) & user.groups.in_group(@cur_site).pluck(:id)).present?
+  end
+
+  @workflow_js_options ||= {}
+  @workflow_js_options[:request_url] ||= request.path
+  @workflow_js_options[:workflow_node] ||= "workflow#{@cur_node? @cur_node.id : ""}"
+  @workflow_js_options[:user_id] ||= @cur_user.id
+  @workflow_js_options[:errors] ||= {}
+  @workflow_js_options[:errors][:not_select] ||= "#{@model.t :workflow_approvers}#{t("errors.messages.not_select")}"
+%>
+<%= jquery do %>
+  var workflow = new SS_Workflow('.mod-workflow', <%== @workflow_js_options.to_json %>);
 <% end %>
 
 <div class="mod-workflow">
@@ -48,7 +57,7 @@
       <% end %>
     <% end %>
 
-    <% if @item.allowed?(:edit, @cur_user, site: @cur_site) && @item.workflow_member.blank? %>
+    <% if @item.allowed?(:edit, @cur_user, site: @cur_site) && @item.try(:workflow_member).blank? %>
       <% if @item.try(:cloned_name?) %>
         <section class="mod-workflow-request">
           <h1><%= t("errors.messages.invalid_approve_name") %></h1>
@@ -96,7 +105,7 @@
     <dl class="see">
       <dt><%= @model.t :workflow_user_id %></dt>
       <dd>
-        <% if @item.workflow_member.present? %>
+        <% if @item.try(:workflow_member).present? %>
           <%= "#{@item.workflow_member.name}(#{t("workflow.member")})" %>
         <% elsif @item.workflow_user.present? %>
           <%= "#{@item.workflow_user.long_name}(#{@item.workflow_user.email})" %>
@@ -145,6 +154,12 @@
             <% user_id = workflow_approver[:user_id] %>
             <% user = SS::User.where(id: user_id).first %>
             <% state = workflow_approver[:state] %>
+            <% delegatee_id = workflow_approver[:delegatee_id] %>
+            <%
+              if delegatee_id.present?
+                delegatee = @item.approver_user_class.site(@cur_site).active.find(delegatee_id) rescue nil
+              end
+            %>
             <tr>
               <% if index == 0 %>
               <td rowspan="<%= workflow_approvers.count %>">
@@ -168,10 +183,26 @@
               <% if (state == 'request' || state == 'pending') && @item.allowed?(:reroute, @cur_user, site: @cur_site) %>
                 <%= link_to('#', class: 'workflow-reroute', data: { level: level, user_id: user_id }) do %>
                   <i class="material-icons" style="font-size: inherit">&#xE254;</i>
+                  <%= t("ss.links.change") %>
+                <% end %>
+              <% end %>
+              <% if @ss_mode == :gws && %w(approve remand).include?(state) && delegatee_id.present? %>
+                <br/>
+                <% if delegatee %>
+                  <%= t(delegatee.email.blank? ? "agent_name" : "agent_name_with_email", scope: :workflow, long_name: delegatee.long_name, email: delegatee.email) %>
+                <% else %>
+                  <%= t("agent_name", scope: :workflow, long_name: t("workflow.user_deleted")) %>
                 <% end %>
               <% end %>
               </td>
-              <td><%= t("workflow.state.#{state}") %></td>
+              <td>
+                <%= t("workflow.state.#{state}") %>
+                <% if @ss_mode == :gws && state == 'request' && @item.allowed?(:approve, @cur_user) && @allowed_delegation.call(user) %>
+                  <%= link_to('#', class: 'workflow-approve-by-delegatee', data: { level: level, user_id: user_id }) do %>
+                    <%= t("workflow.links.approve_by_delegatee") %>
+                  <% end %>
+                <% end %>
+              </td>
               <td>
                 <div class="approver-comment"><%= workflow_approver[:comment] %></div>
                 <% if @ss_mode == :gws && workflow_approver[:file_ids].present? %>
