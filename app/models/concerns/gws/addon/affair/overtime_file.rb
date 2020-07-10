@@ -74,8 +74,11 @@ module Gws::Addon::Affair::OvertimeFile
     return if start_at_date.blank? || start_at_hour.blank? || start_at_minute.blank?
     return if end_at_hour.blank? || end_at_minute.blank?
 
-    site = cur_site || self.site
-    user = cur_user || self.user
+    site = self.site || cur_site
+
+    # 申請した者の勤務時間を確認する必要がある
+    user = self.user || cur_user
+
     return if site.blank?
     return if user.blank?
 
