@@ -734,7 +734,7 @@ ja:
         logo_application_name: アプリケーション名
         logo_application_image_id: ロゴ画像
         logo_application_template: ロゴHTML
-      ss/addon/release:
+      ss/release:
         released: 公開日時
         release_date: 公開開始日時(予約)
         close_date: 公開終了日時(予約)

@@ -1,0 +1,71 @@
+<% addons = @item.class.addons.select { |addon| [Gws::Addon::Contributor].include?(addon.klass) } %>
+
+<%= form_for :item, url: { action: :not_applicable }, html: { id: "item-form", multipart: true, autocomplete: :off } do |f| %>
+  <%= error_messages_for :item %>
+
+  <div class="gws-board gws-board-thread">
+    <article class="topic" id="post-<%= @topic.id %>">
+      <header>
+        <h2>
+          <span class="name"><%= @topic.name %></span>
+          <span class="categories">
+            <% @topic.categories.each do |category| %>
+              <%= link_to category.trailing_name, { category: category.id }, { class: "gws-category-label", style: category_label_css(category) } %>
+            <% end %>
+          </span>
+        </h2>
+        <nav class="meta">
+          <span class="user"><%= @topic.contributor_name.presence || @topic.user_long_name %></span>
+          <span class="datetime"><%= @model.t(:due_date) %>: <%= tryb { @topic.due_date.strftime("%Y/%m/%d %H:%M") } %></span>
+          <span class="datetime"><%= @model.t(:released) %>: <%= tryb { @topic.released.strftime("%Y/%m/%d %H:%M") } %></span>
+        </nav>
+      </header>
+
+      <div class="body markdown-body">
+        <%= @topic.html %>
+      </div>
+
+      <% if @topic.files.present? %>
+        <div class="files">
+          <span class="heading d-block">
+            <%= I18n.t('modules.addons.gws/file') %>
+          </span>
+          <% @topic.files.each do |file| %>
+            <span id="file-<%= file.id %>" class="<%= @cur_site.monitor_files_break == 'horizontal' ? 'd-inline-block mr-1' : 'd-block' %>">
+              <%= link_to(file.url, class: "icon-#{file.extname}", target: '_blank') do %>
+                <img src="/assets/img/gws/ic-file.png" alt="" />
+                <%= file.humanized_name %>
+              <% end %>
+            </span>
+          <% end %>
+          <span id="file-all" class="d-block">
+            <%= link_to({ action: 'all_topic_files' }, target: '_blank') do %>
+              <i class="material-icons">file_download</i>
+                  <%= t('gws/monitor.topic.file_download') %>
+            <% end rescue nil %>
+          </span>
+        </div>
+      <% end %>
+
+      <% if @topic.severity.present? %>
+        <div class="status">
+          <span class="severity">
+            <label><%= @model.t(:severity) %></label>: <%= @topic.label(:severity) %>
+          </span>
+        </div>
+      <% end %>
+    </article>
+  </div>
+
+  <div class="addon-views" style="margin-top: 15px">
+    <%= f.hidden_field :name %>
+    <%= render file: "_addons_form", locals: { f: f, addons: addons } if addons.size > 0 %>
+  </div>
+
+  <footer class="send">
+    <%= f.submit t("gws/monitor.links.question_not_applicable"), class: 'btn-primary question_not_applicable' %>
+    <%= f.button t("ss.buttons.cancel"), class: 'btn-default', type: :reset, onclick: "location.href='#{url_for(action: :index)}'; return false;" %>
+  </footer>
+<% end %>
+
+<%= jquery do %> SS.confirmUnloading(); <% end %>

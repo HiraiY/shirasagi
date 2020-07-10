@@ -22,7 +22,11 @@ Rails.application.routes.draw do
 
   concern :topic_comment do
     namespace :parent, path: ":parent_id", parent_id: /\d+/ do
-      resources :comments, controller: '/gws/monitor/comments', concerns: [:deletion]
+      resources :comments, controller: '/gws/monitor/comments', concerns: [:deletion] do
+        match :not_applicable, on: :collection, via: %i[get post]
+        match :publish, on: :member, via: %i[get post]
+        match :depublish, on: :member, via: %i[get post]
+      end
     end
   end
 

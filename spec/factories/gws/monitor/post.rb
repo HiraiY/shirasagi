@@ -3,7 +3,10 @@ FactoryBot.define do
     cur_site { gws_site }
     cur_user { gws_user }
 
+    post_type "answer"
     name { "name-#{unique_id}" }
     text { "text-#{unique_id}" }
+    state "public"
+    group_ids { cur_user.group_ids }
   end
 end

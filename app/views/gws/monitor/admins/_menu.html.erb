@@ -29,7 +29,7 @@
       <% if @item.state == 'draft' %>
         <%= link_to t('gws/monitor.links.publish'), action: :publish %>
       <% end %>
-      <% if @item.closed? %>
+      <% if @item.topic_closed? %>
         <%= link_to t('gws/monitor.links.open'), { action: :open, id: @item }, class: 'close-topic', 'data-confirm' => t('gws/monitor.confirm.open')  %>
       <% elsif @item.public? %>
         <%= link_to t('gws/monitor.links.closed'), { action: :close, id: @item }, class: 'close-topic', 'data-confirm' => t('gws/monitor.confirm.close')  %>

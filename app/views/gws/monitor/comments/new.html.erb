@@ -4,12 +4,7 @@
 <%= error_messages_for :item %>
 
 <div class="addon-views">
-  <div class="addon-view" id="addon-basic">
-    <% if addons.size > 0 %><div class="addon-head"><h2><%= @addon_basic_name || t("ss.basic_info") %></h2></div><% end %>
-    <div class="addon-body">
-      <%= render file: '_form', locals: { f: f } %>
-    </div>
-  </div>
+  <%= f.hidden_field :name %>
   <%= render file: "_addons_form", locals: { f: f, addons: addons } if addons.size > 0 %>
 </div>
 
@@ -18,8 +13,7 @@
     <% @crud_buttons.call f %>
   <% else %>
     <% if @item.topic.id == @item.parent.id %>
-      <%= f.submit t("gws/monitor.links.comment"), class: 'btn-primary answer', data: { confirm: I18n.t("gws/monitor.confirm.comment_answer") }  %>
-      <%= f.submit t("gws/monitor.links.question_not_applicable"), class: 'btn-primary question_not_applicable', data: { confirm: I18n.t("gws/monitor.confirm.comment_answer") }  %>
+      <%= f.submit t("ss.buttons.draft_save"), class: 'btn-primary answer' %>
     <% else %>
       <%= f.submit t("ss.buttons.save"), class: 'btn-primary save' %>
     <% end %>

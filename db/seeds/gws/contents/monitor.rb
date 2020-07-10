@@ -63,11 +63,15 @@ create_monitor_post(
   cur_user: u('admin'), name: 'Re: 共有ファイルに登録できるファイル容量および種類',
   due_date: @mon_topics[1].due_date,
   topic_id: @mon_topics[1].id, parent_id: @mon_topics[1].id,
-  text: "容量は〇〇MBで制限種類は\n pdf,doc,docs,xls,xlsx,jpg,gif,png を許可しています。"
+  post_type: "answer",
+  text: "容量は〇〇MBで制限種類は\n pdf,doc,docs,xls,xlsx,jpg,gif,png を許可しています。",
+  state: "public", group_ids: u('admin').group_ids
 )
 create_monitor_post(
   cur_user: u('admin'), name: 'Re: 新しい公用車の導入',
   due_date: @mon_topics[1].due_date,
   topic_id: @mon_topics[1].id, parent_id: @mon_topics[1].id,
-  text: '車室の広いものを希望します。'
+  post_type: "answer",
+  text: '車室の広いものを希望します。',
+  state: "public", group_ids: u('admin').group_ids
 )

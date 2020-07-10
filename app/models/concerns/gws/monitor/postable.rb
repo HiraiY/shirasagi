@@ -85,9 +85,15 @@ module Gws::Monitor::Postable
   end
 
   def showable_comment?(cur_user, cur_group)
-    return true if topic.user_ids.include?(cur_user.id) || topic.group_ids.include?(cur_group.id)
-    return true if topic.spec_config == 'other_groups_and_contents'
+    # 管理権限があれば、閲覧できる。
+    return true if topic.allowed?(:read, cur_user) && topic.owned?(cur_user)
 
+    # 設定で「他者の回答内容を閲覧可能」となっているの場合、他者の回答が「公開」であれば閲覧できる。
+    if topic.spec_config == 'other_groups_and_contents'
+      return true if self.public?
+    end
+
+    # 自分の回答は、閲覧できる。
     user_group_id == cur_group.id
   end
 

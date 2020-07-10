@@ -1,7 +1,7 @@
 <%
   menu = []
   if @item.allowed?(:edit, @cur_user, site: @cur_site)
-    if @item.permit_comment? && @item.public? && !@item.closed?
+    if @item.permit_comment? && @item.public? && !@item.topic_closed?
       link = new_gws_monitor_admin_parent_comment_path(admin_id: @item, parent_id: recursion ? comment : @item)
       menu << link_to(t('gws/monitor.links.reply'), link, class: 'btn primary')
     end
@@ -11,6 +11,16 @@
 
     link = delete_gws_monitor_admin_parent_comment_path(admin_id: @item, parent_id: comment.parent_id, id: comment)
     menu << link_to(t('ss.links.delete'), link, class: 'btn')
+
+    if comment.allowed?(:release, @cur_user, site: @cur_site)
+      if comment.public?
+        link = depublish_gws_monitor_topic_parent_comment_path(topic_id: @item.id, parent_id: comment.parent_id, id: comment.id)
+        menu << link_to(t('gws/monitor.links.depublish'), link, class: "btn")
+      else
+        link = publish_gws_monitor_topic_parent_comment_path(topic_id: @item.id, parent_id: comment.parent_id, id: comment.id)
+        menu << link_to(t('gws/monitor.links.publish'), link, class: "btn")
+      end
+    end
   end
 %>
 

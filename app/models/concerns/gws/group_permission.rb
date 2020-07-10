@@ -26,7 +26,9 @@ module Gws::GroupPermission
     user = user.gws_user
     return true if (self.group_ids & user.group_ids).present?
     return true if user_ids.to_a.include?(user.id)
-    return true if custom_groups.any? { |m| m.member?(user) }
+    if self.class.permission_included_custom_groups?
+      return true if custom_groups.any? { |m| m.member?(user) }
+    end
 
     false
   end
@@ -109,11 +111,15 @@ module Gws::GroupPermission
       if (level = user.gws_role_permissions["#{action}_other_#{permission_name}_#{site_id}"]) && !opts[:private_only]
         { permission_level: { "$lte" => level } }
       elsif level = user.gws_role_permissions["#{action}_private_#{permission_name}_#{site_id}"]
-        { permission_level: { "$lte" => level }, "$or" => [
+        conditions = [
           { user_ids: user.id },
-          { :group_ids.in => user.group_ids },
-          { :custom_group_ids.in => Gws::CustomGroup.member(user).pluck(:id) }
-        ] }
+          { :group_ids.in => user.group_ids }
+        ]
+        if permission_included_custom_groups?
+          conditions << { :custom_group_ids.in => Gws::CustomGroup.member(user).pluck(:id) }
+        end
+
+        { permission_level: { "$lte" => level }, "$or" => conditions }
       else
         { _id: -1 }
       end

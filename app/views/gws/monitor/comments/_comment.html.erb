@@ -2,6 +2,9 @@
   <aside class="comment" id="post-<%= comment.id %>">
     <header class="<%= 'toggle-head' if recursion %>">
       <h2><%= comment.name %></h2>
+      <% if comment.user_group_id == @cur_group.id %>
+        <span><%= comment.label(:state) || t("ss.state.draft") %></span>
+      <% end %>
       <nav class="meta">
         <span class="user"><%= comment.contributor_name.presence || comment.user_long_name %></span>
         <span class="datetime"><%= comment.created.strftime("%Y/%m/%d %H:%M") %></span>
