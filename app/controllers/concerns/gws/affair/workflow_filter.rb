@@ -128,6 +128,7 @@ module Gws::Affair::WorkflowFilter
 
     if !@item.save
       render json: @item.errors.full_messages, status: :unprocessable_entity
+      return
     end
 
     current_level = @item.workflow_current_level
