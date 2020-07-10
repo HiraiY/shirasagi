@@ -84,12 +84,14 @@ module Gws::Affair::DutyHourSetting
 
   def night_time_start(time)
     hour = SS.config.gws.affair.dig("overtime", "night_time", "start_hour")
-    time.change(hour: hour, min: 0, sec: 0)
+    time.change(hour: 0, min: 0, sec: 0)
+    time.advance(hours: hour)
   end
 
   def night_time_end(time)
     hour = SS.config.gws.affair.dig("overtime", "night_time", "end_hour")
-    time.change(hour: hour, min: 0, sec: 0)
+    time.change(hour: 0, min: 0, sec: 0)
+    time.advance(hours: hour)
   end
 
   private
