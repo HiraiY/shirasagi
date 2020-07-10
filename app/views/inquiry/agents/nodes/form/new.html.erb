@@ -1,4 +1,5 @@
 <%= jquery do %>Inquiry_Form.render({ confirm: false, requiredLabel: <%== t('inquiry.required_field').to_json %> });<% end %>
+<% @cur_node.name = @group.section_name + " " + @cur_node.name if @group %>
 <div class="inquiry-html">
   <%== @cur_node.inquiry_html %>
 </div>

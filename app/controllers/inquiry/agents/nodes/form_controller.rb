@@ -157,7 +157,9 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
         query[:ref] = @answer.source_url
       end
     end
+    query[:group] = @group.id if @group
     query = query.to_query
+
 
     url = "#{@cur_node.url}sent.html"
     url = "#{url}?#{query}" if query.present?
@@ -165,6 +167,7 @@ class Inquiry::Agents::Nodes::FormController < ApplicationController
   end
 
   def sent
+    set_group
     render action: :sent
   end
 
