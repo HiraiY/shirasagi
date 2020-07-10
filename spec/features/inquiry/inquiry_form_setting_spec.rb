@@ -9,7 +9,7 @@ describe "inquiry_form", type: :feature, dbscope: :example, js: true do
   let(:layout) { create_cms_layout }
   let(:article_node) { create :article_node_page, layout_id: layout.id, filename: "node" }
   let(:article) do
-    create(:article_page, layout_id: layout.id, contact_group_id: cms_group.id, cur_node: article_node)
+    create(:article_page, layout_id: layout.id, contact_group_id: cms_group.id, contact_tel: "000-0000", cur_node: article_node)
   end
   let(:edit_article_path) { edit_article_page_path site.id, article_node, article }
 
@@ -65,8 +65,6 @@ describe "inquiry_form", type: :feature, dbscope: :example, js: true do
       click_button I18n.t('ss.buttons.save')
 
       visit edit_article_path
-      find("#addon-contact-agents-addons-page").click
-      fill_in "item[contact_tel]", with: "000-0000"
       click_on I18n.t("ss.buttons.publish_save")
 
       visit article.full_url
