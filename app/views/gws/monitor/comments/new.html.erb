@@ -4,7 +4,12 @@
 <%= error_messages_for :item %>
 
 <div class="addon-views">
-  <%= f.hidden_field :name %>
+  <div class="addon-view" id="addon-basic">
+    <% if addons.size > 0 %><div class="addon-head"><h2><%= @addon_basic_name || t("ss.basic_info") %></h2></div><% end %>
+    <div class="addon-body">
+      <%= render file: '_form', locals: { f: f } %>
+    </div>
+  </div>
   <%= render file: "_addons_form", locals: { f: f, addons: addons } if addons.size > 0 %>
 </div>
 

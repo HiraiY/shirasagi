@@ -7,15 +7,13 @@ class Gws::Monitor::Topic
   include Gws::Addon::File
   include Gws::Monitor::DescendantsFileInfo
   include Gws::Addon::Monitor::Category
-  include Gws::Addon::Monitor::Release
   include Gws::Addon::GroupPermission
   include Gws::Addon::History
-  # include Gws::Monitor::BrowsingState
+  include Gws::Monitor::Release
 
   readable_setting_include_custom_groups
 
   field :answer_state_hash, type: Hash
-  field :article_state, type: String, default: 'open'
   field :deleted, type: DateTime
 
   field :notice_state, type: String
@@ -27,7 +25,6 @@ class Gws::Monitor::Topic
   before_validation :set_notice_at
 
   validates :deleted, datetime: true
-  validates :article_state, inclusion: { in: %w(open closed) }
 
   # indexing to elasticsearch via companion object
   around_save ::Gws::Elasticsearch::Indexer::MonitorTopicJob.callback
@@ -62,9 +59,17 @@ class Gws::Monitor::Topic
     lte(notice_at: now)
   end
 
-  def article_state_options
-    %w(open closed).map do |v|
-      [I18n.t("gws/monitor.options.article_state.#{v}"), v]
+  class << self
+    def sort_options
+      %w(due_date_desc due_date_asc released_desc released_asc updated_desc updated_asc created_desc created_asc).map do |k|
+        [I18n.t("gws/monitor.options.sort.#{k}"), k]
+      end
+    end
+
+    def answer_state_filter_options
+      %w(unanswered answered all).map do |k|
+        [I18n.t("gws/monitor.options.answer_state_filter.#{k}"), k]
+      end
     end
   end
 
@@ -103,10 +108,6 @@ class Gws::Monitor::Topic
     deleted.blank? || deleted > Time.zone.now
   end
 
-  def topic_closed?
-    article_state == 'closed'
-  end
-
   def answer_state_name(group)
     answered_state = answer_state_hash[group.id.to_s]
     if answered_state.blank?
@@ -120,18 +121,12 @@ class Gws::Monitor::Topic
     created.to_i != updated.to_i || created.to_i != descendants_updated.to_i
   end
 
-  def sort_options
-    %w(due_date_desc due_date_asc released_desc released_asc updated_desc updated_asc created_desc created_asc).map do |k|
-      [I18n.t("gws/monitor.options.sort.#{k}"), k]
-    end
-  end
-
   def comment(groupid)
     children.where(user_group_id: groupid)
   end
 
   def answer_count_admin
-    answered = answer_state_hash.count { |k, v| v.match(/answered|question_not_applicable/) }
+    answered = answer_state_hash.present? ? answer_state_hash.count { |k, v| v.match(/answered|question_not_applicable/) } : 0
     return "(#{answered}/#{attend_group_ids.count})"
   end
 
@@ -197,7 +192,7 @@ class Gws::Monitor::Topic
   end
 
   def due_date_over?(group, now = Time.zone.now)
-    answered_state = answer_state_hash[group.id.to_s]
+    answered_state = answer_state_hash[group.id.to_s] if answer_state_hash.present?
     return if %w(answered question_not_applicable).include?(answered_state)
     return if due_date.blank?
     due_date < now

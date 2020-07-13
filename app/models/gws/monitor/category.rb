@@ -8,6 +8,7 @@ class Gws::Monitor::Category
   include Gws::Addon::History
 
   default_scope ->{ where(model: "gws/monitor/category").order_by(name: 1) }
+  no_needs_read_permission_to_read
 
   validate :validate_name_depth
   validate :validate_parent_name

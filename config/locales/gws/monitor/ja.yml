@@ -86,9 +86,6 @@ ja:
       permit_comment:
         allow: 許可する
         deny: 許可しない
-      article_state:
-        open: 回答募集中
-        closed: 募集締切
       browsed_state:
         read: 既読
         unread: 未読
@@ -105,6 +102,10 @@ ja:
         answered: 回答済み
         question_not_applicable: 該当なし
         no_state: 状態無し
+      answer_state_filter:
+        unanswered: 要回答
+        answered: 回答済み
+        all: すべて
       monitor_delete_threshold:
         '1.day': 1日
         '1.month': 1ヶ月
@@ -125,7 +126,7 @@ ja:
       question_not_applicable: 該当なしにする
       answered: 回答済みにする
       closed: 締め切る
-      open: 締め切り解除
+      open: 再配信
       export_csv: 回答一覧CSV
       file_download: 添付ファイル一括ダウンロード
       forward: 転送する
@@ -150,11 +151,8 @@ ja:
     errors:
       denied_comment: コメントの投稿は許可されていません。
     tabs:
-      unanswer: 未回答
-      answer: 回答済み
-      admin: 作成した設問
-      article_management: 設問（管理）
-      management_admin: 設問（管理）
+      topic: 照会
+      management_topic: 照会管理
     management:
       links:
         back_to_topic: 戻る
@@ -178,28 +176,30 @@ ja:
   gws_role:
     use_gws_monitor: 照会・回答の利用
 
-    read_other_gws_monitor_posts: 投稿の閲覧（全て）
-    read_private_gws_monitor_posts: 投稿の閲覧（所有）
-    edit_other_gws_monitor_posts: 投稿の編集（全て）
-    edit_private_gws_monitor_posts: 投稿の編集（所有）
-    delete_other_gws_monitor_posts: 投稿の削除（全て）
-    delete_private_gws_monitor_posts: 投稿の削除（所有）
-    trash_other_gws_monitor_posts: 投稿ゴミ箱の管理（全て）
-    trash_private_gws_monitor_posts: 投稿ゴミ箱の管理（所有）
-    release_other_gws_monitor_posts: 投稿の配信（全て）
-    release_private_gws_monitor_posts: 投稿の配信（所有）
+    read_other_gws_monitor_topics: 照会の閲覧（全て）
+    read_private_gws_monitor_topics: 照会の閲覧（所有）
+    edit_other_gws_monitor_topics: 照会の編集（全て）
+    edit_private_gws_monitor_topics: 照会の編集（所有）
+    delete_other_gws_monitor_topics: 照会の削除（全て）
+    delete_private_gws_monitor_topics: 照会の削除（所有）
+    trash_other_gws_monitor_topics: 照会・回答ゴミ箱の管理（全て）
+    trash_private_gws_monitor_topics: 照会・回答ゴミ箱の管理（所有）
+
+    read_other_gws_monitor_posts: 回答の閲覧（全て）
+    read_private_gws_monitor_posts: 回答の閲覧（所有）
+    edit_other_gws_monitor_posts: 回答の編集（全て）
+    edit_private_gws_monitor_posts: 回答の編集（所有）
+    delete_other_gws_monitor_posts: 回答の削除（全て）
+    delete_private_gws_monitor_posts: 回答の削除（所有）
+    release_other_gws_monitor_posts: 回答の配信（全て）
+    release_private_gws_monitor_posts: 回答の配信（所有）
+
     read_other_gws_monitor_categories: カテゴリーの閲覧（全て）
     read_private_gws_monitor_categories: カテゴリーの閲覧（所有）
     edit_other_gws_monitor_categories: カテゴリーの編集（全て）
     edit_private_gws_monitor_categories: カテゴリーの編集（所有）
     delete_other_gws_monitor_categories: カテゴリーの削除（全て）
     delete_private_gws_monitor_categories: カテゴリーの削除（所有）
-    read_other_gws_monitor_topics: 記事の閲覧（全て）
-    read_private_gws_monitor_topics: 記事の閲覧（所有）
-    edit_other_gws_monitor_topics: 記事の編集（全て）
-    edit_private_gws_monitor_topics: 記事の編集（所有）
-    delete_other_gws_monitor_topics: 記事の削除（全て）
-    delete_private_gws_monitor_topics: 記事の削除（所有）
 
   gws_notification:
     gws/monitor/topic:
@@ -266,7 +266,6 @@ ja:
         spec_config: 回答表示設定
         due_date: 回答期限
         answer_state: 回答状況
-        article_state: 募集状況
         deleted: 削除日時
         notice_at: 通知日時
       gws/monitor/topic:
@@ -276,7 +275,7 @@ ja:
         notice_state: お知らせ表示設定
         answer_state_hash: 回覧状況
       gws/monitor/post:
-        name: 回答タイトル
+        name: 回答部課名
       gws/monitor/category:
         name: カテゴリー名
       gws/addon/monitor/category:

@@ -67,8 +67,7 @@ module Gws::Portal::PortalFilter
       @monitors = Gws::Monitor::Topic.site(@cur_site).topic.
         and_public.
         and_attended(@cur_user, site: @cur_site, group: @cur_group).
-        and_unanswered(@cur_group).
-        and_noticed
+        and_unanswered(@cur_group)
     else
       @monitors = Gws::Monitor::Topic.none
     end

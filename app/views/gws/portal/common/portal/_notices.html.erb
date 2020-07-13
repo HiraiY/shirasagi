@@ -26,7 +26,7 @@
     <% if @monitors.present? %>
       <li class="list-item">
         <div class="info">
-          <%= link_to t('gws/monitor.portal_notice_format', count: @monitors.count), gws_monitor_topics_path, class: "title notice-severity-high" %>
+          <%= link_to t('gws/monitor.portal_notice_format', count: @monitors.count), gws_monitor_main_path, class: "title notice-severity-high" %>
         </div>
       </li>
     <% end %>

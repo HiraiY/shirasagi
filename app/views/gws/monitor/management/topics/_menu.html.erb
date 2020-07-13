@@ -1,0 +1,33 @@
+<nav class="nav-menu">
+  <% if params[:action] =~ /index/ %>
+    <% if @model.allowed?(:edit, @cur_user, site: @cur_site) %>
+      <%= link_to t('ss.links.new'), action: :new %>
+    <% end %>
+  <% elsif params[:action] =~ /new|create|lock|categories/ %>
+    <%= link_to t('ss.links.back_to_index'), action: :index %>
+  <% elsif params[:action] =~ /edit|update|delete|move|publish/ %>
+    <% if @item.allowed?(:read, @cur_user, site: @cur_site) %>
+      <%= link_to t('ss.links.back_to_show'), action: :show, id: @item %>
+    <% end %>
+    <%= link_to t('ss.links.back_to_index'), action: :index %>
+  <% else %>
+    <% if @item.allowed?(:edit, @cur_user, site: @cur_site) %>
+      <% if @item.closed? %>
+        <%= link_to t('ss.links.edit'), action: :edit, id: @item %>
+      <% end %>
+      <% if @item.closed? %>
+        <%= link_to @item.state == 'draft' ? t('gws/monitor.links.publish') : t('gws/monitor.links.open'), { action: :publish }, class: "publish" %>
+      <% else %>
+        <%= link_to t('gws/monitor.links.closed'), { action: :close, id: @item }, class: 'close', method: "post", 'data-confirm' => t('gws/monitor.confirm.close') %>
+      <% end %>
+    <% end %>
+    <% if @item.allowed?(:delete, @cur_user, site: @cur_site) && @item.closed? %>
+      <%= link_to t('ss.links.delete'), action: :soft_delete, id: @item %>
+    <% end %>
+    <%= link_to(t('gws/monitor.links.export_csv'), { action: :download }, class: 'export_csv') %>
+    <% if @item.descendants_files_count.to_i > 0 %>
+      <%= link_to(t('gws/monitor.links.file_download'), { action: :file_download }, class: 'file_download') %>
+    <% end %>
+    <%= link_to t('ss.links.back_to_index'), action: :index %>
+  <% end %>
+</nav>

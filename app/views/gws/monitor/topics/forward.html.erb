@@ -1,0 +1,31 @@
+<% addons = @addons || @item.try(:addons) || [] %>
+
+<%= form_for :item, url: { action: :forward }, html: { id: "item-form", multipart: true, autocomplete: :off } do |f| %>
+  <%= error_messages_for :item %>
+
+  <div class="addon-views">
+    <%
+      addon_options = {}
+      addon_options[:id] = "addon-basic"
+      addon_options[:head] = @addon_basic_name || t("ss.basic_info") if addons.size > 0
+    %>
+    <% buf = render file: "_form", locals: { f: f, addon: addon_options } %>
+    <%= render "ss/crud/addon", addon: addon_options do %>
+      <%= buf %>
+    <% end %>
+
+    <%= render file: "_addons_form", locals: { f: f, addons: addons } if addons.size > 0 %>
+  </div>
+
+  <footer class="send">
+    <% if @crud_buttons %>
+      <% @crud_buttons.call f %>
+    <% else %>
+      <%= f.submit t("ss.buttons.save"), class: 'btn-primary save' %>
+      <%= f.button t("ss.buttons.cancel"), class: 'btn-default', type: :reset, onclick: "location.href='#{url_for(action: :index)}'; return false;" %>
+    <% end %>
+  </footer>
+
+<% end %>
+
+<%= jquery do %> SS.confirmUnloading(); <% end %>

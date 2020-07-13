@@ -9,7 +9,6 @@ module Gws::Monitor::Postable
 
   included do
     store_in collection: "gws_monitor_posts"
-    set_permission_name "gws_monitor_posts"
 
     attr_accessor :cur_site
 
@@ -49,21 +48,42 @@ module Gws::Monitor::Postable
 
     scope :topic, ->{ exists parent_id: false }
     scope :topic_comments, ->(topic) { where topic_id: topic.id }
-    scope :search, ->(params) {
-      criteria = where({})
-      return criteria if params.blank?
+  end
 
-      criteria = criteria.keyword_in params[:keyword], :name, :text if params[:keyword].present?
+  module ClassMethods
+    def search(params)
+      all.search_keyword(params).search_category(params).search_question_state(params).search_answer_state_filter(params)
+    end
 
-      if params[:category].present?
-        category_ids = Gws::Monitor::Category.site(params[:site]).and_name_prefix(params[:category]).pluck(:id)
-        criteria = criteria.in(category_ids: category_ids)
+    def search_keyword(params)
+      return all if params.blank? || params[:keyword].blank?
+      all.keyword_in(params[:keyword], :name, :text)
+    end
+
+    def search_category(params)
+      return all if params.blank? || params[:category].blank?
+
+      category_ids = Gws::Monitor::Category.site(params[:site]).and_name_prefix(params[:category]).pluck(:id)
+      all.in(category_ids: category_ids)
+    end
+
+    def search_question_state(params)
+      return all if params.blank? || params[:question_state].blank?
+      all.where(question_state: params[:question_state].to_s)
+    end
+
+    def search_answer_state_filter(params)
+      return all if params.blank? || params[:answer_state_filter].blank?
+
+      case params[:answer_state_filter].to_s
+      when "unanswered"
+        all.and_unanswered(params[:group])
+      when "answered"
+        all.and_answered(params[:group])
+      else # "all"
+        all
       end
-      if params[:question_state].present?
-        criteria = criteria.where(question_state: params[:question_state].to_s)
-      end
-      criteria
-    }
+    end
   end
 
   # Returns the topic.

@@ -23,7 +23,7 @@ end
     due_date: @now.beginning_of_day + 7.days,
     attend_group_ids: [@site.id] + @site.descendants.pluck(:id),
     text: '共有ファイルに登録できるファイル容量および種類の制限を教えてください。', category_ids: [@mon_cate[1].id],
-    state: 'public', article_state: 'open'
+    state: 'public'
   ),
 
   create_monitor_topic(
@@ -31,14 +31,14 @@ end
     due_date: @now.beginning_of_day + 7.days,
     attend_group_ids: [@site.id] + @site.descendants.pluck(:id),
     text: "公用車の劣化が進んでおり、買い替えを行うことになりました。\n希望車種などがあれば回答をお願いします。",
-    category_ids: [@mon_cate[0].id], state: 'public', article_state: 'open'
+    category_ids: [@mon_cate[0].id], state: 'public'
   ),
   create_monitor_topic(
     cur_user: u('user4'), name: '庁舎防災設備強化',
     due_date: @now.beginning_of_day + 7.days,
     attend_group_ids: [@site.id] + @site.descendants.pluck(:id),
     text: "庁舎の防災設備を強化を計画しています。\n各課の設備について回答をお願いします。",
-    category_ids: [@mon_cate[0].id], state: 'public', article_state: 'open'
+    category_ids: [@mon_cate[0].id], state: 'public'
   ),
   create_monitor_topic(
     cur_user: u('user2'), name: 'ワークフローのテンプレート',
@@ -60,18 +60,16 @@ def create_monitor_post(data)
 end
 
 create_monitor_post(
-  cur_user: u('admin'), name: 'Re: 共有ファイルに登録できるファイル容量および種類',
+  cur_user: u('admin'), name: u('admin').groups.site(@site).first.section_name,
   due_date: @mon_topics[1].due_date,
   topic_id: @mon_topics[1].id, parent_id: @mon_topics[1].id,
-  post_type: "answer",
-  text: "容量は〇〇MBで制限種類は\n pdf,doc,docs,xls,xlsx,jpg,gif,png を許可しています。",
-  state: "public", group_ids: u('admin').group_ids
+  post_type: "answer", text: "容量は〇〇MBで制限種類は\n pdf,doc,docs,xls,xlsx,jpg,gif,png を許可しています。",
+  state: "public", group_ids: u('admin').groups.site(@site).pluck(:id)
 )
 create_monitor_post(
-  cur_user: u('admin'), name: 'Re: 新しい公用車の導入',
+  cur_user: u('admin'), name: u('admin').groups.site(@site).first.section_name,
   due_date: @mon_topics[1].due_date,
   topic_id: @mon_topics[1].id, parent_id: @mon_topics[1].id,
-  post_type: "answer",
-  text: '車室の広いものを希望します。',
-  state: "public", group_ids: u('admin').group_ids
+  post_type: "answer", text: '車室の広いものを希望します。',
+  state: "public", group_ids: u('admin').groups.site(@site).pluck(:id)
 )

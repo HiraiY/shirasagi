@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "gws_monitor_management_admins", type: :feature, dbscope: :example do
+describe "gws_monitor_management_topics", type: :feature, dbscope: :example do
   let(:site) { gws_site }
   let(:user) { gws_user }
 
@@ -13,8 +13,7 @@ describe "gws_monitor_management_admins", type: :feature, dbscope: :example do
 
   let(:topic1) do
     create(
-      :gws_monitor_topic, user: user, attend_group_ids: [g1.id, g2.id],
-      state: 'public', article_state: 'open', spec_config: 'my_group',
+      :gws_monitor_topic, user: user, attend_group_ids: [g1.id, g2.id], state: 'public', spec_config: 'my_group',
       answer_state_hash: { g1.id.to_s => "answered", g2.id.to_s => "preparation" },
       file_ids: [own_ss_file.id]
     )
@@ -34,8 +33,7 @@ describe "gws_monitor_management_admins", type: :feature, dbscope: :example do
 
   let(:topic2) do
     create(
-      :gws_monitor_topic, user: user, attend_group_ids: [g1.id, g2.id], state: 'public',
-      article_state: 'open', spec_config: 'my_group',
+      :gws_monitor_topic, user: user, attend_group_ids: [g1.id, g2.id], state: 'public', spec_config: 'my_group',
       answer_state_hash: { g1.id.to_s => "answered", g2.id.to_s => "preparation" }
     )
   end
@@ -45,25 +43,28 @@ describe "gws_monitor_management_admins", type: :feature, dbscope: :example do
 
     it "#index" do
       topic1
-      visit gws_monitor_management_admins_path(site)
+      visit gws_monitor_management_topics_path(site)
       expect(page).to have_content(topic1.name)
       expect(page).to have_content('回答状況(1/2)')
     end
 
     it "#edit" do
-      visit edit_gws_monitor_management_admin_path(site, topic1)
+      topic1.state = "closed"
+      topic1.save!
+
+      visit edit_gws_monitor_management_topic_path(site, topic1)
       expect(page).to have_content('基本情報')
     end
 
     it "#show" do
-      visit gws_monitor_management_admin_path(site, topic1)
+      visit gws_monitor_management_topic_path(site, topic1)
       expect(page).to have_content(topic1.name)
     end
 
     it "#file_download" do
       post1
 
-      visit gws_monitor_management_admin_path(site, topic1)
+      visit gws_monitor_management_topic_path(site, topic1)
       expect(page).to have_content(topic1.name)
 
       click_link I18n.t("gws/monitor.links.file_download")
@@ -85,7 +86,7 @@ describe "gws_monitor_management_admins", type: :feature, dbscope: :example do
     it "#file_download when file not stored " do
       topic2
 
-      visit gws_monitor_management_admin_path(site, topic2)
+      visit gws_monitor_management_topics_path(site, topic2)
       expect(page).to have_content(topic2.name)
       expect(page).not_to have_link(I18n.t("gws/monitor.links.file_download"))
     end

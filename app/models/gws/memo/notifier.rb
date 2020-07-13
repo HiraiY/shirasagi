@@ -289,7 +289,7 @@ class Gws::Memo::Notifier
       return unless item.state == "public"
 
       id = id_for_url(item)
-      url = url_helper.gws_monitor_topic_path(id: id, site: cur_site.id, category: '-', mode: '-')
+      url = url_helper.gws_monitor_topic_path(id: id, site: cur_site.id, category: '-')
       deliver_monitor(id)
     else
       url = ''

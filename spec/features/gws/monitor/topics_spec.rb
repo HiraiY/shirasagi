@@ -8,13 +8,13 @@ describe "gws_monitor_topics", type: :feature, dbscope: :example do
   let(:u1) { create(:gws_user, group_ids: [g1.id], gws_role_ids: [r1.id]) }
   let(:item1) do
     create(
-      :gws_monitor_topic, attend_group_ids: [g1.id, g2.id], state: 'public', article_state: 'open', spec_config: 'my_group',
+      :gws_monitor_topic, attend_group_ids: [g1.id, g2.id], state: 'public', spec_config: 'my_group',
       answer_state_hash: { g1.id.to_s => "preparation", g2.id.to_s => "preparation" }
     )
   end
   let(:item2) do
     create(
-      :gws_monitor_topic, attend_group_ids: [g1.id, g2.id], state: 'public', article_state: 'open',
+      :gws_monitor_topic, attend_group_ids: [g1.id, g2.id], state: 'public',
       spec_config: 'other_groups_and_contents', answer_state_hash: { g1.id.to_s => "preparation", g2.id.to_s => "preparation" }
     )
   end

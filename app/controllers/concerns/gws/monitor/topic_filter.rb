@@ -15,6 +15,7 @@ module Gws::Monitor::TopicFilter
     ]
 
     before_action :set_category
+    before_action :set_search_params
   end
 
   private
@@ -34,6 +35,18 @@ module Gws::Monitor::TopicFilter
     end
   end
 
+  def set_search_params
+    set_category
+
+    @s ||= OpenStruct.new(params[:s])
+    if @category
+      @s.site ||= @cur_site
+      @s.category ||= @category.name
+    end
+    @s.group ||= @cur_group
+    @s.user ||= @cur_user
+  end
+
   def fix_params
     { cur_user: @cur_user, cur_site: @cur_site }
   end
@@ -50,12 +63,6 @@ module Gws::Monitor::TopicFilter
   public
 
   def index
-    if @category.present?
-      params[:s] ||= {}
-      params[:s][:site] = @cur_site
-      params[:s][:category] = @category.name
-    end
-
     set_items
   end
 
@@ -78,13 +85,23 @@ module Gws::Monitor::TopicFilter
     raise '403' unless @model.allowed?(:edit, @cur_user, site: @cur_site)
 
     set_item
-    @source = @item
-    @item = @model.new(@source.attributes.slice(*FORWARD_ATTRIBUTES).merge(fix_params))
-    @item.group_ids = [@cur_group.id]
-    @item.user_ids = [@cur_user.id]
-    @item.ref_file_ids = @source.file_ids
+    if request.get?
+      @source = @item
+      @item = @model.new(@source.attributes.slice(*FORWARD_ATTRIBUTES).merge(fix_params))
+      @item.group_ids = [@cur_group.id]
+      @item.user_ids = [@cur_user.id]
+      @item.ref_file_ids = @source.file_ids
 
-    render file: :new
+      render
+      return
+    end
+
+    @item = @model.new get_params
+    return render_create(false) unless @item.allowed?(:edit, @cur_user, site: @cur_site, strict: true)
+    result = @item.save
+    render_opts = { render: { file: :forward } }
+    render_opts[:location] = publish_gws_monitor_management_topic_path(id: @item) if result
+    render_create result, render_opts
   end
 
   # 受け取り済みにする

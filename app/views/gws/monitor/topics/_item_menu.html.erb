@@ -1,0 +1,22 @@
+<% return if !@item.permit_comment? %>
+<% return if !@item.public? %>
+<% return if !@item.attend_group_ids.include?(@cur_group.id) %>
+<% return if !Gws::Monitor::Post.allowed?(:edit, @cur_user, site: @cur_site) %>
+
+<% answer_state = @item.answer_state_hash[@cur_group.id.to_s] %>
+<div class="menu">
+  <% if answer_state == 'preparation' %>
+    <%= button_tag(t('gws/monitor.links.public'), type: 'button', class: %w(public btn), data: { ss_action: url_for(action: :public), ss_confirm: t('gws/monitor.confirm.public') }) %>
+  <% end %>
+
+  <% if answer_state == 'public' %>
+    <%= button_tag(t('gws/monitor.links.preparation'), type: 'button', class: %w(preparation btn), data: { ss_action: url_for(action: :preparation), ss_confirm: t('gws/monitor.confirm.preparation') }) %>
+  <% end %>
+
+  <% if %w(public answered question_not_applicable).include?(answer_state) %>
+    <%= link_to(t('gws/monitor.links.draft_comment'), new_gws_monitor_topic_comment_path(topic_id: @item.id, parent_id: @item.id), class: %w(btn primary)) %>
+    <% if @item.descendants.where(user_group_id: @cur_group.id).blank? %>
+      <%= link_to(t('gws/monitor.links.question_not_applicable'), not_applicable_gws_monitor_topic_comments_path(topic_id: @item.id, parent_id: @item.id), class: %w(btn primary), style: "margin-left: 0;") %>
+    <% end %>
+  <% end %>
+</div>

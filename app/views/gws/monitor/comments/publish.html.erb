@@ -1,4 +1,4 @@
-<% addons = @item.class.addons.select { |addon| [Gws::Addon::Monitor::Group, Gws::Addon::GroupPermission, Gws::Addon::Monitor::Category, Gws::Addon::ReadableSetting].exclude?(addon.klass) } %>
+<%# addons = @item.class.addons.select { |addon| [Gws::Addon::Monitor::Group, Gws::Addon::GroupPermission, Gws::Addon::Monitor::Category, Gws::Addon::ReadableSetting].exclude?(addon.klass) } %>
 
 <%= form_for :item, url: { action: :publish }, html: { id: "item-form", multipart: true, autocomplete: :off } do |f| %>
   <%= error_messages_for :item %>
@@ -6,8 +6,11 @@
   <div class="addon-views">
     <div class="addon-view" id="addon-basic">
       <div class="addon-head"><h2><%= t("gws/monitor.confirm.publish") %></h2></div>
+      <div class="addon-body">
+        <%= render file: '_delete', locals: { f: f } %>
+      </div>
     </div>
-    <%= render file: "_addons_show", locals: { f: f, addons: addons } if addons.size > 0 %>
+    <%# render file: "_addons_show", locals: { f: f, addons: addons } if addons.size > 0 %>
   </div>
 
   <footer class="send">

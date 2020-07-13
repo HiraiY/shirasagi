@@ -5,7 +5,7 @@ RSpec.describe SS::Migration20200710000000, dbscope: :example do
   let!(:topic) do
     create(
       :gws_monitor_topic,
-      attend_group_ids: gws_user.group_ids, state: "public", article_state: "open", spec_config: "my_group"
+      attend_group_ids: gws_user.group_ids, state: "public", spec_config: "my_group"
     )
   end
   let!(:post1) { create :gws_monitor_post, topic: topic, parent: topic, post_type: nil }

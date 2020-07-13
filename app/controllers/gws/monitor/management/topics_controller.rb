@@ -1,4 +1,4 @@
-class Gws::Monitor::Management::AdminsController < ApplicationController
+class Gws::Monitor::Management::TopicsController < ApplicationController
   include Gws::BaseFilter
   include Gws::CrudFilter
   include Gws::Monitor::TopicFilter
@@ -18,18 +18,18 @@ class Gws::Monitor::Management::AdminsController < ApplicationController
   def set_crumbs
     set_category
     @crumbs << [@cur_site.menu_monitor_label || t("modules.gws/monitor"), gws_monitor_topics_path]
+    @crumbs << [t('gws/monitor.tabs.management_topic'), action: :index, category: '-']
     if @category.present?
-      @crumbs << [@category.name, gws_monitor_topics_path]
+      @crumbs << [@category.name, action: :index, category: @category]
     end
-    @crumbs << [t('gws/monitor.tabs.article_management'), action: :index]
   end
 
   def set_items
     @items = @model.site(@cur_site).topic
     @items = @items.allow(:read, @cur_user, site: @cur_site)
     @items = @items.without_deleted
-    @items = @items.search(params[:s])
-    @items = @items.custom_order(params.dig(:s, :sort))
+    @items = @items.search(@s)
+    @items = @items.custom_order(@s.sort)
     @items = @items.page(params[:page]).per(50)
   end
 
@@ -37,5 +37,30 @@ class Gws::Monitor::Management::AdminsController < ApplicationController
     if @item
       raise '403' unless @item.allowed?(:read, @cur_user, site: @cur_site)
     end
+  end
+
+  public
+
+  # override Gws::Monitor::TopicFilter#show
+  def show
+    raise "403" unless @item.allowed?(:read, @cur_user, site: @cur_site)
+
+    render file: "show_#{@item.mode}"
+  end
+
+  def edit
+    raise "404" if @item.public?
+    super
+  end
+
+  def update
+    raise "404" if @item.public?
+    super
+  end
+
+  def soft_delete
+    set_item unless @item
+    raise "404" if @item.public?
+    super
   end
 end

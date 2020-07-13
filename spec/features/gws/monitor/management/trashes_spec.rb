@@ -6,14 +6,13 @@ describe "gws_monitor_management_trashes", type: :feature, dbscope: :example do
   let(:g2) { create(:gws_group, name: "#{site.name}/g-#{unique_id}") }
   let(:item1) do
     create(
-      :gws_monitor_topic, :gws_monitor_deleted, attend_group_ids: [g1.id, g2.id],
-      state: 'public', article_state: 'open', spec_config: 'my_group',
+      :gws_monitor_topic, :gws_monitor_deleted, attend_group_ids: [g1.id, g2.id], state: 'public', spec_config: 'my_group',
       answer_state_hash: { g1.id.to_s => "answered", g2.id.to_s => "preparation" }
     )
   end
   let(:item2) do
     create(
-      :gws_monitor_topic, attend_group_ids: [g1.id, g2.id], state: 'public', article_state: 'open', spec_config: 'my_group',
+      :gws_monitor_topic, attend_group_ids: [g1.id, g2.id], state: 'public', spec_config: 'my_group',
       answer_state_hash: { g1.id.to_s => "answered", g2.id.to_s => "preparation" }
     )
   end
