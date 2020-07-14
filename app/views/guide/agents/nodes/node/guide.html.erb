@@ -1,11 +1,3 @@
-<%
-  if @multi_columns.present?
-    columns = @multi_columns
-  else
-    columns = @columns.limit(1)
-  end
-%>
-
 <%= form_for :item, url: "#{@cur_node.url}guide.html", html: { method: "POST" } do |f| %>
   <div class="guide-node-form">
     <%= error_messages_for :item, header_message: false %>
@@ -14,26 +6,27 @@
       <%= hidden_field_tag("item[column_ids][#{k}]", v) %>
     <% end %>
     <div class="guide-nodes nodes">
-      <div class="columns">
-        <% columns.each do |column| %>
-          <fieldset class="column">
-            <label>
-              <% if columns.pluck(:id).count != 1 %>
+      <div class="question"><%= @questions.first.question %></div>
+      <% if @questions.first.select_options.present? %>
+        <div class="columns">
+          <% @questions.first.columns.each do |column| %>
+            <fieldset class="column">
+              <label>
                 <%= hidden_field_tag("item[column_ids][#{column.id}]", '') %>
                 <%= check_box_tag("item[column_ids][#{column.id}]", 1, @data[column.id.to_s].present?, {}) %>
-              <% end %>
-              <span><%= column.question %></span>
-            </label>
-          </fieldset>
-        <% end %>
-      </div>
+                <span><%= column.name %></span>
+              </label>
+            </fieldset>
+          <% end %>
+        </div>
+      <% end %>
     </div>
     <footer class="send">
-      <% if columns.pluck(:id).count == 1 %>
+      <% if @questions.first.select_options.present? %>
+        <%= f.submit t("guide.links.next"), name: :submit %>
+      <% else %>
         <%= f.submit t("guide.links.applicable"), name: :submit %>
         <%= f.submit t("guide.links.not_applicable"), name: :submit %>
-      <% else %>
-        <%= f.submit t("guide.links.next"), name: :submit %>
       <% end %>
     </footer>
   </div>

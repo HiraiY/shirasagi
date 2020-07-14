@@ -45,9 +45,9 @@ class Guide::Procedure::ImportJob < Cms::ApplicationJob
     row[model.t(key)].to_s.split(/\n/).map(&:strip)
   end
 
-  def set_column_ids(values)
+  def set_question_ids(values)
     values.collect do |value|
-      column = Guide::Column.find_or_initialize_by(site_id: site.id, question: value)
+      column = Guide::Question.find_or_initialize_by(site_id: site.id, question: value)
       column.name ||= value
       column.save!
       column.id
@@ -64,7 +64,6 @@ class Guide::Procedure::ImportJob < Cms::ApplicationJob
     item.procedure_applicant = value(row, :procedure_applicant)
     item.remarks = value(row, :remarks)
     item.order = value(row, :order)
-    item.applicable_column_ids = set_column_ids(ary_value(row, :applicable_column_ids))
-    item.not_applicable_column_ids = set_column_ids(ary_value(row, :not_applicable_column_ids))
+    item.question_ids = set_question_ids(ary_value(row, :question_ids))
   end
 end

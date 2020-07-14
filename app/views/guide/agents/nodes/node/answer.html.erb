@@ -1,19 +1,35 @@
-<%= form_for :item, url: "#{@cur_node.url}guide.html", html: { method: "POST" } do |f| %>
+<%= form_for :item, url: "#{@cur_node.url}answer.html", html: { method: "POST" } do |f| %>
   <div class="guide-node-form">
     <div class="back-to-index"><%= link_to t('guide.links.back_to_index'), @result_uri.to_s %></div>
     <%= error_messages_for :item, header_message: false %>
+    <% @data.each do |k, v| %>
+      <%= hidden_field_tag("item[column_ids][#{k}]", v) %>
+    <% end %>
     <div class="guide-nodes nodes">
-      <div class="columns">
-        <% @columns.each do |column| %>
-          <fieldset class="column">
+      <% @questions.each do |question| %>
+        <% if question.select_options.present? %>
+          <div class="question"><%= question.question %></div>
+          <div class="columns">
+            <% question.columns.each do |column| %>
+              <fieldset class="column">
+                <label>
+                  <%= hidden_field_tag("item[column_ids][#{column.id}]", '') %>
+                  <%= check_box_tag("item[column_ids][#{column.id}]", 1, @data[column.id.to_s].present?, {}) %>
+                  <span><%= column.name %></span>
+                </label>
+              </fieldset>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="question">
             <label>
-              <%= hidden_field_tag("item[column_ids][#{column.id}]", '') %>
-              <%= check_box_tag("item[column_ids][#{column.id}]", 1, @data[column.id.to_s].present?, {}) %>
-              <span><%= column.question %></span>
+              <%= hidden_field_tag("item[question_ids][#{question.id}]", '') %>
+              <%= check_box_tag("item[question_ids][#{question.id}]", 1, @data[question.columns.where(name: I18n.t('guide.links.applicable')).first.id.to_s].present?, {}) %>
+              <%= question.question %>
             </label>
-          </fieldset>
+          </div>
         <% end %>
-      </div>
+      <% end %>
     </div>
     <footer class="send">
       <%= f.submit t("guide.links.revise_and_resubmit"), name: :submit %>

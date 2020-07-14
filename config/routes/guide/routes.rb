@@ -17,11 +17,11 @@ Rails.application.routes.draw do
   end
 
   namespace "guide", path: ".s:site/guide" do
-    resources :columns, concerns: [:deletion]
+    resources :questions, concerns: [:deletion]
     resources :procedures, concerns: [:deletion, :download, :import]
 
     namespace "apis" do
-      get "columns" => "columns#index"
+      get "questions" => "questions#index"
       get "procedures" => "procedures#index"
     end
   end

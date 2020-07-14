@@ -1,0 +1,21 @@
+<dl class="see">
+  <dt><%= @model.t :question_ids %></dt>
+  <dd>
+    <table class="index">
+      <thead>
+        <tr>
+          <th class="name"><%= @model.t :name %></th>
+          <th class="question"><%= @model.t :question_ids %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @item.questions.each do |question| %>
+          <tr data-id="<%= question.id %>">
+            <td><%= question.name %></td>
+            <td><%= @item.columns.where(question_id: question.id).pluck(:name).join(",") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </dd>
+</dl>

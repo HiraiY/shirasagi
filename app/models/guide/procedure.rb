@@ -5,7 +5,7 @@ class Guide::Procedure
   include Cms::SitePermission
   include SS::TemplateVariable
   include SS::Liquidization
-  include Guide::Addon::Column
+  include Guide::Addon::Question
 
   seqid :id
   field :name, type: String
@@ -71,8 +71,7 @@ class Guide::Procedure
 
     def header
       %w(
-        id name link_url html procedure_location belongings procedure_applicant remarks order applicable_column_ids
-        not_applicable_column_ids
+        id name link_url html procedure_location belongings procedure_applicant remarks order question_ids
       ).map { |e| t e }
     end
 
@@ -89,8 +88,7 @@ class Guide::Procedure
         item.procedure_applicant,
         item.remarks,
         item.order,
-        item.applicable_columns.pluck(:question).join("\n"),
-        item.not_applicable_columns.pluck(:question).join("\n")
+        item.questions.pluck(:question).join("\n")
       ]
     end
   end

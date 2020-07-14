@@ -1,10 +1,10 @@
 ja:
   guide:
-    column: 質問項目
+    question: 質問項目
     procedure: 手続き
     procedures_needed: "%{count}件の手続きが必要です。"
     apis:
-      columns:
+      questions:
         index: 質問項目を選択する
         search: 質問項目を検索
         select: 質問項目を設定する
@@ -30,7 +30,7 @@ ja:
   modules:
     guide: 目的別ガイド
     addons:
-      guide/column: 質問項目
+      guide/question: 質問項目
       guide/procedure: 手続き
       guide/guide_list: リスト表示
 
@@ -42,11 +42,12 @@ ja:
     models:
       guide/column: 質問項目
       guide/procedure: 手続き
+      guide/question: 質問
     attributes:
       guide/column:
         name: タイトル
-        question: 質問
         order: 並び順
+        question_id: 質問
       guide/procedure:
         name: タイトル
         link_url: リンク URL
@@ -56,9 +57,14 @@ ja:
         procedure_applicant: 手続き申請者
         remarks: 備考
         order: 並び順
-      guide/addon/column:
-        applicable_column_ids: 条件(該当)
-        not_applicable_column_ids: 条件(非該当)
+      guide/question:
+        name: タイトル
+        question: 質問
+        select_options: 選択肢
+        order: 並び順
+      guide/addon/question:
+        column_ids: 質問項目
+        question_ids: 質問
       guide/addon/procedure:
         procedure_ids: 手続き
       guide/addon/guide_list:
@@ -73,11 +79,13 @@ ja:
         substitute_html: 結果画面 代替HTML
 
   tooltip:
-    guide/column:
+    guide/question:
       name:
         - タイトルを入力します。
       question:
         - 質問を入力します。
+      select_options:
+        - 選択肢を入力します。
       order:
         - 並び順を入力します。
     guide/procedure:
@@ -97,11 +105,9 @@ ja:
         - 備考を入力します。
       order:
         - 並び順を入力します。
-    guide/addon/column:
-      applicable_column_ids:
+    guide/addon/question:
+      question_ids:
         - 該当する場合に必要な手続きとして表示させる条件を選択します。
-      not_applicable_column_ids:
-        - 該当しない場合に必要な手続きとして表示させる条件を選択します。
     guide/addon/procedure:
       procedure_ids:
         - 手続きを選択します。

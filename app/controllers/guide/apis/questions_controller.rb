@@ -1,7 +1,7 @@
-class Guide::Apis::ColumnsController < ApplicationController
+class Guide::Apis::QuestionsController < ApplicationController
   include Cms::ApiFilter
 
-  model Guide::Column
+  model Guide::Question
 
   def index
     @multi = params[:single].blank?

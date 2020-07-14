@@ -1,14 +1,14 @@
-class Guide::ColumnsController < ApplicationController
+class Guide::QuestionsController < ApplicationController
   include Cms::BaseFilter
   include Cms::CrudFilter
 
-  model Guide::Column
+  model Guide::Question
   navi_view "cms/main/conf_navi"
 
   private
 
   def set_crumbs
-    @crumbs << [t("guide.column"), action: :index]
+    @crumbs << [t("guide.question"), action: :index]
   end
 
   def fix_params

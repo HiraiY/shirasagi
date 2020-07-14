@@ -1,0 +1,90 @@
+<%= jquery do %>
+  var template = $("#addon-guide-agents-addons-question .form-template").html();
+  var labelTemplate = $("#addon-guide-agents-addons-question .label-template").html();
+
+  $('#addon-guide-agents-addons-question a.ajax-box.columns').data('on-select', function ($item) {
+    $.colorbox.close();
+
+    var $data = $item.closest("[data-id]");
+    var formId = $data.data('id');
+    var formColumnNames = String($data.data('column-names')).split(' ');
+    var formColumnIds = String($data.data('column-ids')).split(' ');
+    var formName = $data.data("name") || $data.find(".select-item").text() || $item.text() || $data.text();
+    if (!formId || !formName) {
+      return;
+    }
+
+    var html = template.replace(/:id/g, formId).replace(/:name/, formName);
+
+    var $tbody = $("#addon-guide-agents-addons-question table.ajax-selected tbody");
+    $tbody.prepend(html);
+
+    $.each(formColumnNames, function (index, val) {
+      var label = labelTemplate.replace(/:column_id/g, formColumnIds[index]).replace(/:column_name/g, val);
+      $tbody.find('td.question:first').append(label);
+    });
+  });
+<% end %>
+
+<script type="text/html" class="form-template">
+  <tr data-id="<%= ':id' %>">
+    <td class="name">
+      <%= f.hidden_field "question_ids[]", value: ':id' %>
+      <%= ':name' %>
+    </td>
+    <td class="question"></td>
+    <td><%= link_to t("ss.buttons.delete"), "#", class: "deselect btn" %></td>
+  </tr>
+</script>
+
+<script type="text/html" class="label-template">
+  <label>
+    <%= f.check_box "column_ids[]", {}, ':column_id' %>
+    <%= ':column_name' %>
+  </label>
+</script>
+
+<dl class="see mod-guide-question">
+  <dt><%= @model.t :question_ids %><%= @model.tt :question_ids %></dt>
+  <dd>
+    <%= f.hidden_field "question_ids[]", value: "", class: "hidden-ids" %>
+    <%= f.hidden_field "column_ids[]", value: "", class: "hidden-ids" %>
+    <%
+      page_params = {}
+      if @cur_node
+        page_params[:s] = { node: @cur_node }
+      end
+    %>
+    <%= link_to t("guide.apis.questions.index"), guide_apis_questions_path(page_params), class: "ajax-box columns" %>
+  </dd>
+  <dd>
+    <table class="index ajax-selected">
+      <thead>
+        <tr>
+          <th class="name"><%= @model.t :name %></th>
+          <th class="question"><%= @model.t :question_ids %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @item.questions.each do |question| %>
+          <tr data-id="<%= question.id %>">
+            <td>
+              <%= f.hidden_field "question_ids[]", value: question.id %>
+              <%= question.name %>
+            </td>
+            <td>
+              <% question.columns.each do |column| %>
+                <label>
+                  <%= f.check_box "column_ids[]", {}, column.id %>
+                  <%= column.name %>
+                </label>
+              <% end %>
+            </td>
+            <td><%= link_to t("ss.buttons.delete"), "#", class: "deselect btn" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </dd>
+</dl>
