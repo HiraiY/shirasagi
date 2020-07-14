@@ -1,8 +1,10 @@
 <%= node_navi :inquiry do %>
-  <h3><%= link_to t("inquiry.column"), inquiry_columns_path %></h3>
-  <h3><%= link_to t("inquiry.answer"), inquiry_answers_path %></h3>
-  <% unless !@cur_node.allowed?(:edit, @cur_user, site: @cur_site) && @cur_site.inquiry_form.try(:id) == @cur_node.id %>
-    <h3><%= link_to t("inquiry.result"), inquiry_results_path %></h3>
-    <h3><%= link_to t("inquiry.feedback"), inquiry_feedbacks_path %></h3>
+  <% if Inquiry::Node::Form.site(@cur_site).where(id: @cur_node.id).present? %>
+    <h3><%= link_to t("inquiry.column"), inquiry_columns_path %></h3>
+    <h3><%= link_to t("inquiry.answer"), inquiry_answers_path %></h3>
+    <% if @cur_node.allowed?(:edit, @cur_user, site: @cur_site) %>
+      <h3><%= link_to t("inquiry.result"), inquiry_results_path %></h3>
+      <h3><%= link_to t("inquiry.feedback"), inquiry_feedbacks_path %></h3>
+    <% end %>
   <% end %>
 <% end %>
