@@ -20,6 +20,7 @@ ja:
     confirm_input: "%{name}確認用"
     confirm_input_description: "もう一度、同じ%{name}を入力してください。"
     cannot_use: "（使用不可）"
+    group: グループ
 
     options:
       state:
