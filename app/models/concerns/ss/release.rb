@@ -5,8 +5,9 @@ module SS::Release
   included do
     class_variable_set(:@@_hide_released_field, nil)
 
-    cattr_accessor :default_release_state
+    cattr_accessor :default_release_state, :public_states
     self.default_release_state = "public"
+    self.public_states = %w(public)
 
     field :state, type: String, default: ->{ self.class.default_release_state }, overwrite: true
     field :released, type: DateTime
@@ -24,20 +25,33 @@ module SS::Release
     after_validation :set_released, if: -> { state == "public" }
 
     scope :and_public, ->(date = Time.zone.now) {
-      where(state: "public", "$and" => [
+      where(state: { "$in" => self.public_states }, "$and" => [
         { "$or" => [{ release_date: nil }, { :release_date.lte => date }] },
         { "$or" => [{ close_date: nil }, { :close_date.gt => date }] },
       ])
     }
     scope :and_closed, ->(date = Time.zone.now) {
-      where("$and" => [
-        { "$or" => [{ state: "closed" }, { :release_date.gt => date }, { :close_date.lte => date }] }
-      ])
+      conds = [
+        { state: nil }, { state: { "$nin" => public_states } }, { :release_date.gt => date }, { :close_date.lte => date }
+      ]
+      where("$and" => [{ "$or" => conds }])
     }
   end
 
+  module ClassMethods
+    def released_field_shown?
+      !class_variable_get(:@@_hide_released_field)
+    end
+
+    private
+
+    def hide_released_field
+      class_variable_set(:@@_hide_released_field, true)
+    end
+  end
+
   def closed?(date = Time.zone.now)
-    return true if state != "public"
+    return true if !self.class.public_states.include?(state)
     return true if release_date.present? && release_date > date
     return true if close_date.present? && close_date <= date
 
@@ -72,17 +86,5 @@ module SS::Release
 
   def set_released
     self.released ||= Time.zone.now
-  end
-
-  module ClassMethods
-    def released_field_shown?
-      !class_variable_get(:@@_hide_released_field)
-    end
-
-    private
-
-    def hide_released_field
-      class_variable_set(:@@_hide_released_field, true)
-    end
   end
 end
