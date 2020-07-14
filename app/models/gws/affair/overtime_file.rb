@@ -10,20 +10,18 @@ class Gws::Affair::OvertimeFile
   include Gws::Addon::GroupPermission
   include Gws::Addon::History
   include Gws::Affair::Searchable
+  include SS::Release
 
   # rubocop:disable Style/ClassVars
   @@approver_user_class = Gws::User
   # rubocop:enable Style/ClassVars
+  self.default_release_state = "closed"
 
   seqid :id
-  field :state, type: String, default: 'closed'
   field :name, type: String
 
   belongs_to :capital, class_name: "Gws::Affair::Capital"
 
-  permit_params :state, :name, :capital_id
-
-  validates :state, presence: true
   validates :name, presence: true, length: { maximum: 80 }
   validates :capital_id, presence: true
 
