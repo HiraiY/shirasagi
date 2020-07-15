@@ -29,7 +29,11 @@ module Inquiry::Node
     default_scope ->{ where(route: "inquiry/form") }
 
     def serve_static_file?
-      return false if self.site.inquiry_form == self
+      if self.site.inquiry_form == self
+        file = "#{self.path}/index.html"
+        File.delete(file) if File.exists?(file)
+        return false
+      end
       super
     end
 
