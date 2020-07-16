@@ -735,8 +735,25 @@
     color: #444;
     &:hover { color: $orange; }
   }
+  .approval-check {
+    margin-left: 4px;
+    padding: 1px 5px;
+    color: #fff;
+    background-color: #84e;
+    border-radius: 4px;
+  }
   .add-plan {
-    margin-left: 8px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background-color: #f40;
+    color: #fff;
+    text-decoration: none;
+    &:hover {
+      background-color: #f60;
+      color: #fff;
+    }
+  }
+  .on-loan {
     padding: 1px 5px;
     border-radius: 4px;
     background-color: #f40;

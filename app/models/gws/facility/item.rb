@@ -1,5 +1,6 @@
 class Gws::Facility::Item
   include SS::Document
+  include SS::Relation::File
   include Gws::Referenceable
   include Gws::Reference::User
   include Gws::Reference::Site
@@ -25,13 +26,16 @@ class Gws::Facility::Item
   field :reservation_start_date, type: DateTime
   field :reservation_end_date, type: DateTime
   field :approval_check_state, type: String, default: 'disabled'
+  field :loan_state, type: String, default: 'disabled'
 
   belongs_to :category, class_name: 'Gws::Facility::Category'
+  belongs_to_file2 :image
 
   permit_params :name, :order, :category_id, :activation_date, :expiration_date
   permit_params :min_minutes_limit, :max_minutes_limit, :max_days_limit
   permit_params :reservation_start_date, :reservation_end_date
   permit_params :approval_check_state
+  permit_params :loan_state
 
   validates :name, presence: true
   validates :activation_date, datetime: true
@@ -76,6 +80,26 @@ class Gws::Facility::Item
 
   def approval_check_state_options
     %w(enabled disabled).map { |v| [I18n.t("ss.options.state.#{v}"), v] }
+  end
+
+  def loan_state_options
+    %w(enabled disabled).map { |v| [I18n.t("ss.options.state.#{v}"), v] }
+  end
+
+  def approval_check?
+    approval_check_state == "enabled"
+  end
+
+  def on_loan?
+    return false if loan_state != "enabled"
+
+    time = Time.zone.now
+    Gws::Schedule::Plan.without_deleted.loaned_facility(self).where(
+      '$and' => [
+        { :return_item_at.exists => false },
+        { "start_at" => { "$lte" => time } },
+      ]
+    ).present?
   end
 
   private

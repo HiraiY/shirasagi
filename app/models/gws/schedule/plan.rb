@@ -20,6 +20,7 @@ class Gws::Schedule::Plan
   include Gws::Addon::Schedule::Facility
   include Gws::Addon::Schedule::FacilityColumnValues
   include Gws::Addon::Schedule::Approval
+  include Gws::Addon::Schedule::FacilityLoan
   include Gws::Addon::ReadableSetting
   include Gws::Addon::GroupPermission
   include Gws::Addon::History
@@ -28,6 +29,8 @@ class Gws::Schedule::Plan
   member_include_custom_groups
   permission_include_custom_groups
   readable_setting_include_custom_groups
+
+  class_variable_set(:@@_notify_state_default, 'enabled')
 
   field :color, type: String
 

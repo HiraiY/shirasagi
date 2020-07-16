@@ -11,6 +11,7 @@
   table.reminder-conditions {
     td { padding: 5px 5px 5px 0; }
     .interval { width: 58px; }
+    .interval.today { display: none; }
   }
   #gws-addon-reminder-set {
     margin-top: 5px;

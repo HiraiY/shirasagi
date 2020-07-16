@@ -16,6 +16,18 @@ Rails.application.routes.draw do
     match :request_cancel, on: :member, via: [:get, :post]
   end
 
+  concern :plans do
+    get :events, on: :collection
+    get :print, on: :collection
+    get :popup, on: :member
+    get :copy, on: :member
+    match :soft_delete, on: :member, via: [:get, :post]
+  end
+
+  concern :export do
+    get :download, on: :collection
+  end
+
   gws "affair" do
     get '/' => redirect { |p, req| "#{req.path}/attendance/time_cards/#{Time.zone.now.strftime('%Y%m')}" }, as: :main
 

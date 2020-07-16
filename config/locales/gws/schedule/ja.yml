@@ -117,6 +117,7 @@ ja:
       unable_to_reserve_all_days: 設備の利用時間が制限されているため終日予約することができません。
       faciliy_day_lte: 予約時間は%{count}日以内の値にしてください。
       not_found_reservable_facilities: 予約可能な設備が見つかりません。
+      on_loan_faciliy: 設備を貸出予約している為、この予定を変更できません。
 
     csv:
       id: ID
@@ -208,6 +209,7 @@ ja:
     addons:
       gws/schedule/facility: 設備予約
       gws/schedule/facility_column_values: 設備追加情報
+      gws/schedule/facility_loan: 返却
       gws/schedule/repeat: 繰り返し
       gws/schedule/todo: ToDo
       gws/schedule/comments: コメント
@@ -370,6 +372,8 @@ ja:
         depth_level: 深さ
         in_basename: プロジェクト・工程名
         in_parent_id: 親プロジェクト・工程名
+      gws/addon/schedule/facility_loan:
+        return_item_at: 返却日時
 
   tooltip:
     gws/schedule/planable:

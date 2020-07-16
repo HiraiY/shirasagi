@@ -1,0 +1,8 @@
+<% @s = OpenStruct.new params[:s] %>
+<div class="list-head-search">
+  <%= form_for :s, url: "", html: { class: "index-search", method: :get } do |f| %>
+    <%= f.select :facility_category_id, options_for_select(@facility_categories.to_options(offset: 1), @facility_category.try(:id)), include_blank: t('gws/schedule.tabs.facility') if @facility_categories.present? %>
+    <%= f.text_field :keyword, style: "width: 300px;", placeholder: t("gws/schedule.search_plans") %>
+    <input type="submit" value="<%= t('ss.buttons.search') %>" class="btn" />
+  <% end %>
+</div>

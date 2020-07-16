@@ -4,13 +4,13 @@ class Gws::Facility::ItemsController < ApplicationController
 
   model Gws::Facility::Item
 
-  navi_view "gws/schedule/main/navi"
+  navi_view "gws/facility/main/navi"
   menu_view "gws/facility/main/menu"
 
   private
 
   def set_crumbs
-    @crumbs << [@cur_site.menu_schedule_label || t('modules.gws/schedule'), gws_schedule_main_path]
+    @crumbs << [@cur_site.menu_facility_label || t('modules.gws/facility'), gws_facility_main_path]
     @crumbs << [t('gws/facility.navi.item'), gws_facility_items_path]
   end
 
