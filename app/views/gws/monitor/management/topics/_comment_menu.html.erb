@@ -1,29 +1,57 @@
 <%
-  menu = []
-  if @item.allowed?(:edit, @cur_user, site: @cur_site)
-    if @item.permit_comment? && @item.public?
-      link = new_gws_monitor_management_topic_comment_path(topic_id: @item, parent_id: recursion ? comment : @item)
-      menu << link_to(t('gws/monitor.links.reply'), link, class: 'btn primary')
-    end
+  return if @item.closed?
 
-    link = edit_gws_monitor_management_topic_comment_path(topic_id: @item, parent_id: comment.parent_id, id: comment)
-    menu << link_to(t('ss.links.edit'), link, class: 'btn')
+  manageable_my_comment = comment.user_group_id == @cur_group.id && (@item.allowed?(:read, @cur_user, site: @cur_site) || @item.attend_group_ids.include?(@cur_group.id))
+  links = []
 
-    link = delete_gws_monitor_management_topic_comment_path(topic_id: @item, parent_id: comment.parent_id, id: comment)
-    menu << link_to(t('ss.links.delete'), link, class: 'btn')
+  if manageable_my_comment
+    links << [ t('ss.links.show'), gws_monitor_management_topic_comment_path(topic_id: @item, id: comment), class: 'btn' ]
+  end
 
-    if comment.allowed?(:release, @cur_user, site: @cur_site)
-      if comment.public?
-        link = depublish_gws_monitor_management_topic_comment_path(topic_id: @item.id, parent_id: comment.parent_id, id: comment.id)
-        menu << link_to(t('gws/monitor.links.depublish'), link, class: "btn")
-      else
-        link = publish_gws_monitor_management_topic_comment_path(topic_id: @item.id, parent_id: comment.parent_id, id: comment.id)
-        menu << link_to(t('gws/monitor.links.publish'), link, class: "btn")
+  if @item.permit_comment? && comment.public? && comment.user_group_id != @cur_group.id && (comment.answer_post? || comment.not_applicable_post?)
+    link = reply_gws_monitor_management_topic_comment_path(topic_id: @item, id: comment)
+    links << [ t('gws/monitor.links.reply'), link, class: 'btn' ]
+  end
+
+  if manageable_my_comment
+    if comment.public?
+      if comment.allowed?(:release, @cur_user, site: @cur_site)
+        link = depublish_gws_monitor_management_topic_comment_path(topic_id: @item, id: comment)
+        links << [ t('gws/monitor.links.depublish'), link, class: "btn" ]
+      end
+    else
+      if comment.allowed?(:release, @cur_user, site: @cur_site)
+        link = publish_gws_monitor_management_topic_comment_path(topic_id: @item, id: comment)
+        links << [ t('gws/monitor.links.publish'), link, class: "btn primary" ]
+      end
+
+      if comment.allowed?(:edit, @cur_user, site: @cur_site)
+        link = edit_gws_monitor_management_topic_comment_path(topic_id: @item, id: comment)
+        links << [ t('ss.links.edit'), link, class: 'btn' ]
+      end
+
+      if comment.allowed?(:delete, @cur_user, site: @cur_site)
+        link = delete_gws_monitor_management_topic_comment_path(topic_id: @item, id: comment)
+        links << [ t('ss.links.delete'), link, class: 'btn' ]
+      end
+
+      if comment.try(:workflow_member).blank? && !comment.workflow_requested?
+        links[0][0] = t('gws/monitor.links.approval_application')
+        links[0][2] = { class: "btn primary" }
+      end
+
+      if comment.find_workflow_request_to(@cur_user)
+        links[0][0] = t('gws/monitor.links.approve')
+        links[0][2] = { class: "btn primary" }
       end
     end
   end
+
+  return if links.blank?
 %>
 
-<% if menu.present? %>
-  <div class="menu"><%= safe_join(menu) %></div>
-<% end %>
+<div class="menu">
+  <% links.each do |label, link, options| %>
+    <%= link_to(label, link, options) %>
+  <% end %>
+</div>

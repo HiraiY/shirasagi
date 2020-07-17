@@ -22,6 +22,7 @@ class Gws::Monitor::TopicsController < ApplicationController
   def set_search_params
     super
     @s.answer_state_filter ||= "unanswered"
+    @s.approve_state_filter ||= params[:approve_state_filter] if params[:approve_state_filter].present?
   end
 
   def set_items

@@ -15,35 +15,16 @@ class Gws::Memo::Notifier
       opts = opts.dup
 
       url = opts.delete(:url)
-      comment = opts.delete(:comment)
-      cur_site = opts[:cur_site]
-      cur_user = opts[:cur_user]
+      opts.delete(:comment)
       item = opts[:item]
-      from = item.try(:workflow_user) || cur_user
-      agent = item.try(:workflow_agent)
+      class_name = item.class.name
 
-      title = I18n.t("gws_notification.gws/workflow/file.request", name: item.name)
-
-      text = []
-      text << "#{from.name}さん#{agent ? "（代理: #{agent.name}さん）" : ""}より次の記事について承認依頼が届きました。"
-      text << "承認作業を行ってください。"
-      text << ""
-      text << "- タイトル"
-      text << "  #{item.name}"
-      text << ""
-      text << "- 申請者"
-      text << "  #{from.name}"
-      if agent
-        text << "  （代理: #{agent.name}）"
+      if class_name.include?("Gws::Monitor")
+        title = nil
+        opts[:action] = "workflow_request"
+      else
+        title = I18n.t("gws_notification.gws/workflow/file.request", name: item.name)
       end
-      text << ""
-      if comment.present?
-        text << "- 申請者コメント"
-        text << "  #{comment}"
-        text << ""
-      end
-      text << "- URL"
-      text << "  #{url}"
 
       opts[:item_title] = title
       opts[:item_text] = url
@@ -57,28 +38,16 @@ class Gws::Memo::Notifier
       opts = opts.dup
 
       url = opts.delete(:url)
-      comment = opts.delete(:comment)
-      cur_site = opts[:cur_site]
+      opts.delete(:comment)
       item = opts[:item]
-      from = item.try(:workflow_user)
-      agent = item.try(:workflow_agent)
+      class_name = item.class.name
 
-      title = I18n.t("gws_notification.gws/workflow/file.approve", name: item.name)
-
-      text = []
-      text << "次の申請が承認されました。"
-      text << ""
-      text << "- タイトル"
-      text << "  #{item.name}"
-      text << ""
-      text << "- 申請者"
-      text << "  #{from.name}"
-      if agent
-        text << "  （代理: #{agent.name}）"
+      if class_name.include?("Gws::Monitor")
+        title = nil
+        opts[:action] = "workflow_approve"
+      else
+        title = I18n.t("gws_notification.gws/workflow/file.approve", name: item.name)
       end
-      text << ""
-      text << "- URL"
-      text << "  #{url}"
 
       opts[:item_title] = title
       opts[:item_text] = url
@@ -91,35 +60,16 @@ class Gws::Memo::Notifier
       opts = opts.dup
 
       url = opts.delete(:url)
-      comment = opts.delete(:comment)
-      cur_site = opts[:cur_site]
-      cur_user = opts[:cur_user]
+      opts.delete(:comment)
       item = opts[:item]
-      from = item.try(:workflow_user)
-      agent = item.try(:workflow_agent)
+      class_name = item.class.name
 
-      title = I18n.t("gws_notification.gws/workflow/file.remand", name: item.name)
-
-      text = []
-      text << "#{cur_user.name}さんより次の申請について承認依頼が差し戻されました。"
-      text << "適宜修正を行い、再度承認依頼を行ってください。"
-      text << ""
-      text << "- タイトル"
-      text << "  #{item.name}"
-      text << ""
-      text << "- 申請者"
-      text << "  #{from.name}"
-      if agent
-        text << "  （代理: #{agent.name}）"
+      if class_name.include?("Gws::Monitor")
+        title = nil
+        opts[:action] = "workflow_remand"
+      else
+        title = I18n.t("gws_notification.gws/workflow/file.remand", name: item.name)
       end
-      text << ""
-      if comment.present?
-        text << "- 差し戻しコメント"
-        text << "  #{comment}"
-        text << ""
-      end
-      text << "- URL"
-      text << "  #{url}"
 
       opts[:item_title] = title
       opts[:item_text] = url
@@ -136,29 +86,16 @@ class Gws::Memo::Notifier
       opts = opts.dup
 
       url = opts.delete(:url)
-      comment = opts.delete(:comment)
-      cur_site = opts[:cur_site]
+      opts.delete(:comment)
       item = opts[:item]
-      from = item.try(:workflow_user)
-      agent = item.try(:workflow_agent)
+      class_name = item.class.name
 
-      title = I18n.t("gws_notification.gws/workflow/file.circular", name: item.name)
-
-      text = []
-      text << "次の申請が承認されました。"
-      text << "申請内容を確認してください。"
-      text << ""
-      text << "- タイトル"
-      text << "  #{item.name}"
-      text << ""
-      text << "- 申請者"
-      text << "  #{from.name}"
-      if agent
-        text << "  （代理: #{agent.name}）"
+      if class_name.include?("Gws::Monitor")
+        title = nil
+        opts[:action] = "workflow_circular"
+      else
+        title = I18n.t("gws_notification.gws/workflow/file.circular", name: item.name)
       end
-      text << ""
-      text << "- URL"
-      text << "  #{url}"
 
       opts[:item_title] = title
       opts[:item_text] = url
@@ -172,32 +109,16 @@ class Gws::Memo::Notifier
       opts = opts.dup
 
       url = opts.delete(:url)
-      comment = opts.delete(:comment)
-      cur_site = opts[:cur_site]
+      opts.delete(:comment)
       item = opts[:item]
-      from = item.try(:workflow_user)
-      agent = item.try(:workflow_agent)
+      class_name = item.class.name
 
-      title = I18n.t("gws_notification.gws/workflow/file.comment", name: item.name)
-
-      text = []
-      text << "次の申請にコメントがありました。"
-      text << "コメントの内容を確認してください。"
-      text << ""
-      text << "- タイトル"
-      text << "  #{item.name}"
-      text << ""
-      text << "- 申請者"
-      text << "  #{from.name}"
-      if agent
-        text << "  （代理: #{agent.name}）"
+      if class_name.include?("Gws::Monitor")
+        title = nil
+        opts[:action] = "workflow_comment"
+      else
+        title = I18n.t("gws_notification.gws/workflow/file.comment", name: item.name)
       end
-      text << ""
-      text << "- コメント"
-      text << "  #{comment}"
-      text << ""
-      text << "- URL"
-      text << "  #{url}"
 
       opts[:item_title] = title
       opts[:item_text] = url
@@ -281,16 +202,19 @@ class Gws::Memo::Notifier
           id: todo.id, site: cur_site.id, mode: "-", forum_id: todo.discussion_forum)
       else
         url = url_helper.gws_schedule_todo_readable_path(
-          id: todo.id, site: cur_site.id, category: Gws::Schedule::TodoCategory::ALL.id)
+          site: cur_site.id, category: Gws::Schedule::TodoCategory::ALL.id, id: todo.id)
       end
     elsif class_name.include?("Gws::Schedule")
-      url = url_helper.gws_schedule_plan_path(id: id_for_url(item), site: cur_site.id)
+      url = url_helper.gws_schedule_plan_path(site: cur_site.id, id: id_for_url(item))
     elsif class_name.include?("Gws::Monitor")
-      return unless item.state == "public"
-
-      id = id_for_url(item)
-      url = url_helper.gws_monitor_topic_path(id: id, site: cur_site.id, category: '-')
-      deliver_monitor(id)
+      if %w(workflow_request workflow_approve workflow_remand workflow_circular workflow_comment).include?(action)
+        topic_id = id_for_url(item)
+        url = url_helper.gws_monitor_topic_comment_path(site: cur_site.id, category: '-', topic_id: topic_id, id: item.id)
+      elsif item.public?
+        id = id_for_url(item)
+        url = url_helper.gws_monitor_topic_path(site: cur_site.id, category: '-', id: id)
+        deliver_monitor(id)
+      end
     else
       url = ''
     end

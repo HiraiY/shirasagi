@@ -1,5 +1,5 @@
 <% render_group = proc do |group, shows_content_if_could| %>
-  <% post = @item.children.where(user_group_id: group.id).last %>
+  <% post = @item.descendants.where(user_group_id: group.id).reorder(updated: -1).first %>
   <tr>
     <td class="state"><%= @item.answer_state_name(group) %></td>
     <td class="mark_at"><%= post && post.public? ? post.try(:created).strftime('%Y/%m/%d %H:%M') : '' %></td>

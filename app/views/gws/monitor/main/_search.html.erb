@@ -2,10 +2,14 @@
 <div class="list-head-search">
   <%= form_for :s, url: "", html: { class: "index-search", method: :get } do |f| %>
     <% if !params[:controller].include?("management") %>
-      <%= f.select :answer_state_filter, @model.answer_state_filter_options %>
-      <%= f.select :sort, @model.sort_options %>
+      <%= f.select :sort, @model.sort_options, {}, { class: "ss-submit-on-change", style: "margin-right: 15px;" } %>
+      <%= f.select :answer_state_filter, @model.answer_state_filter_options, {}, { class: "ss-submit-on-change" } %>
     <% end %>
     <%= f.text_field :keyword, style: "width: 200px;" %>
     <input type="submit" value="<%= t('ss.buttons.search') %>" class="btn" />
   <% end %>
 </div>
+
+<%= jquery do %>
+  SS.renderSubmitOnChange(".list-head-search");
+<% end %>

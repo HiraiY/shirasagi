@@ -96,6 +96,7 @@ ja:
         draft: 下書き
         public: 配信済み
         closed: 締め切り
+        approve: 承認済み
       answer_state:
         preparation: 受取待ち
         public: 受取済み
@@ -106,6 +107,9 @@ ja:
         unanswered: 要回答
         answered: 回答済み
         all: すべて
+      approve_state_filter:
+        approve: 承認依頼されたもの
+        request: 承認申請したもの
       monitor_delete_threshold:
         '1.day': 1日
         '1.month': 1ヶ月
@@ -116,6 +120,9 @@ ja:
         '15.months': 15ヶ月
         '18.months': 18ヶ月
         '24.months': 24ヶ月
+      in_answer_required:
+        required: 必要
+        not_required: 不要
     links:
       back_to_thread: 戻る
       draft_comment: 回答の作成
@@ -124,6 +131,8 @@ ja:
       public: 受取済みにする
       preparation: 受取待ちに戻す
       question_not_applicable: 該当なしにする
+      question_not_applicable_draft: 該当なしにする（下書き保存）
+      question_not_applicable_publish: 該当なしにする（配信）
       answered: 回答済みにする
       closed: 締め切る
       open: 再配信
@@ -132,6 +141,8 @@ ja:
       forward: 転送する
       publish: 配信する
       depublish: 配信を取り消す
+      approval_application: 承認申請する
+      approve: 承認する
     confirm:
       public: 受取済みにしますか？
       preparation: 受取待ちに戻しますか？
@@ -172,6 +183,7 @@ ja:
       gws/monitor/group: 参加グループ
       gws/monitor/release: 公開設定
       gws/monitor/group_setting: 照会・回答
+      gws/monitor/approver: 承認
 
   gws_role:
     use_gws_monitor: 照会・回答の利用
@@ -193,6 +205,12 @@ ja:
     delete_private_gws_monitor_posts: 回答の削除（所有）
     release_other_gws_monitor_posts: 回答の配信（全て）
     release_private_gws_monitor_posts: 回答の配信（所有）
+    approve_other_gws_monitor_posts: 回答の承認（全て）
+    approve_private_gws_monitor_posts: 回答の承認（所有）
+    reroute_other_gws_monitor_posts: 回答の経路変更（全て）
+    reroute_private_gws_monitor_posts: 回答の経路変更（所有）
+    delegate_all_gws_monitor_posts: 回答の代理承認（全て）
+    delegate_private_gws_monitor_posts: 回答の代理承認（自所属）
 
     read_other_gws_monitor_categories: カテゴリーの閲覧（全て）
     read_private_gws_monitor_categories: カテゴリーの閲覧（所有）
@@ -225,6 +243,21 @@ ja:
     gws/monitor/post/destroy:
       subject: "[照会・回答] 「%{name}」の投稿が削除されました。"
       text: "%{text}"
+
+    gws/monitor/post/workflow_request:
+      subject: "[照会・回答] 「%{name}」の承認申請が届きました。"
+
+    gws/monitor/post/workflow_approve:
+      subject: "[照会・回答] 「%{name}」の最終承認が完了しました。"
+
+    gws/monitor/post/workflow_remand:
+      subject: "[照会・回答] 「%{name}」の承認申請が差し戻されました。"
+
+    gws/monitor/post/workflow_circular:
+      subject: "[照会・回答] 「%{name}」の回覧が届きました。"
+
+    gws/monitor/post/workflow_comment:
+      subject: "[照会・回答] 「%{name}」の承認申請にコメントがありました。"
 
   mongoid:
     models:
@@ -276,6 +309,7 @@ ja:
         answer_state_hash: 回覧状況
       gws/monitor/post:
         name: 回答部課名
+        in_answer_required: 返信への回答
       gws/monitor/category:
         name: カテゴリー名
       gws/addon/monitor/category:
@@ -336,6 +370,13 @@ ja:
           - <b>下書き</b> - 配信状態になります。
           - <b>配信済み</b> - 回答可能かつ配信状態になります。
           - <b>締め切り</b> - 設問を締め切り状態にします。
+
+      gws/monitor/post:
+        in_answer_required:
+          - 「必要」を選択すると、回答者の回答状態を「受取済み」へ差し戻します。「受取済み」へ差し戻されると、
+          - 1) ポータルの先頭に回答要求が掲載されるようになります。
+          - 2) 照会一覧画面の要回答の照会として表示されるようになります。
+
   job:
     models:
       gws/monitor/trash_purge_job: 照会・回答/投稿ゴミ箱の掃除

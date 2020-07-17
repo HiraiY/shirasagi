@@ -63,7 +63,10 @@
   </div>
 
   <footer class="send">
-    <%= f.submit t("gws/monitor.links.question_not_applicable"), class: 'btn-primary question_not_applicable' %>
+    <%= f.submit t("gws/monitor.links.question_not_applicable_draft"), name: "draft", class: 'btn-primary question_not_applicable' %>
+    <% if @item.allowed?(:release, @cur_user, site: @cur_site) %>
+      <%= f.submit t("gws/monitor.links.question_not_applicable_publish"), name: "publish", class: 'btn-primary answer' %>
+    <% end %>
     <%= f.button t("ss.buttons.cancel"), class: 'btn-default', type: :reset, onclick: "location.href='#{url_for(action: :index)}'; return false;" %>
   </footer>
 <% end %>

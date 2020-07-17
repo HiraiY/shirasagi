@@ -1,9 +1,13 @@
 <% if comment.showable_comment?(@cur_user, @cur_group) %>
-  <aside class="comment" id="post-<%= comment.id %>">
+  <aside class="addon-view comment <%= "body-closed" if recursion %>" id="post-<%= comment.id %>">
     <header class="<%= 'toggle-head' if recursion %>">
       <h2><%= comment.name %></h2>
       <% if comment.user_group_id == @cur_group.id %>
-        <span><%= comment.label(:state) || t("ss.state.draft") %></span>
+        <% if comment.workflow_requested? && comment.workflow_state.present? %>
+          <span><%= t("workflow.state.#{comment.workflow_state}") %></span>
+        <% else %>
+          <span><%= comment.label(:state) || t("ss.state.draft") %></span>
+        <% end %>
       <% end %>
       <nav class="meta">
         <span class="user"><%= comment.contributor_name.presence || comment.user_long_name %></span>
@@ -11,7 +15,7 @@
       </nav>
     </header>
 
-    <div class="toggle-body <%= 'hide' if recursion %>">
+    <div class="toggle-body" <% if recursion %>style="display: none;"<% end %>>
       <div class="body markdown-body"><%= comment.html %></div>
 
       <% if comment.files.present? %>

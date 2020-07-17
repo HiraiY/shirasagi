@@ -1,0 +1,9 @@
+<dl class="see">
+  <dt><%= @model.t :name %></dt>
+  <dd><%= @item.name %></dd>
+
+  <% if @item.reply_post? && @item.parent.answer_post? %>
+    <dt><%= @model.t :in_answer_required %><%= @model.tt :in_answer_required %></dt>
+    <dd><%= f.select :in_answer_required, @item.in_answer_required_options %></dd>
+  <% end %>
+</dl>

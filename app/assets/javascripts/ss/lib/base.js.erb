@@ -631,6 +631,13 @@ this.SS = (function () {
     }
   };
 
+  SS.renderSubmitOnChange = function(el) {
+    $(el).on("change", ".ss-submit-on-change", function() {
+      var $this = $(this);
+      $this.closest("form").trigger("submit");
+    });
+  };
+
   return SS;
 
 })();

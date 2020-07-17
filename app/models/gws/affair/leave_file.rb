@@ -10,9 +10,7 @@ class Gws::Affair::LeaveFile
   include Gws::Affair::Searchable
   include SS::Release
 
-  # rubocop:disable Style/ClassVars
-  @@approver_user_class = Gws::User
-  # rubocop:enable Style/ClassVars
+  self.approver_user_class = Gws::User
   self.default_release_state = "closed"
 
   seqid :id

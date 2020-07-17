@@ -38,30 +38,10 @@ describe "gws_monitor_management_topics", type: :feature, dbscope: :example do
     )
   end
 
-  context "with auth" do
+  context "when file attached post is given" do
     before { login_gws_user }
 
-    it "#index" do
-      topic1
-      visit gws_monitor_management_topics_path(site)
-      expect(page).to have_content(topic1.name)
-      expect(page).to have_content('回答状況(1/2)')
-    end
-
-    it "#edit" do
-      topic1.state = "closed"
-      topic1.save!
-
-      visit edit_gws_monitor_management_topic_path(site, topic1)
-      expect(page).to have_content('基本情報')
-    end
-
-    it "#show" do
-      visit gws_monitor_management_topic_path(site, topic1)
-      expect(page).to have_content(topic1.name)
-    end
-
-    it "#file_download" do
+    it do
       post1
 
       visit gws_monitor_management_topic_path(site, topic1)
@@ -82,8 +62,12 @@ describe "gws_monitor_management_topics", type: :feature, dbscope: :example do
         expect(entry_names).to match_array(download_filenames)
       end
     end
+  end
 
-    it "#file_download when file not stored " do
+  context "when no files attached post is given" do
+    before { login_gws_user }
+
+    it do
       topic2
 
       visit gws_monitor_management_topics_path(site, topic2)

@@ -39,12 +39,10 @@ module Gws::Monitor::TopicFilter
     set_category
 
     @s ||= OpenStruct.new(params[:s])
-    if @category
-      @s.site ||= @cur_site
-      @s.category ||= @category.name
-    end
+    @s.site ||= @cur_site
     @s.group ||= @cur_group
     @s.user ||= @cur_user
+    @s.category ||= @category.name if @category
   end
 
   def fix_params
@@ -120,16 +118,6 @@ module Gws::Monitor::TopicFilter
     raise '403' unless @item.attended?(@cur_group)
 
     @item.answer_state_hash.update(@cur_group.id.to_s => "preparation")
-    @item.save
-    render_update @item.update
-  end
-
-  # 該当なしにする
-  def question_not_applicable
-    @item.attributes = fix_params
-    raise '403' unless @item.attended?(@cur_group)
-
-    @item.answer_state_hash.update(@cur_group.id.to_s => "question_not_applicable")
     @item.save
     render_update @item.update
   end
@@ -251,38 +239,4 @@ module Gws::Monitor::TopicFilter
     end
     render_destroy_all(@items.blank?, notice: t("gws/monitor.notice.preparation"))
   end
-
-  # すべてを該当なしにする
-  def question_not_applicable_all
-    entries = @items.entries
-    @items = []
-
-    entries.each do |item|
-      if item.attended?(@cur_group)
-        item.answer_state_hash.update(@cur_group.id.to_s => "question_not_applicable")
-        next if item.save
-      else
-        item.errors.add :base, :auth_error
-      end
-      @items << item
-    end
-
-    render_destroy_all(@items.blank?, notice: t("gws/monitor.notice.question_not_applicable"))
-  end
-
-  # # すべての削除を取り消す
-  # def undo_delete_all
-  #   entries = @items.entries
-  #   @items = []
-  #
-  #   entries.each do |item|
-  #     if item.allowed?(:delete, @cur_user, site: @cur_site)
-  #       next if item.active
-  #     else
-  #       item.errors.add :base, :auth_error
-  #     end
-  #     @items << item
-  #   end
-  #   render_destroy_all(@items.blank?, notice: t("gws/monitor.notice.active"))
-  # end
 end

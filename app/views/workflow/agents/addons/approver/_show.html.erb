@@ -1,9 +1,9 @@
 <%
   @allowed_delegation ||= proc do |user|
-    break true if @cur_user.gws_role_permit_any?(@cur_site, :delegate_all_gws_workflow_files)
+    next true if @cur_user.gws_role_permit_any?(@cur_site, :delegate_all_gws_workflow_files)
 
-    break false unless @cur_user.gws_role_permit_any?(@cur_site, :delegate_private_gws_workflow_files)
-    break false unless user
+    next false unless @cur_user.gws_role_permit_any?(@cur_site, :delegate_private_gws_workflow_files)
+    next false unless user
     (@cur_user.groups.in_group(@cur_site).pluck(:id) & user.groups.in_group(@cur_site).pluck(:id)).present?
   end
 
@@ -19,8 +19,8 @@
 <% end %>
 
 <div class="mod-workflow">
-  <% if @item.state == "closed" %>
-    <% if @item.allowed?(:approve, @cur_user, site: @cur_site) && @item.workflow_state == "request" %>
+  <% if @item.state != "public" %>
+    <% if @item.allowed?(:approve, @cur_user, site: @cur_site) && @item.workflow_state == Workflow::Approver::WORKFLOW_STATE_REQUEST %>
       <% workflow_approver = @item.find_workflow_request_to(@cur_user) %>
       <% if workflow_approver %>
         <section class="mod-workflow-approve">
@@ -70,7 +70,7 @@
     <% end %>
   <% end %>
 
-  <% if @ss_mode == :gws && @item.workflow_state == @model::WORKFLOW_STATE_APPROVE %>
+  <% if @ss_mode == :gws && @item.workflow_state == Workflow::Approver::WORKFLOW_STATE_APPROVE %>
     <% @item.workflow_circulations.each_with_index do |workflow_circulation, index| %>
       <% user_id = workflow_circulation[:user_id] %>
       <% state = workflow_circulation[:state] %>
@@ -157,7 +157,7 @@
             <% delegatee_id = workflow_approver[:delegatee_id] %>
             <%
               if delegatee_id.present?
-                delegatee = @item.approver_user_class.site(@cur_site).active.find(delegatee_id) rescue nil
+                delegatee = @item.class.approver_user_class.site(@cur_site).active.find(delegatee_id) rescue nil
               end
             %>
             <tr>
@@ -197,7 +197,7 @@
               </td>
               <td>
                 <%= t("workflow.state.#{state}") %>
-                <% if @ss_mode == :gws && state == 'request' && @item.allowed?(:approve, @cur_user) && @allowed_delegation.call(user) %>
+                <% if @ss_mode == :gws && state == 'request' && user.id != @cur_user.id && @item.allowed?(:approve, @cur_user, site: @cur_site) && @allowed_delegation.call(user) %>
                   <%= link_to('#', class: 'workflow-approve-by-delegatee', data: { level: level, user_id: user_id }) do %>
                     <%= t("workflow.links.approve_by_delegatee") %>
                   <% end %>

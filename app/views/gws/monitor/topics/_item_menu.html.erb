@@ -5,6 +5,11 @@
 
 <% answer_state = @item.answer_state_hash[@cur_group.id.to_s] %>
 <div class="menu">
+  <% if @model.allowed?(:edit, @cur_user, site: @cur_site) %>
+    <%# 転送に関する権限は存在しないので、新規作成可能なら転送可能とみなす %>
+    <%= link_to(t('gws/monitor.links.forward'), { action: :forward, id: @item }, { class: %w(btn) }) %>
+  <% end %>
+
   <% if answer_state == 'preparation' %>
     <%= button_tag(t('gws/monitor.links.public'), type: 'button', class: %w(public btn), data: { ss_action: url_for(action: :public), ss_confirm: t('gws/monitor.confirm.public') }) %>
   <% end %>
@@ -14,9 +19,9 @@
   <% end %>
 
   <% if %w(public answered question_not_applicable).include?(answer_state) %>
-    <%= link_to(t('gws/monitor.links.draft_comment'), new_gws_monitor_topic_comment_path(topic_id: @item.id, parent_id: @item.id), class: %w(btn primary)) %>
+    <%= link_to(t('gws/monitor.links.draft_comment'), new_gws_monitor_topic_comment_path(topic_id: @item), class: %w(btn primary)) %>
     <% if @item.descendants.where(user_group_id: @cur_group.id).blank? %>
-      <%= link_to(t('gws/monitor.links.question_not_applicable'), not_applicable_gws_monitor_topic_comments_path(topic_id: @item.id, parent_id: @item.id), class: %w(btn primary), style: "margin-left: 0;") %>
+      <%= link_to(t('gws/monitor.links.question_not_applicable'), not_applicable_gws_monitor_topic_comments_path(topic_id: @item), class: %w(btn primary), style: "margin-left: 0;") %>
     <% end %>
   <% end %>
 </div>

@@ -1,5 +1,6 @@
 module Workflow::Approver
   extend ActiveSupport::Concern
+  extend SS::Translation
 
   attr_accessor :workflow_reset, :workflow_cancel_request
 
@@ -17,7 +18,8 @@ module Workflow::Approver
   WORKFLOW_STATE_COMPLETES = [ WORKFLOW_STATE_APPROVE, WORKFLOW_STATE_OTHER_APPROVED, WORKFLOW_STATE_OTHER_PULLED_UP ].freeze
 
   included do
-    cattr_reader(:approver_user_class) { Cms::User }
+    cattr_accessor :approver_user_class, instance_accessor: false
+    self.approver_user_class = Cms::User
 
     field :workflow_user_id, type: Integer
     field :workflow_agent_id, type: Integer
@@ -331,9 +333,9 @@ module Workflow::Approver
   def workflow_circulation_users_at(level)
     circulations = workflow_circulations_at(level)
     user_ids = circulations.map { |h| h[:user_id] }.compact.uniq
-    return approver_user_class.none if user_ids.blank?
+    return self.class.approver_user_class.none if user_ids.blank?
 
-    approver_user_class.site(@cur_site || self.site).in(id: user_ids)
+    self.class.approver_user_class.site(@cur_site || self.site).in(id: user_ids)
   end
 
   def workflow_current_circulation_users

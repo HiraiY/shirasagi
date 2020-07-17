@@ -86,9 +86,15 @@ ja:
       set_seen: 既読にしてもよろしいですか？
       unset_seen: 未読にしてもよろしいですか？
     notice:
+      request_sent: 申請しました。
+      request_approved: 承認しました。
+      request_remanded: 差し戻しました。
+      request_pulled_up: 引き上げ承認しました。
+      request_restarted: 再申請しました。
       request_cancelled: 申請を取り消しました。
       approver_file_droppable: ファイル追加ボタンをクリックするか、ここにファイルをドロップしてください。
       created_branch_page: 差し替えページを作成しました。
+      set_seen: 確認済みにしました。
     csv:
       approvers_or_circulations: 承認者・回覧者
     agent_name: "（代理: %{long_name}）"
@@ -114,15 +120,19 @@ ja:
     models:
       workflow/route: 承認経路
     attributes:
-      workflow/addon/approver:
+      workflow/approver:
         workflow_user_id: 申請者
+        workflow_agent_id: 申請代理者
         workflow_state: 承認状態
         workflow_comment: 申請コメント
         workflow_pull_up: 引き上げ承認
         workflow_on_remand: 差し戻し時
         workflow_approvers: 承認者
         workflow_required_counts: 必要承認数
+        workflow_approver_attachment_uses: 承認者添付利用
+        workflow_current_circulation_level: 回覧レベル
         workflow_circulations: 回覧者
+        workflow_circulation_attachment_uses: 回覧者添付利用
         approved: 承認日時
         comment: 差し戻しコメント
         approver_comment: 承認者コメント
@@ -166,7 +176,7 @@ ja:
       branch_is_already_existed: 差し替えページが作成されています。
 
   tooltip:
-    workflow/addon/approver:
+    workflow/approver:
       workflow_comment:
         - 申請理由など承認者に対するコメントをを記述してください。
       workflow_approvers:

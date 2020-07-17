@@ -12,4 +12,3 @@ class Gws::Elasticsearch::Indexer::MonitorTopicJob < Gws::ApplicationJob
     end
   end
 end
-

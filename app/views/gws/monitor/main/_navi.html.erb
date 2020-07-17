@@ -1,6 +1,8 @@
 <nav class="mod-navi current-navi">
   <h2><%= link_to @cur_site.menu_monitor_label || t('modules.gws/monitor'), gws_monitor_main_path, class: 'icon-monitor' %></h2>
   <h3><%= link_to t('gws/monitor.tabs.topic'), gws_monitor_topics_path, class: 'topic' %></h3>
+  <h3><%= link_to t("gws/monitor.options.approve_state_filter.approve"), gws_monitor_topics_path(approve_state_filter: "approve"), class: 'topic' %></h3>
+  <h3><%= link_to t("gws/monitor.options.approve_state_filter.request"), gws_monitor_topics_path(approve_state_filter: "request"), class: 'topic' %></h3>
 
   <% if Gws::Monitor::Topic.allowed?(:read, @cur_user, site: @cur_site) %>
     <h3><%= link_to t('gws/monitor.tabs.management_topic'), gws_monitor_management_topics_path, class: "management" %></h3>

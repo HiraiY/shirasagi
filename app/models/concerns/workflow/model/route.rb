@@ -9,7 +9,8 @@ module Workflow::Model::Route
   included do
     store_in collection: "workflow_routes"
 
-    cattr_reader(:approver_user_class) { Cms::User }
+    cattr_accessor :approver_user_class, instance_accessor: false
+    self.approver_user_class = Cms::User
 
     seqid :id
     field :name, type: String

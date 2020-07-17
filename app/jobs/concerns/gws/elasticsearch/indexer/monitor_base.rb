@@ -14,14 +14,14 @@ module Gws::Elasticsearch::Indexer::MonitorBase
       doc = {}
       doc[:url] = path(site: cur_site, id: topic, anchor: "post-#{post.id}")
       doc[:name] = post.name
-      doc[:mode] = post.try(:mode)
+      doc[:mode] = topic.try(:mode)
       doc[:text] = post.text
       doc[:categories] = topic.categories.pluck(:name)
 
-      doc[:release_date] = topic.release_date.try(:iso8601) if topic.respond_to?(:release_date)
-      doc[:close_date] = topic.close_date.try(:iso8601) if topic.respond_to?(:close_date)
-      doc[:released] = topic.released.try(:iso8601) if topic.respond_to?(:released)
-      doc[:state] = post.try(:state) || 'public'
+      doc[:release_date] = post.release_date.try(:iso8601) if post.respond_to?(:release_date)
+      doc[:close_date] = post.close_date.try(:iso8601) if post.respond_to?(:close_date)
+      doc[:released] = post.released.try(:iso8601) if post.respond_to?(:released)
+      doc[:state] = post.public? ? 'public' : 'closed'
 
       doc[:user_name] = post.contributor_name.presence if topic.respond_to?(:contributor_name)
       doc[:user_name] ||= post.user_long_name
@@ -54,10 +54,10 @@ module Gws::Elasticsearch::Indexer::MonitorBase
       doc[:file][:extname] = file.extname.upcase
       doc[:file][:size] = file.size
 
-      doc[:release_date] = topic.release_date.try(:iso8601) if topic.respond_to?(:release_date)
-      doc[:close_date] = topic.close_date.try(:iso8601) if topic.respond_to?(:close_date)
-      doc[:released] = topic.released.try(:iso8601) if topic.respond_to?(:released)
-      doc[:state] = post.try(:state) || 'public'
+      doc[:release_date] = post.release_date.try(:iso8601) if post.respond_to?(:release_date)
+      doc[:close_date] = post.close_date.try(:iso8601) if post.respond_to?(:close_date)
+      doc[:released] = post.released.try(:iso8601) if post.respond_to?(:released)
+      doc[:state] = post.public? ? 'public' : 'closed'
 
       doc[:group_ids] = post.groups.pluck(:id)
       doc[:custom_group_ids] = post.custom_groups.pluck(:id)

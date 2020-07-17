@@ -17,10 +17,9 @@
   <% if @crud_buttons %>
     <% @crud_buttons.call f %>
   <% else %>
-    <% if @item.topic.id == @item.parent.id %>
-      <%= f.submit t("ss.buttons.draft_save"), class: 'btn-primary answer' %>
-    <% else %>
-      <%= f.submit t("ss.buttons.save"), class: 'btn-primary save' %>
+    <%= f.submit t("ss.buttons.draft_save"), name: "draft", class: 'btn-primary answer' %>
+    <% if @item.allowed?(:release, @cur_user, site: @cur_site) %>
+      <%= f.submit t("gws/monitor.buttons.publish"), name: "publish", class: 'btn-primary answer' %>
     <% end %>
     <%= f.button t("ss.buttons.cancel"), class: 'btn-default', type: :reset, onclick: "location.href='#{url_for(action: :index)}'; return false;" %>
   <% end %>

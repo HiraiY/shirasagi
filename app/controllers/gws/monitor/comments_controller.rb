@@ -8,7 +8,7 @@ class Gws::Monitor::CommentsController < ApplicationController
 
   def set_crumbs
     set_category
-    set_topic_and_parent
+    set_topic
 
     @crumbs << [@cur_site.menu_monitor_label || t("modules.gws/monitor"), gws_monitor_main_path]
     @crumbs << [t('gws/monitor.tabs.topic'), gws_monitor_topics_path(category: '-')]

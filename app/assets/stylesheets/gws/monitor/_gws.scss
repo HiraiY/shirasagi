@@ -11,3 +11,53 @@
     vertical-align: -3px;
   }
 }
+
+.gws-monitor-draft-post-topic#addon-basic {
+  .addon-head {
+    h2 {
+      @include display-flex;
+      @include align-items(center);
+
+      .categories {
+        margin-right: auto;
+        float: none;
+        font-size: 13px;
+      }
+
+      .meta {
+        margin: 0;
+        float: none;
+        font-size: 1rem;
+
+        .datetime {
+          font-weight: normal;
+        }
+      }
+    }
+  }
+
+  .files {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f2f2f2;
+
+    .heading {
+      margin-bottom: 8px;
+      padding-left: 8px;
+      border-left: 3px solid #2d3e92;
+      color: #333;
+      font-weight: bold;
+    }
+
+    span {
+      a {
+        padding-left: 0;
+
+        &[class^="icon-"] {
+          background: none;
+        }
+      }
+    }
+  }
+}

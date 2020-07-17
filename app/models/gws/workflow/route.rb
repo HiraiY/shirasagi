@@ -6,7 +6,7 @@ class Gws::Workflow::Route
   include Gws::GroupPermission
   include Gws::Addon::History
 
-  cattr_reader(:approver_user_class) { Gws::User }
+  self.approver_user_class = Gws::User
 
   attr_accessor :cur_site, :cur_user
 

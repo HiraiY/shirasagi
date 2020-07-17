@@ -31,10 +31,10 @@ module Gws::Monitor::Postable
     has_many :descendants, class_name: "Gws::Monitor::Post", dependent: :destroy, inverse_of: :topic,
       order: { created: -1 }
 
-    permit_params :name, :mode, :permit_comment, :severity, :due_date,
-                  :spec_config
+    permit_params :name, :mode, :permit_comment, :severity, :due_date, :spec_config
+    permit_params :parent_id
 
-    before_validation :set_topic_id, if: :comment?
+    before_validation :set_topic_id, if: ->{ comment? && topic_id.blank? }
 
     validates :name, presence: true, length: { maximum: 80 }
     validates :mode, inclusion: {in: %w(thread tree)}, unless: :comment?
@@ -52,7 +52,13 @@ module Gws::Monitor::Postable
 
   module ClassMethods
     def search(params)
-      all.search_keyword(params).search_category(params).search_question_state(params).search_answer_state_filter(params)
+      methods = %i[search_keyword search_category search_question_state search_answer_state_filter search_approve_state_filter]
+
+      criteria = all
+      methods.each do |method|
+        criteria = criteria.send(method, params)
+      end
+      criteria
     end
 
     def search_keyword(params)
@@ -84,6 +90,27 @@ module Gws::Monitor::Postable
         all
       end
     end
+
+    def search_approve_state_filter(params)
+      return all if params.blank? || params[:approve_state_filter].blank?
+      return all if params[:approve_state_filter] == "-"
+
+      base_criteria = Gws::Monitor::Post.site(params[:site]).exists(topic_id: true).where(user_group_id: params[:group].id)
+
+      case params[:approve_state_filter].to_s
+      when "approve"
+        criteria = base_criteria.where(
+          workflow_state: 'request',
+          workflow_approvers: { '$elemMatch' => { 'user_id' => params[:user].id, 'state' => 'request' } }
+        )
+      when "request"
+        criteria = base_criteria.where(workflow_user_id: params[:user].id)
+      else
+        criteria = Gws::Monitor::Post.none
+      end
+
+      all.in(id: criteria.pluck(:topic_id))
+    end
   end
 
   # Returns the topic.
@@ -105,16 +132,25 @@ module Gws::Monitor::Postable
   end
 
   def showable_comment?(cur_user, cur_group)
+    # 自部署の回答は閲覧できる。
+    return true if user_group_id == cur_group.id
+
+    # 自部署の回答への返信は閲覧できる。
+    return true if reply_post? && closest_answer.try(:user_group_id) == cur_group.id
+
+    topic = self.topic
+    return false if topic.blank?
+
     # 管理権限があれば、閲覧できる。
-    return true if topic.allowed?(:read, cur_user) && topic.owned?(cur_user)
+    topic.cur_site = topic.site
+    return true if topic.allowed?(:read, cur_user, site: topic.site) && topic.owned?(cur_user)
 
     # 設定で「他者の回答内容を閲覧可能」となっているの場合、他者の回答が「公開」であれば閲覧できる。
     if topic.spec_config == 'other_groups_and_contents'
       return true if self.public?
     end
 
-    # 自分の回答は、閲覧できる。
-    user_group_id == cur_group.id
+    false
   end
 
   def mode_options
@@ -169,6 +205,10 @@ module Gws::Monitor::Postable
     end
   end
 
+  def closest_answer
+    @closest_answer ||= _closest_answer
+  end
+
   private
 
   # topic(root_post)を設定
@@ -195,6 +235,17 @@ module Gws::Monitor::Postable
     return unless topic
 
     topic.set descendants_updated: updated
+  end
+
+  def _closest_answer
+    post = parent
+    while post.present? && post.topic_id.present?
+      return post if post.answer_post? || post.not_applicable_post?
+
+      post = post.parent
+    end
+
+    nil
   end
 
   module ClassMethods

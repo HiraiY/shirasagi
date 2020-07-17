@@ -14,7 +14,7 @@ class Gws::Workflow::File
   include Gws::Addon::History
   include SS::Release
 
-  cattr_reader(:approver_user_class) { Gws::User }
+  self.approver_user_class = Gws::User
   self.default_release_state = "closed"
 
   seqid :id

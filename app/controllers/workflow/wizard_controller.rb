@@ -62,7 +62,7 @@ class Workflow::WizardController < ApplicationController
       workflow_approver[:user_id]
     end
 
-    criteria = @item.approver_user_class.site(@cur_site)
+    criteria = @item.class.approver_user_class.site(@cur_site)
     criteria = criteria.search(params[:s])
     criteria = criteria.nin(id: same_level_user_ids + [ @item.workflow_user_id ])
     criteria = criteria.order_by(filename: 1)
