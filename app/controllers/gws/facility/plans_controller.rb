@@ -13,6 +13,17 @@ class Gws::Facility::PlansController < ApplicationController
 
   private
 
+  def set_item
+    @item ||= begin
+      item = @model.find(params[:id])
+      item.attributes = fix_params
+      item
+    end
+  rescue Mongoid::Errors::DocumentNotFound => e
+    return render_destroy(true) if params[:action] == 'destroy'
+    raise e
+  end
+
   def set_crumbs
     @crumbs << [@cur_site.menu_facility_label || t('modules.gws/facility'), gws_facility_main_path]
     @crumbs << [t('modules.addons.gws/schedule/facility'), gws_facility_schedule_path]
@@ -33,6 +44,8 @@ class Gws::Facility::PlansController < ApplicationController
       where(user_ids: @cur_user.id).
       active
     @manage_facilities = @manage_facilities.in(category_id: category_ids)
+
+    @approval_facilities = @facilities.where(approval_check_state: "enabled")
   end
 
   def set_items
@@ -47,8 +60,8 @@ class Gws::Facility::PlansController < ApplicationController
       @items = @items.where(approval_state: "request")
       @items = @items.in(facility_ids: @manage_facilities.map(&:id))
     elsif params[:state] == "request"
-      @items = @items.where(approval_state: "request")
       @items = @items.or([{ user_id: @cur_user.id }, { "member_ids" => { "$in" => [@cur_user.id] }}])
+      @items = @items.in(facility_ids: @approval_facilities.map(&:id))
     elsif params[:state] == "loan"
       @items = @items.on_loan.or([{ approval_state: "approve" }, { :approval_state.exists => false }])
     end
