@@ -20,6 +20,8 @@ class Gws::Affair::OvertimeFile
 
   belongs_to :capital, class_name: "Gws::Affair::Capital"
 
+  permit_params :capital_id
+
   validates :name, presence: true, length: { maximum: 80 }
   validates :capital_id, presence: true
 
