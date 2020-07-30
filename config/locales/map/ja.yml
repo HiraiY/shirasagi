@@ -20,6 +20,8 @@ ja:
     confirm:
       delete_marker: マーカーを削除してよろしいですか？
       find_exif: 画像に位置情報が含まれています。位置情報を地図に設定しますか？
+    hide: 非表示
+    show: 表示
 
   modules:
     map: 地図
@@ -34,7 +36,9 @@ ja:
         marker_name: マーカー名
         marker_text: 説明
         marker_loc: 座標
+        marker_number: 番号
         marker_link: リンク
+        map_link: Googleマップのリンク
 
   tooltip:
     map/addon/page:
@@ -55,3 +59,6 @@ ja:
         -
         - "マーカー名、説明にはマーカーの吹き出しテキストを入力します。"
         - "「マーカーを追加する」を選択することで複数のマーカーを設定することが可能です。"
+      map_link:
+        - マーカーの番号順に経路が表示されるGoogleマップのリンクを表示します。
+        - マーカーに番号がない場合は、そのマーカーは経路に含まれません。
