@@ -136,13 +136,22 @@ this.Openlayers_Map = (function () {
     })(this));
   };
 
-  Openlayers_Map.prototype.createMarkerStyle = function (iconSrc) {
+  Openlayers_Map.prototype.createMarkerStyle = function (iconSrc, number) {
     return new ol.style.Style({
       image: new ol.style.Icon({
         anchor: [0.5, 1],
         anchorXUnits: 'fraction',
         anchorYUnits: 'fraction',
         src: iconSrc
+      }),
+      text: new ol.style.Text({
+        fill: new ol.style.Fill({color: "#333"}),
+        stroke: new ol.style.Stroke({color: "#333", width: 1}),
+        scale: 1.6,
+        textAlign: "center",
+        textBaseline: "center",
+        offsetY: -15,
+        text: number,
       })
     });
   };
@@ -223,7 +232,7 @@ this.Openlayers_Map = (function () {
   };
 
   Openlayers_Map.prototype.renderMarkers = function (markers) {
-    var feature, iconSrc, id, marker, markerHtml, name, pos, ref, ref1, ref2, results, style, text;
+    var feature, iconSrc, id, marker, markerHtml, name, pos, ref, ref1, ref2, results, style, text, number, loc, url;
     results = [];
     for (id in markers) {
       marker = markers[id];
@@ -231,21 +240,27 @@ this.Openlayers_Map = (function () {
       if (marker['image']) {
         iconSrc = marker['image'];
       }
-      style = this.createMarkerStyle(iconSrc);
+      number = marker['number'];
+      style = this.createMarkerStyle(iconSrc, number);
       markerHtml = "";
       name = marker['name'];
       text = marker['text'];
+      loc = marker['loc'];
+      url = "https://www.google.co.jp/maps/search/" + loc
       if (name) {
         markerHtml += '<p>' + name + '</p>';
       }
       if (text) {
         $.each(text.split(/[\r\n]+/), function () {
           if (this.match(/^https?:\/\//)) {
-            return markerHtml += '<p><a href="' + this + '">' + this + '</a></p>';
+            markerHtml += '<p><a href="' + this + '">' + this + '</a></p>';
           } else {
-            return markerHtml += '<p>' + this + '</p>';
+            markerHtml += '<p>' + this + '</p>';
           }
         });
+      }
+      if (loc) {
+        markerHtml += '<p><a href="' + url + '">' + "<%= I18n.t('map.map_url') %>" + '</a></p>';
       }
       pos = [marker['loc'][1], marker['loc'][0]];
       feature = new ol.Feature({

@@ -132,13 +132,14 @@ this.Openlayers_Map_Form = (function () {
   Openlayers_Map_Form.prototype.renderMarkers = function () {
     return $(".mod-map dd.marker").each((function (_this) {
       return function (i, e) {
-        var loc;
+        var loc, num;
+        num = $(e).find(".marker-number").val();
         $(e).attr("data-id", _this.dataID);
         if ($(e).find(".marker-loc").val() !== "") {
           loc = _this.getMapLoc($(e).find(".marker-loc"));
           _this.setMarker(loc, {
             id: parseInt(_this.dataID)
-          });
+          }, num);
         }
         //Map_Form.attachMessage(Map_Form.dataID)
         return _this.dataID += 1;
@@ -155,20 +156,25 @@ this.Openlayers_Map_Form = (function () {
     }
     markerHtml = "";
     $('dd[data-id = "' + markerId + '"]').each(function () {
-      var name, text;
+      var name, text, loc, url;
       name = $(this).find(".marker-name").val();
       text = $(this).find(".marker-text").val();
+      loc = $(this).find(".marker-loc").val();
+      url = "https://www.google.co.jp/maps/search/" + loc
       if (name) {
         markerHtml += '<p>' + name + '</p>';
       }
       if (text) {
-        return $.each(text.split(/[\r\n]+/), function () {
+        $.each(text.split(/[\r\n]+/), function () {
           if (this.match(/^https?:\/\//)) {
-            return markerHtml += '<p><a href="' + this + '">' + this + '</a></p>';
+            markerHtml += '<p><a href="' + this + '">' + this + '</a></p>';
           } else {
-            return markerHtml += '<p>' + this + '</p>';
+            markerHtml += '<p>' + this + '</p>';
           }
         });
+      }
+      if (loc) {
+        return markerHtml += '<p><a href="' + url + '">' + "<%= I18n.t('map.map_url') %>" + '</a></p>';
       }
     });
     if (!markerHtml) {
@@ -182,8 +188,8 @@ this.Openlayers_Map_Form = (function () {
     return this.popupOverlay.setPosition(e.coordinate);
   };
 
-  Openlayers_Map_Form.prototype.setMarker = function (loc, opts) {
-    var feature, pos, ref, ref1, ref2, src, style;
+  Openlayers_Map_Form.prototype.setMarker = function (loc, opts, num) {
+    var feature, pos, ref, ref1, ref2, src, style, number;
     if (opts == null) {
       opts = {};
     }
@@ -191,12 +197,22 @@ this.Openlayers_Map_Form = (function () {
     if (opts['image']) {
       src = opts['image'];
     }
+    number = num
     style = new ol.style.Style({
       image: new ol.style.Icon({
         anchor: [0.5, 1],
         anchorXUnits: 'fraction',
         anchorYUnits: 'fraction',
         src: src
+      }),
+      text: new ol.style.Text({
+        fill: new ol.style.Fill({color: "#333"}),
+        stroke: new ol.style.Stroke({color: "#333", width: 1}),
+        scale: 1.6,
+        textAlign: "center",
+        textBaseline: "center",
+        offsetY: -15,
+        text: number,
       })
     });
     pos = [loc[1], loc[0]];
@@ -385,7 +401,7 @@ this.Openlayers_Map_Form = (function () {
   };
 
   Openlayers_Map_Form.prototype.createMarker = function (ele) {
-    var dataId, loc;
+    var dataId, loc, num;
     loc = null;
     if ($(".mod-map .clicked").val() !== "") {
       loc = $(".mod-map .clicked").val();
@@ -403,9 +419,10 @@ this.Openlayers_Map_Form = (function () {
     ele.find(".marker-loc-input").val(loc);
     dataId = parseInt(ele.attr("data-id"));
     this.removeMarker(dataId);
+    num = ele.find(".marker-number").val();
     return this.setMarker(this.getMapLoc(ele.find(".marker-loc")), {
       id: dataId
-    });
+    }, num);
   };
 
   Openlayers_Map_Form.prototype.clearPointForm = function (ele) {
