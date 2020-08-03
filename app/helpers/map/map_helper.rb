@@ -144,6 +144,8 @@ module Map::MapHelper
 
     center = opts[:center] || SS.config.map.map_center
     markers = opts[:markers]
+    opts[:number] = "disabled"
+    number = opts[:number]
 
     s = []
     case default_map_api(opts)
@@ -155,6 +157,7 @@ module Map::MapHelper
       s << '  center:' + center.reverse.to_json + ',' if center.present?
       s << '  markers: ' + markers.to_json + ',' if markers.present?
       s << '  layers: ' + SS.config.map.layers.to_json + ','
+      s << '  number: ' + number.to_json + ',' if number.present?
       s << '};'
       s << 'Openlayers_Facility_Search.render("' + selector + '", opts);'
     when 'open_street_map'
