@@ -22,6 +22,9 @@
     <% if @item.map_points.blank? %>
       <dd class="marker">
         <p>
+          <%= number_field_tag "item[map_points][][number]", nil, min: 1, class: "marker-number", placeholder: @item.t(:marker_number) %>
+        </p>
+        <p>
           <%= text_field_tag "item[map_points][][loc_]", nil, class: "marker-loc-input loc", placeholder: @item.t(:marker_loc) %>
         </p>
         <p>
@@ -39,6 +42,9 @@
     <% end %>
     <% @item.map_points.each do |point| %>
       <dd class="marker">
+        <p>
+          <%= number_field_tag "item[map_points][][number]", point[:number], min: 1, class: "marker-number", placeholder: @item.t(:marker_number) %>
+        </p>
         <p>
           <%= text_field_tag "item[map_points][][loc_]", point[:loc].join(","), class: "marker-loc-input loc", placeholder: @item.t(:marker_loc) %>
         </p>
@@ -58,6 +64,10 @@
     <dd>
       <%= link_to t("map.buttons.add_marker"), "#", class: "add-marker" %>
     </dd>
+  </dl>
+  <dl class="see mod-cms-opendata-license">
+    <dt><%= @model.t :map_link %><%= @model.tt :map_link %></dt>
+    <dd><%= select_tag "item[map_link]", options_for_select(@item.map_link_options, @item.map_link) %></dd>
   </dl>
 </div>
 
