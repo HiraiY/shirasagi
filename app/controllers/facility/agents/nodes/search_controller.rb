@@ -38,7 +38,6 @@ class Facility::Agents::Nodes::SearchController < ApplicationController
       category_ids, image_ids = item.categories.pluck(:id, :image_id).transpose
       image_id = image_ids.try(:first)
       image_url = SS::File.where(id: image_id).first.try(:url) if image_id.present?
-      marker_info = view_context.render_facility_info(item)
       maps = Facility::Map.site(@cur_site).
         and_public.
         where(filename: /\A#{::Regexp.escape(item.filename)}\//, depth: item.depth + 1).
@@ -47,9 +46,10 @@ class Facility::Agents::Nodes::SearchController < ApplicationController
       maps.each do |map|
         map.map_points.each do |point|
           point[:id] = item.id
-          point[:html] = marker_info
+          point[:html] = view_context.render_facility_info(item, point[:loc])
           point[:category] = category_ids
           point[:image] = image_url if image_url.present?
+          point[:number] = ""
           @markers.push point
         end
       end

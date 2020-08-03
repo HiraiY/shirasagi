@@ -239,10 +239,12 @@ module Map::MapHelper
   end
 
   def map_point_info(event, map_point)
+    url = "https://www.google.co.jp/maps/search/" + map_point[:loc].join(',')
     h = []
     h << %(<div class="maker-info">)
     h << %(<p class="name">#{map_point[:name]}</p>)
-    h << %(<p class="name">#{map_point[:text]}</p>)
+    h << %(<p class="text">#{map_point[:text]}</p>)
+    h << %(<p class="map-url"><a href="#{url}">#{I18n.t('map.googlemap_url')}</a></p>)
     h << %(</div>)
     h << %(<div class="event-info">イベント情報(1#{t("event.count")}))
     h << %(<div class="event-list">)
@@ -267,8 +269,10 @@ module Map::MapHelper
     end
   end
 
-  def render_facility_info(item)
+  def render_facility_info(item, map_point)
     h = render_marker_info(item)
+    url = "https://www.google.co.jp/maps/search/" + map_point.join(',')
+    h << %(<p class="map-url"><a href="#{url}">#{I18n.t('map.googlemap_url')}</a></p>)
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id).order(event_dates: "ASC")
     if events.present?
       event_count = 0
@@ -311,8 +315,10 @@ module Map::MapHelper
     map_point_info(event, map_point)
   end
 
-  def monthly_facility_info(item, dates)
+  def monthly_facility_info(item, dates, map_point)
     h = render_marker_info(item)
+    url = "https://www.google.co.jp/maps/search/" + map_point.join(',')
+    h << %(<p class="map-url"><a href="#{url}">#{I18n.t('map.googlemap_url')}</a></p>)
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id)
     if events.present?
       events = events.where(:event_dates.in => dates).
@@ -342,10 +348,12 @@ module Map::MapHelper
 
   def render_event_info(item, map_point)
     h = []
+    url = "https://www.google.co.jp/maps/search/" + map_point[:loc].join(',')
     if map_point[:name].present? || map_point[:text].present?
       h << %(<div class="maker-info">)
       h << %(<p class="name">#{map_point[:name]}</p>)
-      h << %(<p class="name">#{map_point[:text]}</p>)
+      h << %(<p class="text">#{map_point[:text]}</p>)
+      h << %(<p class="map-url"><a href="#{url}">#{I18n.t('map.googlemap_url')}</a></p>)
       h << %(</div>)
     end
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id).order(event_dates: "ASC")
