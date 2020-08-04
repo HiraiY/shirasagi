@@ -48,9 +48,11 @@ this.Map_Form = (function () {
         Googlemaps_Map.openedInfo.close();
       }
       $('dd[data-id = "' + id + '"]').each(function () {
-        var marker_html, name, text;
+        var marker_html, name, text, loc, url;
         name = $(this).find(".marker-name").val();
         text = $(this).find(".marker-text").val();
+        loc = $(this).find(".marker-loc-input").val();
+        url = "https://www.google.co.jp/maps/search/" + loc;
         if (name !== "" || text !== "") {
           marker_html = '<div class="marker-info">';
           if (name !== "") {
@@ -59,11 +61,14 @@ this.Map_Form = (function () {
           if (text !== "") {
             $.each(text.split(/[\r\n]+/), function () {
               if (this.match(/^https?:\/\//)) {
-                return marker_html += '<p><a href="' + this + '">' + this + '</a></p>';
+                marker_html += '<p><a href="' + this + '">' + this + '</a></p>';
               } else {
-                return marker_html += '<p>' + this + '</p>';
+                marker_html += '<p>' + this + '</p>';
               }
             });
+          }
+          if (loc) {
+            marker_html += '<p><a href="' + url + '">' + "<%= I18n.t('map.googlemap_url') %>" + '</a></p>';
           }
           Googlemaps_Map.openedInfo = new google.maps.InfoWindow({
             content: marker_html,
@@ -202,7 +207,7 @@ this.Map_Form = (function () {
   };
 
   Map_Form.createMarker = function (ele) {
-    var dataId, loc;
+    var dataId, loc, num;
     loc = null;
     if ($(".mod-map .clicked").val() !== "") {
       loc = $(".mod-map .clicked").val();
@@ -222,9 +227,16 @@ this.Map_Form = (function () {
     if (Googlemaps_Map.markers[dataId]) {
       Googlemaps_Map.markers[dataId].setMap(null);
     }
+    num = ele.find(".marker-number").val()
     Googlemaps_Map.markers[dataId] = new google.maps.Marker({
       position: Map_Form.getMapLoc(ele.find(".marker-loc")),
-      map: Googlemaps_Map.map
+      map: Googlemaps_Map.map,
+      label: {
+        text: num,
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: '16px'
+      }
     });
     Map_Form.attachMessage(dataId);
     if (Map_Form.clickMarker) {
@@ -234,7 +246,7 @@ this.Map_Form = (function () {
   };
 
   Map_Form.renderMarkers = function () {
-    var i, len, markerBounds;
+    var i, len, markerBounds, num;
     markerBounds = new google.maps.LatLngBounds();
     if (Googlemaps_Map.markers) {
       var ref = Googlemaps_Map.markers;
@@ -249,9 +261,16 @@ this.Map_Form = (function () {
       $(this).attr("data-id", Map_Form.dataID);
       if ($(this).find(".marker-loc").val() !== "") {
         var loc = Map_Form.getMapLoc($(this).find(".marker-loc"));
+        num = $(this).find(".marker-number").val()
         Googlemaps_Map.markers[Map_Form.dataID] = new google.maps.Marker({
           position: loc,
-          map: Googlemaps_Map.map
+          map: Googlemaps_Map.map,
+          label: {
+            text: num,
+            color: '#ffffff',
+            fontWeight: 'bold',
+            fontSize: '16px'
+          }
         });
         Map_Form.attachMessage(Map_Form.dataID);
         markerBounds.extend(loc);
