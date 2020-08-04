@@ -201,7 +201,11 @@ class Workflow::PagesController < ApplicationController
 
     if @item.workflow_state == @model::WORKFLOW_STATE_APPROVE
       # finished workflow
-      url = merged ? @item.private_show_path : params[:url].to_s
+      if merged || params[:url].blank?
+        url = @item.private_show_path
+      else
+        url = params[:url].to_s
+      end
       Workflow::Mailer.send_approve_mails(
         f_uid: @cur_user._id, t_uids: [ @item.workflow_user_id ],
         site: @cur_site, page: @item,
