@@ -104,16 +104,31 @@ this.Googlemaps_Map = (function () {
     markerBounds = new google.maps.LatLngBounds();
     $.each(Googlemaps_Map.markers, function (id, value) {
       var marker_html, name, text;
+      if (value["number"] == "") {
+        value["number"] = null;
+      }
       if (value["image"]) {
         Googlemaps_Map.markers[id]["marker"] = new google.maps.Marker({
           position: new google.maps.LatLng(value["loc"][0], value["loc"][1]),
           icon: value["image"],
-          map: Googlemaps_Map.map
+          map: Googlemaps_Map.map,
+          label: {
+            text: value["number"],
+            color: '#ffffff',
+            fontWeight: 'bold',
+            fontSize: '16px'
+          }
         });
       } else {
         Googlemaps_Map.markers[id]["marker"] = new google.maps.Marker({
           position: new google.maps.LatLng(value["loc"][0], value["loc"][1]),
-          map: Googlemaps_Map.map
+          map: Googlemaps_Map.map,
+          label: {
+            text: value["number"],
+            color: '#ffffff',
+            fontWeight: 'bold',
+            fontSize: '16px'
+          }
         });
       }
       markerBounds.extend(new google.maps.LatLng(value["loc"][0], value["loc"][1]));
@@ -126,6 +141,7 @@ this.Googlemaps_Map = (function () {
       } else if (value["name"] || value["text"]) {
         name = value["name"];
         text = value["text"];
+        var url = "https://www.google.co.jp/maps/search/" + value["loc"];
         marker_html = '<div class="marker-info">';
         if (name && name !== "") {
           marker_html += '<p>' + name + '</p>';
@@ -138,6 +154,9 @@ this.Googlemaps_Map = (function () {
               }
             });
           }
+        }
+        if (url) {
+          marker_html += '<p><a href="' + url + '">' + "<%= I18n.t('map.googlemap_url') %>" + '</a></p>';
         }
         marker_html += '</div>';
         Googlemaps_Map.markers[id]["window"] = new google.maps.InfoWindow({
