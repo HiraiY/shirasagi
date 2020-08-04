@@ -1,6 +1,7 @@
 ja:
   guide:
-    question: 質問項目
+    guide: 目的別ガイド
+    question: 質問
     procedure: 手続き
     procedures_needed: "%{count}件の手続きが必要です。"
     apis:
@@ -23,20 +24,30 @@ ja:
       start_guide: ガイドを開始する
 
   cms_role:
-    read_guide_procedures: 目的別ガイドの閲覧
-    edit_guide_procedures: 目的別ガイドの編集
-    delete_guide_procedures: 目的別ガイドの削除
+    read_other_guide_procedures: 目的別ガイドの閲覧(全て)
+    read_private_guide_procedures: 目的別ガイドの閲覧(所有)
+    edit_other_guide_procedures: 目的別ガイドの編集(全て)
+    edit_private_guide_procedures: 目的別ガイドの編集(所有)
+    delete_other_guide_procedures: 目的別ガイドの削除(全て)
+    delete_private_guide_procedures: 目的別ガイドの削除(所有)
+    import_other_guide_procedures: 目的別ガイドのインポート(全て)
+    import_private_guide_procedures: 目的別ガイドのインポート(所有)
 
   modules:
     guide: 目的別ガイド
     addons:
-      guide/question: 質問項目
+      guide/question: 質問
       guide/procedure: 手続き
+      guide/genre: ジャンル
       guide/guide_list: リスト表示
 
   cms:
     nodes:
-      guide/node: 目的別ガイド
+      guide/node: 目的別ガイドリスト
+      guide/genre: ジャンル
+      guide/guide: 目的別ガイド
+    parts:
+      guide/node: 目的別ガイドリスト
 
   mongoid:
     models:
@@ -45,6 +56,7 @@ ja:
       guide/question: 質問
     attributes:
       guide/column:
+        select_options_id: 選択肢識別子
         name: タイトル
         order: 並び順
         question_id: 質問
@@ -62,6 +74,8 @@ ja:
         question: 質問
         select_options: 選択肢
         order: 並び順
+      guide/addon/genre:
+        genre_ids: ジャンル
       guide/addon/question:
         column_ids: 質問項目
         question_ids: 質問
@@ -85,7 +99,11 @@ ja:
       question:
         - 質問を入力します。
       select_options:
-        - 選択肢を入力します。
+        - |-
+          選択肢を入力します。
+          「ID,質問項目」のように入力することで、
+          IDという識別子を持つ
+          質問項目という選択肢が使用できます。
       order:
         - 並び順を入力します。
     guide/procedure:

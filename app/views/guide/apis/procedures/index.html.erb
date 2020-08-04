@@ -7,8 +7,15 @@
       <dt><%= @model.t :name %></dt>
       <dd>
         <%= f.text_field :keyword, value: params[:s].try(:[], :keyword) %>
-        <%= f.submit  t("ss.buttons.search"), class: :btn %>
       </dd>
+
+      <dt><%= @model.t :genre_ids %></dt>
+      <dd>
+        <%= f.select :genre_id, options_from_collection_for_select(Guide::Node::Genre.site(@cur_site).order_by(order: 1, name: 1), :id, :name, params.dig(:s, :genre_id)), include_blank: true %>
+      </dd>
+
+      <dt></dt>
+      <dd><%= f.submit  t("ss.buttons.search"), class: :btn %></dd>
     </dl>
   <% end %>
 </div>

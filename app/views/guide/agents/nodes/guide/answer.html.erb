@@ -24,7 +24,7 @@
           <div class="question">
             <label>
               <%= hidden_field_tag("item[question_ids][#{question.id}]", '') %>
-              <%= check_box_tag("item[question_ids][#{question.id}]", 1, @data[question.columns.where(name: I18n.t('guide.links.applicable')).first.id.to_s].present?, {}) %>
+              <%= check_box_tag("item[question_ids][#{question.id}]", 1, @data[question.columns.where(select_options_id: I18n.t('guide.links.applicable')).first.id.to_s].present?, {}) %>
               <%= question.question %>
             </label>
           </div>

@@ -17,9 +17,6 @@ Rails.application.routes.draw do
   end
 
   namespace "guide", path: ".s:site/guide" do
-    resources :questions, concerns: [:deletion]
-    resources :procedures, concerns: [:deletion, :download, :import]
-
     namespace "apis" do
       get "questions" => "questions#index"
       get "procedures" => "procedures#index"
@@ -29,12 +26,22 @@ Rails.application.routes.draw do
   content "guide" do
     get "/" => redirect { |p, req| "#{req.path}/nodes" }, as: :main
     resources :nodes, concerns: :deletion
+    resources :genres, concerns: :deletion
+    resources :guides, concerns: :deletion
+    resources :questions, concerns: :deletion
+    resources :procedures, concerns: [:deletion, :download, :import]
   end
 
   node "guide" do
     get "node(index.:format)" => "public#index", cell: "nodes/node"
-    match "node/guide(.:format)" => "public#guide", via: [:get, :post], cell: "nodes/node"
-    match "node/result(.:format)" => "public#result", via: [:get, :post], cell: "nodes/node"
-    match "node/answer(.:format)" => "public#answer", via: [:get, :post], cell: "nodes/node"
+    get "genre(index.:format)" => "public#index", cell: "nodes/genre"
+    get "guide(index.:format)" => "public#index", cell: "nodes/guide"
+    match "guide/guide(.:format)" => "public#guide", via: [:get, :post], cell: "nodes/guide"
+    match "guide/result(.:format)" => "public#result", via: [:get, :post], cell: "nodes/guide"
+    match "guide/answer(.:format)" => "public#answer", via: [:get, :post], cell: "nodes/guide"
+  end
+
+  part "guide" do
+    get "node(index.:format)" => "public#index", cell: "parts/node"
   end
 end

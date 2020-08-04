@@ -35,9 +35,6 @@
   <% if Cms::BodyLayout.allowed?(:read, @cur_user, site: @cur_site) %>
     <h3><%= link_to t("cms.body_layout"), cms_body_layouts_path %></h3>
   <% end %>
-  <% if Guide::Procedure.allowed?(:read, @cur_user, site: @cur_site) %>
-    <h3><%= link_to t("modules.guide"), guide_procedures_path %></h3>
-  <% end %>
   <% if Cms::PageSearch.allowed?(:read, @cur_user, site: @cur_site) %>
     <h3><%= link_to t("cms.page_search"), cms_page_searches_path %></h3>
   <% end %>

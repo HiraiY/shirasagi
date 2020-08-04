@@ -3,7 +3,7 @@ class Guide::ProceduresController < ApplicationController
   include Cms::CrudFilter
 
   model Guide::Procedure
-  navi_view "cms/main/conf_navi"
+  navi_view "cms/node/main/navi"
 
   private
 
@@ -18,7 +18,8 @@ class Guide::ProceduresController < ApplicationController
   public
 
   def download
-    csv = @model.to_csv(@cur_site).encode("SJIS", invalid: :replace, undef: :replace)
+    csv = @model.allow(:read, @cur_user, site: @cur_site, node: @cur_node).
+        to_csv(@cur_site).encode("SJIS", invalid: :replace, undef: :replace)
     filename = @model.to_s.tableize.gsub(/\//, "_")
     send_data csv, filename: "#{filename}_#{Time.zone.now.to_i}.csv"
   end

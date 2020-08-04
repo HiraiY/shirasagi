@@ -2,10 +2,11 @@ class Guide::Procedure
   extend SS::Translation
   include SS::Document
   include SS::Reference::Site
-  include Cms::SitePermission
+  include Guide::Addon::Question
+  include Guide::Addon::Genre
+  include Cms::Addon::GroupPermission
   include SS::TemplateVariable
   include SS::Liquidization
-  include Guide::Addon::Question
 
   seqid :id
   field :name, type: String
@@ -56,6 +57,9 @@ class Guide::Procedure
       end
       if params[:keyword].present?
         criteria = criteria.keyword_in params[:keyword], :name
+      end
+      if params[:genre_id].present?
+        criteria = criteria.in(genre_ids: [params[:genre_id].try(:to_i)])
       end
       criteria
     end

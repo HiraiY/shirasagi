@@ -1,4 +1,4 @@
-class Guide::Agents::Nodes::NodeController < ApplicationController
+class Guide::Agents::Nodes::GenreController < ApplicationController
   include Cms::NodeFilter::View
   helper Cms::ListHelper
 

@@ -1,0 +1,31 @@
+<%
+  depth = 1
+  @reject_items = {}
+%>
+<%= jquery do %>
+SS_TreeUI.render(".index.items", { collapse_all: true });
+<% end %>
+
+<div class="main-box">
+  <div class="list-head"><%#= link_to t('ss.links.edit'), edit_node_conf_path %></div>
+  <table class="index items">
+    <thead>
+      <tr>
+        <th><%= @model.t :name %></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @items.each do |item| %>
+        <tr data-depth="<%= depth %>">
+          <td class="expandable"><%= item.name %></td>
+        </tr>
+        <% item.select_options.each do |opt| %>
+          <%= render partial: 'column', locals: { column: item.columns.where(select_options_id: opt.split(/[#{%w(, 、 ，).join}]/).map(&:strip).first).first, depth: depth + 1 } %>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= paginate @items if @items.try(:current_page) %>

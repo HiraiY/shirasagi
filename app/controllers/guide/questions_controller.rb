@@ -3,7 +3,7 @@ class Guide::QuestionsController < ApplicationController
   include Cms::CrudFilter
 
   model Guide::Question
-  navi_view "cms/main/conf_navi"
+  navi_view "cms/node/main/navi"
 
   private
 

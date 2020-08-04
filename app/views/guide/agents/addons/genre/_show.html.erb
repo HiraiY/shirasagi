@@ -1,0 +1,16 @@
+<%
+return if @item.genres.blank?
+
+def name_hier(genre)
+  names = []
+  names << genre.name
+  while genre.parent.present?
+    genre = genre.parent
+    names << genre.name
+  end
+  names.reverse.join('/')
+end
+%>
+<dl class="see">
+  <dd class="wide"><%=br @item.genres.map { |genre| name_hier(genre) } %></dd>
+</dl>
