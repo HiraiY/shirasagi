@@ -51,8 +51,8 @@ this.Map_Form = (function () {
         var marker_html, name, text, loc, url;
         name = $(this).find(".marker-name").val();
         text = $(this).find(".marker-text").val();
-        loc = $(this).find(".marker-loc-input").val();
-        url = "https://www.google.co.jp/maps/search/" + loc;
+        loc = $(this).find(".marker-loc-input").val().split(",");
+        url = "https://www.google.co.jp/maps/search/" + + loc[1] + "," + loc[0];
         if (name !== "" || text !== "") {
           marker_html = '<div class="marker-info">';
           if (name !== "") {

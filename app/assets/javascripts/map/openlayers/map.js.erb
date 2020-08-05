@@ -246,7 +246,7 @@ this.Openlayers_Map = (function () {
       name = marker['name'];
       text = marker['text'];
       loc = marker['loc'];
-      url = "https://www.google.co.jp/maps/search/" + loc;
+      url = "https://www.google.co.jp/maps/search/" + loc[1] + "," + loc[0];
       if (name) {
         markerHtml += '<p>' + name + '</p>';
       }

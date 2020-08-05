@@ -20,7 +20,7 @@ $(".mod-map .clear-marker").on('click', function (e) {
       <% if @item.map_points.blank? %>
         <dd class="marker">
           <p>
-            <%= number_field_tag "item[map_points][][number]", nil, min: 1, class: "marker-number", placeholder: @item.t(:marker_number) %>
+            <%= number_field_tag "item[map_points][][number]", nil, min: 1, max: 99, class: "marker-number", placeholder: @item.t(:marker_number) %>
           </p>
           <p>
             <%= text_field_tag "item[map_points][][loc]", nil, class: "marker-loc-input loc", placeholder: @item.t(:marker_loc) %>

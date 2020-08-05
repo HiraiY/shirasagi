@@ -239,7 +239,7 @@ module Map::MapHelper
   end
 
   def map_point_info(event, map_point)
-    url = "https://www.google.co.jp/maps/search/" + map_point[:loc].join(',')
+    url = "https://www.google.co.jp/maps/search/" + map_point[:loc][1].to_s + "," + map_point[:loc][0].to_s
     h = []
     h << %(<div class="maker-info">)
     h << %(<p class="name">#{map_point[:name]}</p>)
@@ -271,7 +271,7 @@ module Map::MapHelper
 
   def render_facility_info(item, map_point)
     h = render_marker_info(item)
-    url = "https://www.google.co.jp/maps/search/" + map_point.join(',')
+    url = "https://www.google.co.jp/maps/search/" + map_point[1].to_s + "," + map_point[0].to_s
     h << %(<p class="map-url"><a href="#{url}">#{I18n.t('map.googlemap_url')}</a></p>)
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id).order(event_dates: "ASC")
     if events.present?
@@ -317,7 +317,7 @@ module Map::MapHelper
 
   def monthly_facility_info(item, dates, map_point)
     h = render_marker_info(item)
-    url = "https://www.google.co.jp/maps/search/" + map_point.join(',')
+    url = "https://www.google.co.jp/maps/search/" + map_point[1].to_s + "," + map_point[0].to_s
     h << %(<p class="map-url"><a href="#{url}">#{I18n.t('map.googlemap_url')}</a></p>)
     events = Event::Page.site(@cur_site).and_public.where(facility_ids: item.id)
     if events.present?
@@ -348,7 +348,7 @@ module Map::MapHelper
 
   def render_event_info(item, map_point)
     h = []
-    url = "https://www.google.co.jp/maps/search/" + map_point[:loc].join(',')
+    url = "https://www.google.co.jp/maps/search/" + map_point[:loc][1].to_s + "," + map_point[:loc][0].to_s
     if map_point[:name].present? || map_point[:text].present?
       h << %(<div class="maker-info">)
       h << %(<p class="name">#{map_point[:name]}</p>)

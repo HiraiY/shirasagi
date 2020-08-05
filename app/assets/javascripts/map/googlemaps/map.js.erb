@@ -141,7 +141,7 @@ this.Googlemaps_Map = (function () {
       } else if (value["name"] || value["text"]) {
         name = value["name"];
         text = value["text"];
-        var url = "https://www.google.co.jp/maps/search/" + value["loc"];
+        var url = "https://www.google.co.jp/maps/search/" + value["loc"][1] + "," + value["loc"][0];
         marker_html = '<div class="marker-info">';
         if (name && name !== "") {
           marker_html += '<p>' + name + '</p>';
