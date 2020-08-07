@@ -11,8 +11,7 @@ module Gws::Addon::Affair::DutyHour
     duty_hours.first || Gws::Affair::DefaultDutyHour.new(cur_site: @cur_site || site)
   end
 
-  # _date は現在は使用していない。将来のシフト勤務サポートのためにある。
-  def effective_duty_hour(_date)
+  def effective_duty_hour(date)
     default_duty_hour
   end
 
@@ -38,5 +37,9 @@ module Gws::Addon::Affair::DutyHour
 
   def night_time_end(time)
     effective_duty_hour(time).night_time_end(time)
+  end
+
+  def working_minute(time)
+    effective_duty_hour(time).working_minute(time)
   end
 end

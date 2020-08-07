@@ -26,18 +26,42 @@ Rails.application.routes.draw do
 
   concern :export do
     get :download, on: :collection
+    get :import, on: :collection
+    post :import, on: :collection
   end
 
   gws "affair" do
     get '/' => redirect { |p, req| "#{req.path}/attendance/time_cards/#{Time.zone.now.strftime('%Y%m')}" }, as: :main
 
     resources :capitals, concerns: :deletion
-    resources :duty_calendars, concerns: :deletion
+    resources :duty_calendars, concerns: :deletion do
+      resources :time_card_notices, concerns: :deletion
+    end
+
+    resources :shift_calendars, only: [:index]
+    resources :shift_calendars, concerns: :deletion, except: [:index], path: "shift_calendars/u-:user" do
+      get '/shift_records/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y/%m')}" }, as: :shift_record_main
+      resources :shift_records, path: 'shift_records/:year/:month', concerns: [:deletion, :export], year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+    end
+
     resources :duty_hours, concerns: :deletion
     resources :holiday_calendars, concerns: :deletion do
       resources :holidays, concerns: :deletion, path: "holidays/:year" do
         get :download, on: :collection
         match :import, on: :collection, via: %i[get post]
+      end
+    end
+
+    get '/working_time/' => redirect { |p, req| "#{req.path}/calendar/" }, as: :working_time_main
+    namespace "working_time" do
+      get '/calendar/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y%m')}" }, as: :calendar_main
+      get '/calendar/:year_month' => 'calendar#index', as: :calendar
+      get '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
+      post '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
+      namespace 'management' do
+        get "aggregate" => "aggregate#index", as: :aggregate
+        get "aggregate/download" => "aggregate#download", as: :download_aggregate
+        post "aggregate/download" => "aggregate#download"
       end
     end
 
@@ -86,15 +110,18 @@ Rails.application.routes.draw do
     end
 
     namespace "attendance" do
-      get '/time_cards/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y%m')}" }, as: :time_card_main
+      get '/time_cards/' => "time_cards#main", as: :time_card_main
+      #get '/time_cards/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y%m')}" }, as: :time_card_main
       resources :time_cards, path: 'time_cards/:year_month', only: %i[index] do
         match :download, on: :collection, via: %i[get post]
         get :print, on: :collection
         post :enter, on: :collection
         post :leave, on: :collection
+        post :leave, path: 'leave:date', on: :collection
         post :break_enter, path: 'break_enter:index', on: :collection
         post :break_leave, path: 'break_leave:index', on: :collection
         match :memo, path: ':day/memo', on: :collection, via: %i[get post]
+        match :working_time, path: ':day/working_time', on: :collection, via: %i[get post]
         match :time, path: ':day/:type', on: :collection, via: %i[get post]
       end
 
@@ -103,6 +130,7 @@ Rails.application.routes.draw do
         get '/time_cards/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y%m')}" }, as: :time_card_main
         resources :time_cards, path: 'time_cards/:year_month', except: %i[new create edit update], concerns: %i[deletion] do
           match :memo, path: ':day/memo', on: :member, via: %i[get post]
+          match :working_time, path: ':day/working_time', on: :member, via: %i[get post]
           match :time, path: ':day/:type', on: :member, via: %i[get post]
           match :download, on: :collection, via: %i[get post]
           match :lock, on: :collection, via: %i[get post]

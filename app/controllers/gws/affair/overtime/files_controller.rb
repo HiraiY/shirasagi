@@ -8,6 +8,10 @@ class Gws::Affair::Overtime::FilesController < ApplicationController
 
   navi_view "gws/affair/main/navi"
 
+  def week_in_compensatory
+    render layout: false
+  end
+
   private
 
   def set_crumbs

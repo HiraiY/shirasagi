@@ -5,8 +5,10 @@
 
     <% if @item.blank? %>
       <p><%= t('gws/attendance.no_time_cards') %></p>
+    <% elsif @duty_calendar.flextime? %>
+      <%= render 'time_card/flextime' %>
     <% else %>
-      <%= render 'time_card' %>
+      <%= render 'time_card/default' %>
     <% end %>
   </div>
 </div>

@@ -16,6 +16,7 @@ toggleSelectCompensatoryFile();
 <%
   duty_calendar = @cur_user.effective_duty_calendar(@cur_site)
   duty_hour = duty_calendar.default_duty_hour
+  @item.start_at_date ||= Time.zone.now.strftime("%Y/%m/%d")
   @item.start_at_hour ||= duty_hour.affair_start_at_hour
   @item.start_at_minute ||= duty_hour.affair_start_at_minute
   @item.end_at_hour ||= duty_hour.affair_end_at_hour

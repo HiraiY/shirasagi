@@ -70,4 +70,16 @@ class Gws::Affair::DefaultDutyHour
     hour = SS.config.gws.affair.dig("overtime", "night_time", "end_hour")
     time.change(hour: 0, min: 0, sec: 0).advance(hours: hour)
   end
+
+  def working_minute(time)
+    start_at = Time.zone.parse("#{affair_start_at_hour}:#{affair_start_at_minute}").to_datetime
+    end_at = Time.zone.parse("#{affair_end_at_hour}:#{affair_end_at_minute}").to_datetime
+    return 0 if start_at >= end_at
+
+    minute = ((end_at - start_at) * 24 * 60).to_i
+    if affair_on_duty_working_minute && affair_on_duty_break_minute
+      minute -= affair_on_duty_break_minute if minute > affair_on_duty_working_minute
+    end
+    minute
+  end
 end

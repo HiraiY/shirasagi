@@ -149,6 +149,14 @@ $border-white: 1px solid $white;
     background: #ebecec;
     text-decoration: none;
   }
+  &:disabled, &[disabled] {
+    cursor: auto;
+    filter: alpha(opacity = 65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: #ebecec;
+    opacity: .65;
+  }
 }
 @mixin btn-gray-l {
   display: inline-block;

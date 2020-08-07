@@ -4,13 +4,17 @@ class Gws::Affair::Attendance::TimeCardsController < ApplicationController
   include Gws::Attendance::TimeCardFilter
 
   before_action :set_active_year_range
-  before_action :set_cur_month
+  before_action :set_cur_month, except: %i[main]
   before_action :set_items
   before_action :create_new_time_card_if_necessary, only: %i[index]
-  before_action :set_item, only: %i[download enter leave break_enter break_leave time memo print]
-  before_action :set_record, only: %i[time memo]
+  before_action :set_item, only: %i[download enter leave break_enter break_leave time memo working_time print]
+  before_action :set_duty_calendar
+  before_action :set_overtime_day_results, if: -> { @item }
+  before_action :set_leave_files, if: -> { @item }
+  before_action :set_record, only: %i[time memo working_time]
   before_action :check_time_editable, only: %i[time]
   before_action :check_memo_editable, only: %i[memo]
+  before_action :check_working_time_editable, only: %i[working_time]
 
   helper_method :year_month_options
 
@@ -23,13 +27,18 @@ class Gws::Affair::Attendance::TimeCardsController < ApplicationController
     @crumbs << [t('modules.gws/affair/attendance/time_card'), action: :index]
   end
 
+  def set_duty_calendar
+    @duty_calendar = @cur_user.effective_duty_calendar(@cur_site)
+  end
+
   def crud_redirect_url
     params[:ref].presence || super
   end
 
   def create_new_time_card_if_necessary
+    today = @cur_site.calc_attendance_date(Time.zone.now)
     @item = @items.where(date: @cur_month).first
-    if @item.blank? && Time.zone.now.year == @cur_month.year && Time.zone.now.month == @cur_month.month
+    if @item.blank? && today.year == @cur_month.year && today.month == @cur_month.month
       @item = @model.new fix_params
       @item.date = @cur_month
       @item.save!
@@ -70,12 +79,34 @@ class Gws::Affair::Attendance::TimeCardsController < ApplicationController
 
   def check_memo_editable
     editable = false
-    if @record.date_range.include?(Time.zone.now)
-      # 備考には打刻という概念がないので、備考の編集 = 打刻とみなす。よって、現在日なら何度でも編集可能。
+
+    now = Time.zone.now
+    yesterday = Time.zone.yesterday # 日をまたぐ勤務を想定して前日を許可する
+
+    if @record.date_range.include?(now) || @record.date_range.include?(yesterday)
+      # 備考には打刻という概念がないので、備考の編集 = 打刻とみなす。よって、現在日もしくは前日なら何度でも編集可能。
       editable = true
     end
     if @model.allowed?(:edit, @cur_user, site: @cur_site)
-      # 現在日以外の備考の編集には、編集権限が必要。
+      # 現在日と前日以外の備考の編集には、編集権限が必要。
+      editable = true
+    end
+    raise '403' unless editable
+
+    if @item.locked?
+      redirect_to({ action: :index }, { notice: t('gws/attendance.already_locked') })
+      return
+    end
+  end
+
+  def check_working_time_editable
+    editable = false
+    if @record.date_range.include?(Time.zone.now)
+      # 就業時間には打刻という概念がないので、就業時間の編集 = 打刻とみなす。よって、現在日なら何度でも編集可能。
+      editable = true
+    end
+    if @model.allowed?(:edit, @cur_user, site: @cur_site)
+      # 現在日以外の就業時間の編集には、編集権限が必要。
       editable = true
     end
     raise '403' unless editable
@@ -93,6 +124,11 @@ class Gws::Affair::Attendance::TimeCardsController < ApplicationController
   end
 
   public
+
+  def main
+    today = @cur_site.calc_attendance_date(Time.zone.now)
+    redirect_to "#{request.path}/#{today.strftime('%Y%m')}"
+  end
 
   def index
     @items = @items.
@@ -124,8 +160,15 @@ class Gws::Affair::Attendance::TimeCardsController < ApplicationController
       return
     end
 
+    now = Time.zone.now
+    if params[:date] =~ /yesterday/
+      date = Time.zone.now.yesterday
+    else
+      date = now
+    end
+
     render_opts = { location: location, render: { file: :index }, notice: t('gws/attendance.notice.punched') }
-    render_update @item.punch("#{params[:action]}#{params[:index]}"), render_opts
+    render_update @item.punch("#{params[:action]}#{params[:index]}", date, now), render_opts
   end
 
   alias leave enter

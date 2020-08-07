@@ -89,10 +89,10 @@ class Gws::Attendance::TimeCard
     end
   end
 
-  def punch(field_name, now = Time.zone.now)
+  def punch(field_name, date, punch_at)
     raise "unable to punch: #{field_name}" if !Gws::Attendance::Record.punchable_field_names.include?(field_name)
 
-    date = (@cur_site || site).calc_attendance_date(now)
+    date = (@cur_site || site).calc_attendance_date(date)
     record = self.records.where(date: date).first
     if record.blank?
       record = self.records.create(date: date)
@@ -102,8 +102,8 @@ class Gws::Attendance::TimeCard
       return false
     end
 
-    record.send("#{field_name}=", now)
-    self.histories.create(date: date, field_name: field_name, action: 'set', time: now)
+    record.send("#{field_name}=", punch_at)
+    self.histories.create(date: date, field_name: field_name, action: 'set', time: punch_at)
     record.save
   end
 
@@ -125,6 +125,16 @@ class Gws::Attendance::TimeCard
     rescue
       nil
     end
+  end
+
+  def total_working_minute
+    records.map { |record| [record.working_hour.to_i, record.working_minute.to_i] }.
+      sum{ |h, m| h * 60 + m }
+  end
+
+  def total_working_minute_label
+    total = total_working_minute
+    "#{total / 60}:#{format('%02d', total % 60)}"
   end
 
   private

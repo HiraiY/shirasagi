@@ -24,6 +24,13 @@
     @include mb { margin: 0 10px 10px; }
   }
 
+  .attendance-box-container {
+    display: flex;
+    .attendance-box {
+      margin-right: 10px;
+    }
+  }
+
   .attendance-box-title {
     padding: 8px 10px;
     border-bottom: $border-gray1;
@@ -203,6 +210,9 @@
       color: #28a745;
     }
   }
+  .total-working-time {
+    margin-top: 10px;
+  }
 }
 
 .print-preview {
@@ -278,5 +288,15 @@
       color: #999;
       background-color: #ddd;
     }
+  }
+}
+
+.time-card-notices {
+  padding-left: 20px;
+  li {
+    list-style: disc;
+  }
+  .notice {
+    color: #f00;
   }
 }

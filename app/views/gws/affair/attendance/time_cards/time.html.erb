@@ -3,18 +3,38 @@
 
   <%= hidden_field_tag 'ref', params[:ref] %>
 
-  <% val = @record.send(@type) %>
+  <%
+    now = Time.zone.now
+    attendance_date = @cur_site.calc_attendance_date(now)
+    val = @record.send(@type)
+
+    if val
+      val_attendance_date = @cur_site.calc_attendance_date(val)
+
+      day = (val_attendance_date == @cur_date.tomorrow) ? "tomorrow" : "today"
+      hour = (val_attendance_date == val.beginning_of_day) ? val.hour : 24 + val.hour
+      min = val.min
+    else
+      day = "today"
+      hour = (attendance_date == now.beginning_of_day) ? now.hour : 24 + now.hour
+      min = now.min
+    end
+  %>
   <div class="addon-views">
     <%= render "ss/crud/addon", addon: { id: "addon-basic", head: false } do %>
       <dl class="see">
         <dt><%= t('gws/attendance.edit_cell.time') %></dt>
         <dd>
-          <%= f.select(:in_hour, hour_options, selected: val.try(:hour) || Time.zone.now.hour, include_blank: true) %>
-          <%= f.select(:in_minute, minute_options, selected: val.try(:min) || Time.zone.now.min, include_blank: true) %>
+          <%= f.select(:in_day, day_options, selected: day, include_blank: true) if @type == "leave" %>
+          <%= f.select(:in_hour, hour_options, selected: hour, include_blank: true) %>
+          <%= f.select(:in_minute, minute_options, selected: min, include_blank: true) %>
           <%= button_tag(t('ss.buttons.clear'), type: 'reset', name: 'clear', class: 'btn') %>
         </dd>
         <dt><%= @model.t :in_reason %></dt>
-        <dd><%= f.text_field(:in_reason) %></dd>
+        <dd>
+          <%= f.select(:in_reason_type, reason_type_options) %>
+          <%= f.text_field(:in_reason, placeholder: t("ss.remark")) %>
+        </dd>
       </dl>
     <% end %>
   </div>
@@ -31,9 +51,20 @@
     var $select = $('form.cell-edit select[name="cell[in_hour]"]');
     $select.find('option:selected').removeAttr('selected');
 
+    $('form.cell-edit select[name="cell[in_day]"] option:selected').removeAttr('selected');
     $('form.cell-edit select[name="cell[in_hour]"] option:selected').removeAttr('selected');
     $('form.cell-edit select[name="cell[in_minute]"] option:selected').removeAttr('selected');
   });
+
+  var toggleReason = function(ele) {
+    if ($(ele).val() == "other") {
+      $el.find('[name="cell[in_reason]"]').show();
+    } else {
+      $el.find('[name="cell[in_reason]"]').hide();
+    }
+  };
+  $el.find('[name="cell[in_reason_type]"]').on('change', function() { toggleReason(this); });
+  toggleReason($el.find('[name="cell[in_reason_type]"]'));
 
   $el.on('submit', function(e) {
     e.preventDefault();

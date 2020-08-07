@@ -4,7 +4,7 @@ module Gws::Attendance::TimeCardFilter
   included do
     model Gws::Attendance::TimeCard
 
-    helper_method :format_time, :hour_options, :minute_options
+    helper_method :format_time, :day_options, :hour_options, :minute_options, :reason_type_options
     helper_method :holiday?
   end
 
@@ -34,15 +34,49 @@ module Gws::Attendance::TimeCardFilter
     @cur_month = Time.zone.parse("#{year}/#{month}/01")
   end
 
+  def set_overtime_day_results
+    @overtime_day_results = {}
+    Gws::Affair::OvertimeDayResult.site(@cur_site).user(@item.user).and(
+      { "date" => { "$gte" => @cur_month } },
+      { "date" => { "$lte" => @cur_month.end_of_month } },
+    ).each do |item|
+      @overtime_day_results[item.date] ||= []
+      @overtime_day_results[item.date] << item
+    end
+  end
+
+  def set_leave_files
+    @leave_files = {}
+    Gws::Affair::LeaveFile.site(@cur_site).user(@item.user).and(
+        { "start_at" => { "$gte" => @cur_month } },
+        { "start_at" => { "$lte" => @cur_month.end_of_month } },
+        { "workflow_state" => "approve" }
+    ).each do |item|
+      @leave_files[item.date] ||= []
+      @leave_files[item.date] << item
+    end
+  end
+
   def format_time(date, time)
     return '--:--' if time.blank?
 
     time = time.in_time_zone
     hour = time.hour
-    if date.day != time.day
-      hour += 24
+    label = ""
+    attendance_date = @cur_site.calc_attendance_date(time)
+
+    day_diff = (time.to_date - date.to_date).to_i
+    if attendance_date > date.beginning_of_day
+      label = "翌"
+      day_diff -= 1
     end
-    "#{hour}:#{format('%02d', time.min)}"
+    hour += day_diff * 24 if day_diff > 0
+
+    "#{label}#{hour}:#{format('%02d', time.min)}"
+  end
+
+  def day_options
+    I18n.t("gws/attendance.options.in_day").map { |k, v| [v, k] }
   end
 
   def hour_options
@@ -54,6 +88,10 @@ module Gws::Attendance::TimeCardFilter
 
   def minute_options
     60.times.to_a.map { |m| [ I18n.t('gws/attendance.minute', count: m), m ] }
+  end
+
+  def reason_type_options
+    I18n.t("gws/attendance.options.reason_type").map { |k, v| [v, k] }
   end
 
   def holiday?(date)
@@ -87,7 +125,10 @@ module Gws::Attendance::TimeCardFilter
     result = false
     if @cell.valid?
       time = @cell.calc_time(@cur_date)
-      @item.histories.create(date: @cur_date, field_name: @type, action: 'modify', time: time, reason: @cell.in_reason)
+      @item.histories.create(
+        date: @cur_date, field_name: @type, action: 'modify',
+        time: time, reason_type: @cell.in_reason_type, reason: @cell.in_reason
+      )
       @record.send("#{@type}=", time)
       result = @record.save
     end
@@ -131,5 +172,39 @@ module Gws::Attendance::TimeCardFilter
       notice = @record.errors.full_messages.join("\n")
     end
     redirect_to location, notice: notice
+  end
+
+  def working_time
+    if request.get?
+      render file: 'working_time', layout: false
+      return
+    end
+
+    safe_params = params.require(:record).permit(:working_hour, :working_minute)
+    @record.working_hour = safe_params[:working_hour].presence
+    @record.working_minute = safe_params[:working_minute].presence
+
+    result = @record.save
+    if result
+      location = crud_redirect_url || url_for(action: :index)
+      notice = t('ss.notice.saved')
+
+      respond_to do |format|
+        flash[:notice] = notice
+        format.html do
+          if request.xhr?
+            render json: { location: location }, status: :ok, content_type: json_content_type
+          else
+            redirect_to location
+          end
+        end
+        format.json { render json: { location: location }, status: :ok, content_type: json_content_type }
+      end
+    else
+      respond_to do |format|
+        format.html { render file: 'working_time', layout: false, status: :unprocessable_entity }
+        format.json { render json: @cell.errors.full_messages, status: :unprocessable_entity, content_type: json_content_type }
+      end
+    end
   end
 end

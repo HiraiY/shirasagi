@@ -4,6 +4,7 @@ class Gws::Affair::DutyCalendar
   include Gws::Reference::Site
   include Gws::Addon::Affair::DutyHour
   include Gws::Addon::Affair::Holiday
+  include Gws::Addon::Affair::Flextime
   include Gws::Addon::Member
   include Gws::SitePermission
 

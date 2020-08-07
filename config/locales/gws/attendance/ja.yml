@@ -7,6 +7,8 @@ ja:
     no_time_cards: タイムカードはありません。
     no_target_users: 対象者がいません。
     already_locked: タイムカードは締められています。
+    views:
+      total_working_minute: 就業時間合計
     confirm:
       download: タイムカードをダウンロードしてよろしですか？
       lock: タイムカードを締めてよろしですか？
@@ -31,11 +33,23 @@ ja:
     edit_cell:
       time: 時刻
       reason: 修正理由
+      working_time: 就業時間
+    options:
+      in_day:
+        today: 当日
+        tomorrow: 翌日
+      reason_type:
+        mistake: 打刻忘れ
+        trip: 出張
+        exemption: 職務免除
+        other: その他
     tooltips:
       encoding:
         - 文字コードを選択してください。
         - 難読人名に対して特殊な漢字を割り当てている場合は「UTF-8」を選択してください。
         - 通常の利用の場合ですと「シフトJIS」を選択して問題ありません。
+      overnight:
+        - 出勤を打刻してから退勤するまでに、日付が変わってしまった場合、こちらを打刻してください。
     hour: '%{count}時'
     minute: '%{count}分'
 
@@ -80,11 +94,13 @@ ja:
         break_enter3: 休始3
         break_leave3: 休終3
         memo: 備考
+        working_time: 就業時間
       gws/attendance/history:
         date: 日付
         field_name: フィールド名
         action: アクション
-        reason: 修正理由
+        reason_type: 修正理由
+        reason: 備考
         created: 修正時刻
       gws/addon/attendance/group_setting:
         attendance_enter_label: 出勤表示
@@ -105,6 +121,8 @@ ja:
       models:
         gws/attendance/time_card:
           already_punched: 打刻済みです。
+        gws/attendance/record:
+          working_time: "出勤もしくは退勤が打刻されていません。打刻してから就業時間を入力してください。"
 
   activemodel:
     attributes:

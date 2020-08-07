@@ -11,8 +11,7 @@ class Gws::Affair::DefaultDutyCalendar
     Gws::Affair::DefaultDutyHour.new(cur_site: cur_site)
   end
 
-  # _date は現在は使用していない。将来のシフト勤務サポートのためにある。
-  def effective_duty_hour(_date)
+  def effective_duty_hour(date)
     default_duty_hour
   end
 
@@ -48,15 +47,23 @@ class Gws::Affair::DefaultDutyCalendar
     false
   end
 
-  def effective_holiday_calendar
+  def default_holiday_calendar
     Gws::Affair::DefaultHolidayCalendar.new(cur_site: cur_site)
   end
 
+  def effective_holiday_calendar(date)
+    default_holiday_calendar
+  end
+
   def leave_day?(date)
-    effective_holiday_calendar.leave_day?(date)
+    effective_holiday_calendar(date).leave_day?(date)
   end
 
   def holiday?(date)
-    effective_holiday_calendar.holiday?(date)
+    effective_holiday_calendar(date).holiday?(date)
+  end
+
+  def flextime?
+    false
   end
 end

@@ -24,13 +24,16 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
   def set_query
     @current = Time.zone.now
 
-    # TODO: manage_all or manage_private
     @groups = Gws::Group.in_group(@cur_site).active
-
     @year = (params.dig(:s, :year).presence || @current.year).to_i
     @month = (params.dig(:s, :month).presence || @current.month).to_i
-    @group_id = params.dig(:s, :group_id)
-    @capital_id = params.dig(:s, :capital_id)
+    @group_id = params.dig(:s, :group_id).presence
+    @capital_id = params.dig(:s, :capital_id).presence
+
+    @s ||= OpenStruct.new params[:s]
+    @s[:year] ||= @year
+    @s[:month] ||= @month
+    @s[:capital_id] = @capital_id
   end
 
   def set_items
@@ -41,14 +44,20 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
 
     if @group_id.present?
       group = @groups.where(id: @group_id).first
-    end
-    if group.present?
-      group_ids = @groups.in_group(group).pluck(:id)
     else
-      group_ids = @groups.pluck(:id)
+      group = @cur_user.gws_main_group(@cur_site)
+    end
+    group ||= @cur_site
+    @s[:group_id] ||= group.id
+
+    @users = Gws::User.active.in(group_ids: [group.id]).order_by_title(@cur_site)
+
+    # only not flextime users
+    @users = @users.select do |user|
+      duty_calendar = user.effective_duty_calendar(@cur_site)
+      !duty_calendar.flextime?
     end
 
-    @users = Gws::User.active.in(group_ids: group_ids).order_by_title(@cur_site)
     user_ids = @users.pluck(:id)
 
     cond = [
@@ -90,7 +99,7 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
   def download
     return if request.get?
 
-    safe_params = params.require(:item).permit(:encoding)
+    safe_params = params.require(:s).permit(:encoding)
     encoding = safe_params[:encoding]
     filename = "aggregate_#{@threshold}_#{Time.zone.now.to_i}.csv"
 

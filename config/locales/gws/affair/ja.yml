@@ -6,6 +6,7 @@ ja:
     top_holidays_on_year: "%{year}年度の休日を最大%{count}件を表示しています。"
     year_id: 年度
     all_year_id: 全年度
+    shift_calendar: シフト勤務カレンダー
     links:
       set_results: 結果を入力する
       edit_results: 結果を編集する
@@ -13,6 +14,7 @@ ja:
       aggregate_capitals: 原資区分
       manage_holidays: 休日を管理する
       manage_shifts: シフト勤務を管理する
+      manage_notices: 注意文を管理する
     options:
       leave_type:
         annual_leave: 年次有給休暇
@@ -37,6 +39,12 @@ ja:
       wday_type:
         workday: 勤務日
         holiday: 休日
+      notice_type:
+        time_limit: 時間制限
+      period_type:
+        month: 月
+        week: 週
+        day: 日
     notice:
       not_found_overtime_file: "設定可能な時間外申請がありませんでした。"
       time_card_unlocked:
@@ -44,6 +52,8 @@ ja:
         p: 以下のタイムカードが締められていません。
     confirm:
       download: ダウンロードしてよろしいですか？
+      create_shift_calendar: "%{user} のシフト勤務カレンダーを作成してよろしいですか？"
+      delete_shift_calendar: "%{user} のシフト勤務カレンダーを削除してよろしいですか？"
     labels:
       overtime_file: 時間外申請
       overtime:
@@ -94,12 +104,15 @@ ja:
     gws/affair/leave_file: 休暇申請
     gws/affair/leave_file/approve: 依頼されたもの
     gws/affair/leave_file/all: 全ての管理
+    gws/affair/working_time/management/aggregate: 自由勤務時間集計
     gws/affair/overtime_file/management/aggregate: 時間外集計
     gws/affair/attendance/management/time_card: タイムカードの管理
     gws/affair/duty_hour: 勤務体系
     gws/affair/duty_calendar: 勤務カレンダー
     gws/affair/holiday_calendar: 休日カレンダー
     gws/affair/capital: 原資区分
+    gws/affair/working_time: 勤務表
+    gws/affair/shift_calendar: シフト勤務
     addons:
       gws/affair/overtime_file: 時間外申請書
       gws/affair/overtime_result: 結果
@@ -107,6 +120,7 @@ ja:
       gws/affair/leave_file: 休暇申請書
       gws/affair/duty_hour: 勤務体系
       gws/affair/holiday: 休日
+      gws/affair/flextime: 自由時間勤務
 
   mongoid:
     models:
@@ -122,6 +136,15 @@ ja:
         remark: 説明
       gws/affair/duty_calendar:
         name: タイトル
+      gws/affair/shift_record:
+        duty_calendar_id: 勤務カレンダー
+        date: 日付
+        wday: 曜日
+        start_at: 開始時間
+        end_at: 終了時間
+        wday_type: 休日設定
+        in_file: ファイル
+        affair_time: 勤務時間
       gws/affair/duty_hour:
         name: 勤務体系名
         start_at: 開始時間
@@ -180,6 +203,12 @@ ja:
         saturday_type: 土曜日
         national_holiday_type: 勤務日が祝祭日の場合
         holidays: 他の所定休日
+      gws/addon/affair/flextime:
+        flextime_state: 自由時間勤務
+      gws/affair/time_card_notice:
+        notice_type: 種別
+        period_type: 期間
+        threshold_hour: 上限時間
     errors:
       models:
         gws/affair/overtime_file:
@@ -209,10 +238,16 @@ ja:
     edit_private_gws_affair_leave_files: 休暇申請の編集（所有）
     delete_other_gws_affair_leave_files: 休暇申請の削除（全て）
     delete_private_gws_affair_leave_files: 休暇申請の削除（所有）
-    approve_other_gws_affair_leave_files: 休暇申請の承認（所有）
-    approve_private_gws_affair_leave_files: 休暇申請の承認（全て）
-    reroute_other_gws_affair_leave_files: 休暇申請の経路変更（所有）
-    reroute_private_gws_affair_leave_files: 休暇申請の経路変更（全て）
+    approve_other_gws_affair_leave_files: 休暇申請の承認（全て）
+    approve_private_gws_affair_leave_files: 休暇申請の承認（所有）
+    reroute_other_gws_affair_leave_files: 休暇申請の経路変更（全て）
+    reroute_private_gws_affair_leave_files: 休暇申請の経路変更（所有）
+    read_other_gws_affair_shift_calendars: シフト勤務の閲覧（全て）
+    read_private_gws_affair_shift_calendars: シフト勤務の閲覧（自所属）
+    edit_other_gws_affair_shift_calendars: シフト勤務の編集（全て）
+    edit_private_gws_affair_shift_calendars: シフト勤務の編集（自所属）
+    delete_other_gws_affair_shift_calendars: シフト勤務の削除（全て）
+    delete_private_gws_affair_shift_calendars: シフト勤務の削除（自所属）
 
   gws_notification:
     gws/affair/overtime_file:
@@ -285,3 +320,8 @@ ja:
     gws/affair/duty_hour:
       name:
         - 勤務体系名を入力します。
+    gws/affair/time_card_notice:
+      notice_type:
+        - 種別を選択します。
+      threshold_hour:
+        - 上限時間を入力します。

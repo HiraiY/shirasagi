@@ -19,6 +19,7 @@ class Gws::Affair::OvertimeFile
   field :name, type: String
 
   belongs_to :capital, class_name: "Gws::Affair::Capital"
+  permit_params :capital_id
 
   permit_params :capital_id
 

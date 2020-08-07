@@ -1,9 +1,27 @@
+<div class="total-working-time">
+  <%= "#{t("gws/attendance.views.total_working_minute")} #{@item.total_working_minute_label}" %>
+</div>
+
+<%
+  messages = @duty_calendar.notices(@item)
+  if messages.present?
+%>
+<ul class="time-card-notices">
+  <% messages.each do |message| %>
+    <li><span class="notice"><%= message %></span></li>
+  <% end %>
+</ul>
+<% end %>
+
 <% render_reason = proc do |history| %>
-  <% if history.present? && history.reason.present? %>
+  <% if history.present? && history.reason_type.present? %>
     <div class="reason-tooltip">
       <i class="material-icons md-13">&#xE0C9;</i>
       <div class="reason">
-        <div><%= history.reason %></div>
+        <div>
+          <%= t("gws/attendance.options.reason_type.#{history.reason_type}") %>
+          <%= history.reason if history.reason.present? %>
+        </div>
         <time datetime="<%= history.created.iso8601 %>"><%= history.created.strftime('%Y/%m/%d %H:%M') %></time>
       </div>
     </div>
@@ -28,21 +46,25 @@
   </td>
 <% end %>
 
-<%
-  overtime_day_results = {}
-  Gws::Affair::OvertimeDayResult.site(@cur_site).user(@item.user).and(
-    { "date" => { "$gte" => @cur_month } },
-    { "date" => { "$lte" => @cur_month.end_of_month } },
-  ).each do |item|
-    overtime_day_results[item.date] ||= []
-    overtime_day_results[item.date] << item
-  end
+<% render_working_time = proc do |date, record, field_name| %>
+  <% td_classes = %w(working-time) %>
+  <% td_classes << field_name %>
+  <% td_classes << (date.day >= 16 ? 'top' : nil) %>
+  <% mode = "edit" %>
+  <td class="<%= td_classes.join(' ') %>" data-day="<%= date.day %>" data-type="<%= field_name %>" data-mode="<%= mode %>">
+    <div class="time-wrap">
+      <%= format_time(date, record.try(:working_time)) %>
+      <% render_reason.call(record.try(:find_latest_history, field_name)) %>
+    </div>
+  </td>
+<% end %>
 
+<%
   leave_files = {}
   Gws::Affair::LeaveFile.site(@cur_site).user(@item.user).and(
-    { "start_at" => { "$gte" => @cur_month } },
-    { "start_at" => { "$lte" => @cur_month.end_of_month } },
-    { "workflow_state" => "approve" }
+      { "start_at" => { "$gte" => @cur_month } },
+      { "start_at" => { "$lte" => @cur_month.end_of_month } },
+      { "workflow_state" => "approve" }
   ).each do |item|
     leave_files[item.date] ||= []
     leave_files[item.date] << item
@@ -61,8 +83,7 @@
       <% offset = date.day >= 16 ? 'top' : '' %>
       <% if date.day == 1 %>
         <tr class="header">
-          <th colspan="<%= 3 + @break_times.size * 2 %>"><%= "勤務" %></th>
-          <th class="overtime time" colspan="3"><%= "時間外" %></th>
+          <th colspan="<%= 4 + @break_times.size * 2 %>"><%= "勤務" %></th>
           <th class="leave" rowspan="2"><%= "休暇" %></th>
           <th class="memo" rowspan="2"><%= Gws::Attendance::Record.t(:memo) %></th>
         </tr>
@@ -74,9 +95,7 @@
             <th class="time <%= "break_enter#{i + 1}" %>"><%= @cur_site["attendance_break_enter#{i + 1}_label"].presence || t('gws/attendance.formats.break_enter', count: i + 1) %></th>
             <th class="time <%= "break_leave#{i + 1}" %>"><%= @cur_site["attendance_break_leave#{i + 1}_label"].presence || t('gws/attendance.formats.break_leave', count: i + 1) %></th>
           <% end %>
-          <th class="overtime time"><%= "執務時間 (時間外 | 差分)" %></th>
-          <th class="break-time"><%= "休憩" %></th>
-          <th class="compensatory-time"><%= "振替" %></th>
+          <th class="working-time"><%= "就業時間" %></th>
         <tr>
     　<% end %>
       <% if date.day == 16 %>
@@ -88,9 +107,7 @@
             <th class="time <%= "break_enter#{i + 1}" %>"><%= @cur_site["attendance_break_enter#{i + 1}_label"].presence || t('gws/attendance.formats.break_enter', count: i + 1) %></th>
             <th class="time <%= "break_leave#{i + 1}" %>"><%= @cur_site["attendance_break_leave#{i + 1}_label"].presence || t('gws/attendance.formats.break_leave', count: i + 1) %></th>
           <% end %>
-          <th class="overtime time"><%= "執務時間 (時間外 | 差分)" %></th>
-          <th class="break-time"><%= "休憩" %></th>
-          <th class="compensatory-time"><%= "振替" %></th>
+          <th class="working-time"><%= "就業時間" %></th>
           <th class="leave"><%= "休暇" %></th>
           <th class="memo"><%= Gws::Attendance::Record.t(:memo) %></th>
         </tr>
@@ -109,58 +126,7 @@
           <% render_time.call(date, record, "break_enter#{i + 1}") %>
           <% render_time.call(date, record, "break_leave#{i + 1}") %>
         <% end %>
-
-        <%
-          overtime_minute = 0
-          overtime_minute = record.overtime_minute if record
-
-          day_results = overtime_day_results[date.to_datetime]
-
-          break_time_minute = 0
-          if day_results.present?
-            result_minute = day_results.map { |day_result| (day_result.end_at.to_i - day_result.start_at.to_i) / 60 }.sum
-            break_time_minute = day_results.map(&:break_time_minute).sum
-          end
-        %>
-        <td class="overtime time">
-          <%= format_minute(overtime_minute.to_i) %>
-
-          <% if day_results.present? %>
-            <%= " (" %>
-            <%= link_to format_minute(result_minute), edit_gws_affair_overtime_result_path(id: day_results.first.file.id, ref: request.path), class: "ajax-box" %>
-
-            <%= " | " %>
-            <% overtime_diff = result_minute - overtime_minute %>
-            <% if overtime_diff == 0 %>
-              <span class="overtime-diff equal"><%= format_minute(overtime_diff) %></span>
-            <% elsif overtime_diff > 0 %>
-              <span class="overtime-diff minus">- <%= format_minute(overtime_diff) %></span>
-            <% else %>
-              <span class="overtime-diff plus">+ <%= format_minute(- overtime_diff) %></span>
-            <% end %>
-            <%= ")" %>
-          <% end %>
-        </td>
-
-        <td class="time"><%= format_minute(break_time_minute) %></td>
-
-        <%
-          day_results = overtime_day_results[date.to_datetime]
-          compensatory_minute_labels = []
-          if day_results.present?
-            day_results.each do |result|
-              if result.week_in_compensatory_minute > 0
-                compensatory_minute_labels << "週内#{format_minute(result.week_in_compensatory_minute)}"
-              end
-              if result.week_out_compensatory_minute > 0
-                compensatory_minute_labels << "週外#{format_minute(result.week_out_compensatory_minute)}"
-              end
-            end
-          end
-          compensatory_minute_labels << format_minute(0) if compensatory_minute_labels.blank?
-        %>
-        <td class="time"><%=br compensatory_minute_labels.join("\n") %></td>
-
+        <% render_working_time.call(date, record, 'working_time') %>
         <td class="leave">
           <% (leave_files[date.to_datetime] || []).each do |leave_file|%>
             <div class="leave-file">

@@ -1,0 +1,11 @@
+<div class="attendance-box">
+  <div class="attendance-box-main">
+    <% group_options = @groups.map { |g| [g.name, g.id] } %>
+    <%= form_for :s, url: "", html: { method: :get } do |f| %>
+      <%= f.select :group_id, group_options %>
+
+      <input type="submit" value="<%= t('ss.buttons.search') %>" class="btn" />
+      <%= link_to t("ss.buttons.reset"), gws_affair_shift_calendars_path, class: "btn" %>
+    <% end %>
+  </div>
+</div>

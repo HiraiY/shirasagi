@@ -64,3 +64,47 @@ table.affair-overtime-aggregate {
   text-align: center;
   cursor: pointer;
 }
+
+.gws-affair-shift-records {
+  .year-navi {
+    display: inline-block;
+  }
+  .month-navi {
+    display: inline-block;
+  }
+
+  tr.shift {
+    background-color: #ffe4c3;
+  }
+}
+
+.gws-affair-shift-table {
+  .working-time {
+    .name {
+      min-width: 16.5em;
+    }
+    .day {
+      text-align: center;
+      white-space: nowrap;
+      &.saturday {
+        color: #00f;
+      }
+      &.sunday {
+        color: #f00;
+      }
+      &.holiday {
+        color: #f00;
+      }
+    }
+    .shift-record {
+      .affair {
+        text-align: center;
+        font-size: 80%;
+        white-space: nowrap;
+      }
+      &.focus {
+        background-color: #f2a950;
+      }
+    }
+  }
+}

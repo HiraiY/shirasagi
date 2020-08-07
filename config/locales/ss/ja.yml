@@ -33,6 +33,8 @@ ja:
     color: 表示色
     bg_color: 背景色
     contrast_ratio: コントラスト比
+    time: 時間
+    remark: 備考
 
     views:
       login/login:

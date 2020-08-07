@@ -44,12 +44,21 @@
     <% end %>
   <% end %>
 
+  <% if Gws::Affair::ShiftCalendar.allowed?(:read, @cur_user, site: @cur_site) %>
+    <h3><%= link_to "シフト勤務", gws_affair_working_time_main_path %></h3>
+    <ul class="narrow-page">
+      <li><%= link_to t('modules.gws/affair/working_time'), gws_affair_working_time_calendar_main_path %></li>
+      <li><%= link_to "勤務カレンダー", gws_affair_shift_calendars_path %></li>
+    </ul>
+  <% end %>
+
   <% if %i[manage_private manage_all].find { |priv| Gws::Attendance::TimeCard.allowed?(priv, @cur_user, site: @cur_site) } %>
     <h3><%= link_to t("modules.gws/affair/attendance/management/time_card"), gws_affair_attendance_management_main_path, class: "management" %></h3>
   <% end %>
 
   <% if Gws::Affair::DutyHour.allowed?(:read, @cur_user, site: @cur_site) %>
     <h3><%= link_to t("modules.gws/affair/overtime_file/management/aggregate"), gws_affair_overtime_management_aggregate_main_path, class: "management" %></h3>
+    <h3><%= link_to t("modules.gws/affair/working_time/management/aggregate"), gws_affair_working_time_management_aggregate_path, class: "management" %></h3>
     <h3><%= link_to t("modules.gws/affair/duty_calendar"), gws_affair_duty_calendars_path, class: "management" %></h3>
     <h3><%= link_to t("modules.gws/affair/duty_hour"), gws_affair_duty_hours_path, class: "management" %></h3>
     <h3><%= link_to t("modules.gws/affair/holiday_calendar"), gws_affair_holiday_calendars_path, class: "management" %></h3>

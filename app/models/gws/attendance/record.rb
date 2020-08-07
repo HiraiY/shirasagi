@@ -17,8 +17,15 @@ class Gws::Attendance::Record
     self.punchable_field_names << "break_enter#{i + 1}"
     self.punchable_field_names << "break_leave#{i + 1}"
   end
+  field :working_hour, type: Integer
+  field :working_minute, type: Integer
   field :memo, type: String
   self.punchable_field_names = self.punchable_field_names.freeze
+
+  def working_time
+    return nil if working_hour.nil? && working_minute.nil?
+    date.in_time_zone.change(hour: working_hour, min: working_minute, sec: 0)
+  end
 
   def find_latest_history(field_name)
     criteria = time_card.histories.where(date: date.in_time_zone('UTC'), field_name: field_name)
@@ -41,12 +48,16 @@ class Gws::Attendance::Record
     return 0 unless leave
 
     duty_calendar = time_card.duty_calendar
+    affair_start = duty_calendar.affair_start(date)
     affair_end = duty_calendar.affair_end(date)
 
     if duty_calendar.leave_day?(date)
       ((leave - enter) * 24 * 60).to_i
     else
-      (leave > affair_end) ? ((leave - affair_end) * 24 * 60).to_i : 0
+      before_overtime_minute = (enter < affair_start) ? ((affair_start - enter) * 24 * 60).to_i : 0
+      after_overtime_minute = (leave > affair_end) ? ((leave - affair_end) * 24 * 60).to_i : 0
+
+      before_overtime_minute + after_overtime_minute
     end
   end
 end

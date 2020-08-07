@@ -3,7 +3,7 @@
   return if duty_calendar.blank?
 
   duty_hour = duty_calendar.default_duty_hour
-  holiday_calendar = duty_calendar.effective_holiday_calendar
+  holiday_calendar = duty_calendar.default_holiday_calendar
 %>
 <dl class="see">
   <dt><%= t("mongoid.models.gws/affair/duty_hour") %></dt>

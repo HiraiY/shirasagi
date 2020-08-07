@@ -12,8 +12,11 @@ class Gws::Affair::Attendance::Management::TimeCardsController < ApplicationCont
   before_action :check_cur_month
   before_action :set_search_params
   before_action :set_items
-  before_action :set_item, only: %i[show delete destroy time memo]
-  before_action :set_record, only: %i[time memo]
+  before_action :set_item, only: %i[show delete destroy time working_time memo]
+  before_action :set_duty_calendar, only: %i[show delete destroy time working_time memo]
+  before_action :set_overtime_day_results, if: -> { @item }
+  before_action :set_leave_files, if: -> { @item }
+  before_action :set_record, only: %i[time working_time memo]
 
   helper_method :year_month_options, :group_options
 
@@ -26,6 +29,10 @@ class Gws::Affair::Attendance::Management::TimeCardsController < ApplicationCont
   def set_crumbs
     @crumbs << [@cur_site.menu_affair_label || t('modules.gws/affair'), gws_affair_main_path]
     @crumbs << [t('modules.gws/affair/attendance/management/time_card'), gws_affair_attendance_management_main_path]
+  end
+
+  def set_duty_calendar
+    @duty_calendar = @item.user.effective_duty_calendar(@cur_site)
   end
 
   def check_model_permission
@@ -72,7 +79,7 @@ class Gws::Affair::Attendance::Management::TimeCardsController < ApplicationCont
   end
 
   def crud_redirect_url
-    if params[:action] == 'time' || params[:action] == 'memo'
+    if params[:action] == 'time' || params[:action] == 'memo' || params[:action] == 'working_time'
       gws_affair_attendance_management_time_card_path(id: @item)
     else
       super
