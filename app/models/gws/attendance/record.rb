@@ -27,7 +27,12 @@ class Gws::Attendance::Record
 
   def set_working_time
     return if duty_calendar.flextime?
-    return if enter.nil? || leave.nil?
+
+    if enter.nil? || leave.nil?
+      self.working_hour = nil
+      self.working_minute = nil
+      return
+    end
 
     duty_hour = duty_calendar.effective_duty_hour(date)
     affair_start_at = duty_calendar.affair_start(date)
@@ -36,9 +41,12 @@ class Gws::Attendance::Record
     start_at = enter > affair_start_at ? enter : affair_start_at
     end_at = leave > affair_end_at ? affair_end_at : leave
 
+    duty_working_minute = duty_hour.affair_on_duty_working_minute.to_i
+    duty_break_minute = duty_hour.affair_on_duty_break_minute.to_i
+
     minutes = ((end_at.to_datetime - start_at.to_datetime) * 24 * 60).to_i
-    if minutes > duty_hour.affair_on_duty_working_minute.to_i
-      break_minute = duty_hour.affair_on_duty_break_minute.to_i * (minutes / duty_hour.affair_on_duty_working_minute.to_i)
+    if duty_working_minute > 0 && minutes > duty_working_minute
+      break_minute = duty_break_minute * (minutes / duty_working_minute.to_i)
       minutes -= break_minute
     end
 
