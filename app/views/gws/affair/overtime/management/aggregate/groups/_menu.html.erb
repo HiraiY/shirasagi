@@ -1,0 +1,9 @@
+<nav class="nav-menu">
+  <% if params[:action] =~ /monthly/ %>
+    <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_groups_path %>
+  <% elsif params[:action] =~ /groups/ %>
+    <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_groups_monthly_path %>
+  <% elsif params[:action] =~ /users/ %>
+    <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_groups_groups_path %>
+  <% end %>
+</nav>

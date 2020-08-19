@@ -22,10 +22,6 @@ class Gws::Affair::LeaveFile
 
   validates :name, length: { maximum: 80 }
 
-  # indexing to elasticsearch via companion object
-  #around_save ::Gws::Elasticsearch::Indexer::LeaveFileJob.callback
-  #around_destroy ::Gws::Elasticsearch::Indexer::LeaveFileJob.callback
-
   default_scope -> {
     order_by updated: -1
   }

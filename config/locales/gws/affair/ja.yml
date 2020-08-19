@@ -90,6 +90,10 @@ ja:
           week_out_compensatory:
             name: "同一週以外の振替"
             rate: "同一週以外の振替\n50/100"
+        total:
+          under: 通常分
+          over: 超過分
+          sum: 月合計
     apis:
       duty_hours:
         index: 勤務体系を選択する
@@ -108,7 +112,8 @@ ja:
     gws/affair/leave_file/approve: 依頼されたもの
     gws/affair/leave_file/all: 全ての管理
     gws/affair/working_time/management/aggregate: 勤務時間集計
-    gws/affair/overtime_file/management/aggregate: 時間外集計
+    gws/affair/overtime_file/management/aggregate/user: 時間外集計（職員別）
+    gws/affair/overtime_file/management/aggregate/capital: 時間外集計（費目別）
     gws/affair/attendance/management/time_card: タイムカードの管理
     gws/affair/duty_hour: 勤務体系
     gws/affair/duty_calendar: 勤務カレンダー
@@ -126,6 +131,7 @@ ja:
       gws/affair/holiday: 休日
       gws/affair/flextime: 自由時間勤務
       gws/affair/duty_notice: タイムカード警告文
+      gws/affair/file_target: 申請対象
 
   mongoid:
     models:
@@ -218,6 +224,9 @@ ja:
         period_type: 期間
         threshold_hour: 上限時間
         body: 警告文
+      gws/addon/affair/file_target:
+        target_group_id:  グループ
+        target_user_id: ユーザー
     errors:
       models:
         gws/affair/overtime_file:
@@ -338,3 +347,6 @@ ja:
         - 上限時間を入力します。
       body:
         - 注意文を入力します。
+    gws/addon/affair/file_target:
+      target_group_id: 申請対象のグループを選択します。
+      target_user_id: 申請対象のユーザーを選択します。

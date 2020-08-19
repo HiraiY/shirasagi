@@ -1,0 +1,47 @@
+<%
+  def format_minute(minute)
+    (minute.to_i > 0) ? "#{minute / 60}:#{format("%02d", (minute % 60))}" : "--:--"
+  end
+%>
+
+<div class="gws-attendance">
+  <table class="index">
+    <thead>
+      <tr>
+        <th><%= "費目別（#{@cur_year}年度 #{@cur_month}月：#{@group.trailing_name}）" %></th>
+        <% @descendant_groups.each do |group| %>
+          <th>
+            <%= link_to action: :users, child_group: group.id do %>
+              <%= group.trailing_name %>
+            <% end %>
+          </th>
+        <% end %>
+        <th><%= "合計" %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @capitals.each do |capital| %>
+        <tr>
+          <th><%= capital.name %></th>
+          <% total_minute = 0 %>
+          <% @descendant_groups.each do |group| %>
+            <%
+              group_ids = [group.id] + @descendants[group.id].to_a.map(&:id)
+              overtime_minute = group_ids.map { |id| @items.dig(id, capital.id).to_i }.sum
+              total_minute += overtime_minute
+            %>
+            <td><%= format_minute(overtime_minute) %></td>
+          <% end %>
+          <td><%= format_minute(total_minute) %></td>
+        </tr>
+      <% end %>
+      <tr>
+        <th><%= "費目合計" %></th>
+        <% @descendant_groups.each do |group| %>
+          <td><%= format_minute(0) %></td>
+        <% end %>
+        <td class="time"><%= format_minute(0) %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -77,7 +77,7 @@ module Gws::Addon::Affair::OvertimeFile
     site = self.site || cur_site
 
     # 申請した者の勤務時間を確認する必要がある
-    user = self.user || cur_user
+    user = target_user
 
     return if site.blank?
     return if user.blank?

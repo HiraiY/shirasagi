@@ -1,0 +1,27 @@
+<table class="index overtime-results">
+  <thead>
+  <tr>
+    <th><%= Gws::User.t :name %></th>
+    <th><%= Gws::User.t :organization_uid %></th>
+    <th class="time"><%= t("gws/affair.labels.overtime.total.under") %></th>
+    <th class="time"><%= t("gws/affair.labels.overtime.total.over") %></th>
+    <th class="time"><%= t("gws/affair.labels.overtime.total.sum") %></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @users.each do |user| %>
+    <%
+      under_working_minute = @items.dig(user.id, "under_threshold", "overtime_minute").to_i
+      over_working_minute = @items.dig(user.id, "over_threshold", "overtime_minute").to_i
+      working_minute = under_working_minute + over_working_minute
+    %>
+    <tr>
+      <td><%= user.long_name %></td>
+      <td><%= user.organization_uid %></td>
+      <td class="time"><%= format_minute(under_working_minute) %></td>
+      <td class="time"><%= format_minute(over_working_minute) %></td>
+      <td class="time"><%= format_minute(working_minute) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

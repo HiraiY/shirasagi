@@ -8,8 +8,14 @@ module Gws::Addon::Affair::OvertimeDayResult
   end
 
   def save_day_results
-    return if result.blank?
+    if result.present?
+      create_day_results
+    else
+      update_day_results
+    end
+  end
 
+  def create_day_results
     duty_calendar = user.effective_duty_calendar(site)
 
     results = [[result.date, result.start_at, result.end_at]]
@@ -132,7 +138,7 @@ module Gws::Addon::Affair::OvertimeDayResult
         week_out_compensatory_minute = 0
       end
 
-      overtime_minute = duty_day_time_minute + duty_night_time_minute + leave_day_time_minute + leave_night_time_minute
+      overtime_minute = duty_day_time_minute + duty_night_time_minute + leave_day_time_minute + leave_night_time_minute + week_out_compensatory_minute
       cond = {
         site_id: site.id,
         user_id: user.id,
@@ -140,6 +146,11 @@ module Gws::Addon::Affair::OvertimeDayResult
         file_id: id
       }
       item = Gws::Affair::OvertimeDayResult.find_or_initialize_by(cond)
+      item.file = self
+      item.cur_user = user
+      item.cur_site = site
+      item.date_year = r_date.year
+      item.date_month = r_date.month
       item.overtime_minute = overtime_minute
 
       item.start_at = r_start_at
@@ -158,6 +169,16 @@ module Gws::Addon::Affair::OvertimeDayResult
       item.week_out_compensatory_minute = week_out_compensatory_minute
 
       item.save
+    end
+  end
+
+  def update_day_results
+    return if day_results.blank?
+    day_results.each do |item|
+      item.cur_user = user
+      item.cur_site = site
+      item.file = self
+      item.update
     end
   end
 end

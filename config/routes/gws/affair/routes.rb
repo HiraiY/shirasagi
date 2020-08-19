@@ -75,10 +75,18 @@ Rails.application.routes.draw do
       resources :results, only: [:edit, :update]
 
       namespace 'management' do
-        get "aggregate" => redirect { |p, req| "#{req.path}/under" }, as: :aggregate_main
-        get "aggregate/:threshold" => "aggregate#index", as: :aggregate
-        get "aggregate/:threshold/download" => "aggregate#download", as: :download_aggregate
-        post "aggregate/:threshold/download" => "aggregate#download"
+        namespace 'aggregate' do
+          get "users" => redirect { |p, req| "#{req.path}/under" }, as: :users_main
+          get "users/:threshold" => "users#index", as: :users
+          get "users/:threshold/download" => "users#download", as: :download_users
+          post "users/:threshold/download" => "users#download"
+
+          get "groups" => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y')}" }, as: :groups_main
+          get "groups/:year" => "groups#index", as: :groups, year: /(\d{4}|ID)/
+          get "groups/:year/:month" => "groups#monthly", as: :groups_monthly, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          get "groups/:year/:month/:group" => "groups#groups", as: :groups_groups, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          get "groups/:year/:month/:group/:child_group" => "groups#users", as: :groups_users, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+        end
       end
 
       namespace "apis" do

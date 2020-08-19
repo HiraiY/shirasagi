@@ -1,4 +1,4 @@
-class Gws::Affair::Overtime::Management::AggregateController < ApplicationController
+class Gws::Affair::Overtime::Management::Aggregate::UsersController < ApplicationController
   include Gws::BaseFilter
   include Gws::CrudFilter
 
@@ -13,11 +13,13 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
 
   def set_crumbs
     @crumbs << [@cur_site.menu_affair_label || t('modules.gws/affair'), gws_affair_main_path]
-    @crumbs << [t("modules.gws/affair/overtime_file/management/aggregate"), gws_affair_overtime_management_aggregate_main_path]
+    @crumbs << [t("modules.gws/affair/overtime_file/management/aggregate/user"), gws_affair_overtime_management_aggregate_users_main_path]
     if params[:threshold] == "under"
-      @crumbs << ["通常分", gws_affair_overtime_management_aggregate_path(threshold: "under")]
-    else
-      @crumbs << ["割合引上対象分", gws_affair_overtime_management_aggregate_path(threshold: "over")]
+      @crumbs << ["通常分", gws_affair_overtime_management_aggregate_users_path(threshold: "under")]
+    elsif params[:threshold] == "over"
+      @crumbs << ["割合引上対象分", gws_affair_overtime_management_aggregate_users_path(threshold: "over")]
+    elsif params[:threshold] == "total"
+      @crumbs << ["時間外合計", gws_affair_overtime_management_aggregate_users_path(threshold: "over")]
     end
   end
 
@@ -39,9 +41,6 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
   def set_items
     @threshold = params[:threshold]
 
-    start_at = Time.zone.parse("#{@year}/#{@month}/1").to_date
-    end_at = start_at.end_of_month
-
     if @group_id.present?
       group = @groups.where(id: @group_id).first
     else
@@ -61,8 +60,8 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
     user_ids = @users.pluck(:id)
 
     cond = [
-      { "date" => { "$gte" => start_at } },
-      { "date" => { "$lte" => end_at } },
+      { "date_year" => @year },
+      { "date_month" => @month },
       { "user_id" => { "$in" => user_ids } }
     ]
 
@@ -70,7 +69,7 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
       cond << { "capital_id" => @capital_id.to_i }
     end
 
-    @items = @model.site(@cur_site).and(cond)
+    @items = @model.site(@cur_site).and(cond).user_aggregate
   end
 
   def set_time_cards
@@ -93,7 +92,6 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
   def index
     set_items
     set_time_cards
-    @items = @items.aggregate_by_user
   end
 
   def download
@@ -104,7 +102,7 @@ class Gws::Affair::Overtime::Management::AggregateController < ApplicationContro
     filename = "aggregate_#{@threshold}_#{Time.zone.now.to_i}.csv"
 
     set_items
-    enum_csv = @items.enum_csv(@users, @threshold, OpenStruct.new(encoding: encoding))
+    enum_csv = Gws::Affair::OvertimeDayResultEnumerator.new(@items, @users, @threshold, OpenStruct.new(encoding: encoding))
     send_enum(enum_csv, type: "text/csv; charset=#{encoding}", filename: filename)
   end
 end
