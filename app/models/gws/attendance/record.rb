@@ -46,7 +46,7 @@ class Gws::Attendance::Record
 
     minutes = ((end_at.to_datetime - start_at.to_datetime) * 24 * 60).to_i
     if duty_working_minute > 0 && minutes > duty_working_minute
-      break_minute = duty_break_minute * (minutes / duty_working_minute.to_i)
+      break_minute = duty_break_minute * (minutes / duty_working_minute)
       minutes -= break_minute
     end
 

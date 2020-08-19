@@ -39,7 +39,7 @@ module Gws::Addon::Affair::DutyHour
     effective_duty_hour(time).night_time_end(time)
   end
 
-  #def working_minute(time)
-  #  effective_duty_hour(time).working_minute(time)
-  #end
+  def working_minute(time)
+    effective_duty_hour(time).working_minute(time)
+  end
 end

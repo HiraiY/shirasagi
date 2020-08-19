@@ -139,17 +139,23 @@ module Gws::Affair::DutyHourSetting
     time.advance(hours: hour)
   end
 
-  #def working_minute(time)
-  #  start_at = affair_start(time).to_datetime
-  #  end_at = affair_end(time).to_datetime
-  #  return 0 if start_at >= end_at
-  #
-  #  minute = (end_at - start_at) * 24 * 60
-  #  if affair_on_duty_working_minute && affair_on_duty_break_minute
-  #    minute -= affair_on_duty_break_minute if minute > affair_on_duty_working_minute
-  #  end
-  #  minute
-  #end
+  def working_minute(time)
+    start_at = affair_start(time)
+    end_at = affair_end(time)
+    return 0 if start_at >= end_at
+
+    duty_working_minute = affair_on_duty_working_minute.to_i
+    duty_break_minute = affair_on_duty_break_minute.to_i
+
+    minutes = ((end_at.to_datetime - start_at.to_datetime) * 24 * 60).to_i
+    if duty_working_minute > 0 && minutes > duty_working_minute
+      break_minute = duty_break_minute * (minutes / duty_working_minute)
+      minutes -= break_minute
+    end
+
+    minutes = 0 if minutes < 0
+    minutes
+  end
 
   private
 
