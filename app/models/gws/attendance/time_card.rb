@@ -129,6 +129,11 @@ class Gws::Attendance::TimeCard
     end
   end
 
+  def total_working_minute
+    records.map { |record| [record.working_hour.to_i, record.working_minute.to_i] }.
+      sum{ |h, m| h * 60 + m }
+  end
+
   def total_working_minute_label
     total = total_working_minute
     "#{total / 60}:#{format('%02d', total % 60)}"

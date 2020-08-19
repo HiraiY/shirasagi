@@ -14,8 +14,7 @@ module Gws::Addon::Affair::DutyNotice
   def total_working_minute_of_month(user, time)
     date = calc_attendance_date(time).beginning_of_month
     time_card = Gws::Attendance::TimeCard.site(site).user(user).where(date: date).first
-    time_card.records.map { |record| [record.working_hour.to_i, record.working_minute.to_i] }.
-      sum{ |h, m| h * 60 + m }
+    time_card.total_working_minute
   end
 
   def total_working_minute_of_week(user, time)
