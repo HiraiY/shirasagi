@@ -89,7 +89,7 @@ class Gws::Attendance::TimeCard
     end
   end
 
-  def punch(field_name, date, punch_at)
+  def punch(field_name, date, punch_at, duty_calendar)
     raise "unable to punch: #{field_name}" if !Gws::Attendance::Record.punchable_field_names.include?(field_name)
 
     date = (@cur_site || site).calc_attendance_date(date)
@@ -97,6 +97,8 @@ class Gws::Attendance::TimeCard
     if record.blank?
       record = self.records.create(date: date)
     end
+
+    record.duty_calendar = duty_calendar
     if record.send(field_name).present?
       errors.add :base, :already_punched
       return false
@@ -125,11 +127,6 @@ class Gws::Attendance::TimeCard
     rescue
       nil
     end
-  end
-
-  def total_working_minute
-    records.map { |record| [record.working_hour.to_i, record.working_minute.to_i] }.
-      sum{ |h, m| h * 60 + m }
   end
 
   def total_working_minute_label

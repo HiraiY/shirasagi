@@ -1,9 +1,4 @@
 <dl class="see">
   <dt><%= @model.t :flextime_state %></dt>
   <dd><%= @item.label :flextime_state %></dd>
-  <% if @item.flextime? %>
-  <dd>
-    <%= link_to t("gws/affair.links.manage_notices"), gws_affair_duty_calendar_time_card_notices_path(duty_calendar_id: @item), class: "btn" %>
-  </dd>
-  <% end %>
 </dl>

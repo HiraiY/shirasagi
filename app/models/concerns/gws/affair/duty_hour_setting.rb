@@ -11,6 +11,16 @@ module Gws::Affair::DutyHourSetting
     field :affair_start_at_minute, type: Integer, default: 0
     field :affair_end_at_hour, type: Integer, default: 18
     field :affair_end_at_minute, type: Integer, default: 0
+    field :affair_time_wday, default: "disabled"
+
+    (0..6).each do |wday|
+      field "affair_start_at_hour_#{wday}", type: Integer, default: 9
+      field "affair_start_at_minute_#{wday}", type: Integer, default: 0
+      field "affair_end_at_hour_#{wday}", type: Integer, default: 18
+      field "affair_end_at_minute_#{wday}", type: Integer, default: 0
+      permit_params "affair_start_at_hour_#{wday}", "affair_start_at_minute_#{wday}"
+      permit_params "affair_end_at_hour_#{wday}", "affair_end_at_minute_#{wday}"
+    end
 
     field :affair_on_duty_working_minute, type: Integer
     field :affair_on_duty_break_minute, type: Integer
@@ -18,7 +28,7 @@ module Gws::Affair::DutyHourSetting
     field :affair_overtime_break_minute, type: Integer
 
     permit_params :in_attendance_time_change_hour
-    permit_params :affair_start_at_hour, :affair_start_at_minute, :affair_end_at_hour, :affair_end_at_minute
+    permit_params :affair_time_wday
     permit_params :affair_on_duty_working_minute, :affair_on_duty_break_minute
     permit_params :affair_overtime_working_minute, :affair_overtime_break_minute
 
@@ -34,6 +44,10 @@ module Gws::Affair::DutyHourSetting
               numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 59 }
   end
 
+  def affair_time_wday?
+    affair_time_wday == "enabled"
+  end
+
   def affair_start_at_hour_options
     (0..23).map do |h|
       [ "#{h}#{I18n.t('datetime.prompts.hour')}", h.to_s ]
@@ -41,12 +55,6 @@ module Gws::Affair::DutyHourSetting
   end
 
   def affair_end_at_hour_options
-    (0..23).map do |h|
-      [ "#{h}#{I18n.t('datetime.prompts.hour')}", h.to_s ]
-    end
-  end
-
-  def attendance_time_changed_options
     (0..23).map do |h|
       [ "#{h}#{I18n.t('datetime.prompts.hour')}", h.to_s ]
     end
@@ -64,16 +72,53 @@ module Gws::Affair::DutyHourSetting
     end
   end
 
+  (0..6).each do |wday|
+    alias_method "affair_start_at_hour_#{wday}_options", "affair_start_at_hour_options"
+    alias_method "affair_start_at_minute_#{wday}_options", "affair_start_at_minute_options"
+    alias_method "affair_end_at_hour_#{wday}_options", "affair_end_at_hour_options"
+    alias_method "affair_end_at_minute_#{wday}_options", "affair_end_at_minute_options"
+  end
+
+  def affair_start_at_hour(time = nil)
+    return super() unless time
+    affair_time_wday? ? send("affair_start_at_hour_#{time.wday}") : affair_start_at_hour
+  end
+
+  def affair_start_at_minute(time = nil)
+    return super() unless time
+    affair_time_wday? ? send("affair_start_at_minute_#{time.wday}") : affair_start_at_minute
+  end
+
+  def affair_end_at_hour(time = nil)
+    return super() unless time
+    affair_time_wday? ? send("affair_end_at_hour_#{time.wday}") : affair_end_at_hour
+  end
+
+  def affair_end_at_minute(time = nil)
+    return super() unless time
+    affair_time_wday? ? send("affair_end_at_minute_#{time.wday}") : affair_end_at_minute
+  end
+
+  def attendance_time_changed_options
+    (0..23).map do |h|
+      [ "#{h}#{I18n.t('datetime.prompts.hour')}", h.to_s ]
+    end
+  end
+
   def calc_attendance_date(time = Time.zone.now)
     Time.zone.at(time.to_i - attendance_time_changed_minute * 60).beginning_of_day
   end
 
   def affair_start(time)
-    time.change(hour: affair_start_at_hour, min: affair_start_at_minute, sec: 0)
+    hour = affair_start_at_hour(time)
+    min = affair_start_at_minute(time)
+    time.change(hour: hour, min: min, sec: 0)
   end
 
   def affair_end(time)
-    time.change(hour: affair_end_at_hour, min: affair_end_at_minute, sec: 0)
+    hour = affair_end_at_hour(time)
+    min = affair_end_at_minute(time)
+    time.change(hour: hour, min: min, sec: 0)
   end
 
   def affair_next_changed(time)
@@ -94,17 +139,17 @@ module Gws::Affair::DutyHourSetting
     time.advance(hours: hour)
   end
 
-  def working_minute(time)
-    start_at = Time.zone.parse("#{affair_start_at_hour}:#{affair_start_at_minute}").to_datetime
-    end_at = Time.zone.parse("#{affair_end_at_hour}:#{affair_end_at_minute}").to_datetime
-    return 0 if start_at >= end_at
-
-    minute = (end_at - start_at) * 24 * 60
-    if affair_on_duty_working_minute && affair_on_duty_break_minute
-      minute -= affair_on_duty_break_minute if minute > affair_on_duty_working_minute
-    end
-    minute
-  end
+  #def working_minute(time)
+  #  start_at = affair_start(time).to_datetime
+  #  end_at = affair_end(time).to_datetime
+  #  return 0 if start_at >= end_at
+  #
+  #  minute = (end_at - start_at) * 24 * 60
+  #  if affair_on_duty_working_minute && affair_on_duty_break_minute
+  #    minute -= affair_on_duty_break_minute if minute > affair_on_duty_working_minute
+  #  end
+  #  minute
+  #end
 
   private
 

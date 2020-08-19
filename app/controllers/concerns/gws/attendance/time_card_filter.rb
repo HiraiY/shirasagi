@@ -129,6 +129,7 @@ module Gws::Attendance::TimeCardFilter
         date: @cur_date, field_name: @type, action: 'modify',
         time: time, reason_type: @cell.in_reason_type, reason: @cell.in_reason
       )
+      @record.duty_calendar = @duty_calendar
       @record.send("#{@type}=", time)
       result = @record.save
     end

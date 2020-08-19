@@ -34,10 +34,8 @@ Rails.application.routes.draw do
     get '/' => redirect { |p, req| "#{req.path}/attendance/time_cards/#{Time.zone.now.strftime('%Y%m')}" }, as: :main
 
     resources :capitals, concerns: :deletion
-    resources :duty_calendars, concerns: :deletion do
-      resources :time_card_notices, concerns: :deletion
-    end
-
+    resources :duty_calendars, concerns: :deletion
+    resources :duty_notices, concerns: :deletion
     resources :shift_calendars, only: [:index]
     resources :shift_calendars, concerns: :deletion, except: [:index], path: "shift_calendars/u-:user" do
       get '/shift_records/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y/%m')}" }, as: :shift_record_main
@@ -59,9 +57,10 @@ Rails.application.routes.draw do
       get '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
       post '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
       namespace 'management' do
-        get "aggregate" => "aggregate#index", as: :aggregate
-        get "aggregate/download" => "aggregate#download", as: :download_aggregate
-        post "aggregate/download" => "aggregate#download"
+        get "aggregate" => redirect { |p, req| "#{req.path}/default" }, as: :aggregate_main
+        get "aggregate/:duty_type" => "aggregate#index", as: :aggregate
+        get "aggregate/:duty_type/download" => "aggregate#download", as: :download_aggregate
+        post "aggregate/:duty_type/download" => "aggregate#download"
       end
     end
 
@@ -106,6 +105,7 @@ Rails.application.routes.draw do
         resources :results, only: [:edit, :update]
       end
       get "duty_hours" => "duty_hours#index"
+      get "duty_notices" => "duty_notices#index"
       get "holiday_calendars" => "holiday_calendars#index"
     end
 

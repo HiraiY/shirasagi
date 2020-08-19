@@ -1,3 +1,15 @@
+<%= jquery do %>
+var toggleAffairTimeWday = function(ele){
+  if($('.toggle-affair-time-wday').prop("checked")) {
+    $(".affair-time-wday").show();
+  } else {
+    $(".affair-time-wday").hide();
+  }
+};
+$('.toggle-affair-time-wday').on("change", toggleAffairTimeWday);
+toggleAffairTimeWday();
+<% end %>
+
 <%
   @item.in_attendance_time_change_hour = @item.attendance_time_changed_minute / 60
 %>
@@ -10,6 +22,24 @@
   <%= f.select :affair_end_at_hour, @item.affair_end_at_hour_options %>
   <%= f.select :affair_end_at_minute, @item.affair_end_at_minute_options %>
 </dd>
+<dd>
+  <%= f.hidden_field "affair_time_wday", value: "disabled" %>
+  <label>
+    <%= check_box_tag "#{f.object_name}[affair_time_wday]", "enabled", (@item.affair_time_wday == "enabled"), class: "toggle-affair-time-wday" %>
+    <%= "曜日毎に設定する" %>
+  </label>
+</dd>
+
+<% (0..6).each do |wday| %>
+  <dt class="depth-2 affair-time-wday"><%= t("date.day_names")[wday] %></dt>
+  <dd class="depth-2 affair-time-wday">
+    <%= f.select "affair_start_at_hour_#{wday}", @item.affair_start_at_hour_options %>
+    <%= f.select "affair_start_at_minute_#{wday}", @item.affair_start_at_minute_options %>
+    <%= t("ss.wave_dash") %>
+    <%= f.select "affair_end_at_hour_#{wday}", @item.affair_end_at_hour_options %>
+    <%= f.select "affair_end_at_minute_#{wday}", @item.affair_end_at_minute_options %>
+  </dd>
+<% end %>
 
 <dt><%= @model.t :attendance_time_changed_minute %><%= @model.tt :attendance_time_changed_minute %></dt>
 <dd><%= f.select :in_attendance_time_change_hour, @item.attendance_time_changed_options %></dd>
