@@ -15,13 +15,12 @@ ja:
       manage_holidays: 休日を管理する
       manage_shifts: シフト勤務を管理する
       manage_notices: 注意文を管理する
+    leave_type:
+      week_in_compensatory_leave: 同一週内の振替
     options:
       leave_type:
         annual_leave: 年次有給休暇
-        sick_leave: 病気休暇
         paidleave: 特別休暇
-        nursing_care_leave: 介護休暇
-        week_in_compensatory_leave: 同一週内の振替
         week_out_compensatory_leave: 同一週外の振替
       compensatory_minute:
         0: ""
@@ -165,6 +164,11 @@ ja:
         week_in_compensatory_minute: 同一週内振替
         week_out_compensatory_minute: 同一週外振替
         remark: 備考
+        week_in_start_at: 同一週内振替開始時間
+        week_in_end_at: 同一週内振替終了時間
+        week_in_start_at_date: 同一週内振替日
+        week_out_start_at: 同一週外振替開始時間
+        week_out_end_at: 同一週外振替終了時間
       gws/affair/leave_file:
         name: タイトル
         start_at: 開始時間
@@ -215,6 +219,7 @@ ja:
           over_one_day: 開始時間〜終了時間が1日を超過しています。
           over_change_hour: 開始時間〜終了時間が日替わり時刻を超えています。
           in_duty_hour: 開始時間〜終了時間が勤務時間内です。
+          not_set_week_out_compensatory_minute: は同一週内振替と同時に入力はできません。
 
   gws_role:
     read_gws_affair_duty_hours: 勤務体系の閲覧
@@ -287,8 +292,13 @@ ja:
         - 終了時間を入力します。
       week_in_compensatory_minute:
         - 同一週内振替を入力します。
+        - 振替時間を入力すると日時の入力が必須となります。
+        - 時間外申請が承認されると入力した日時で承認済みの休暇申請が作成されます。
       week_out_compensatory_minute:
         - 同一週外振替を入力します。
+        - 休暇申請を同時に作成する場合は日時の入力をしてください。
+        - 時間外申請が承認されると入力した日時で承認済みの休暇申請が作成されます。
+        - 同一週内振替と併用はできません。
       remark:
         - 備考を入力します。
     gws/affair/leave_file:

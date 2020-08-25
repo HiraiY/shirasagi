@@ -29,10 +29,26 @@
   </dd>
 
   <dt><%= @model.t :week_in_compensatory_minute %><%= @model.tt :week_in_compensatory_minute %></dt>
-  <dd><%= f.select :week_in_compensatory_minute, @item.week_in_compensatory_minute_options %></dd>
+  <dd>
+    <%= f.select :week_in_compensatory_minute, @item.week_in_compensatory_minute_options %>
+    <%= f.text_field :week_in_start_at_date, class: "date js-date" %>
+    <%= f.select :week_in_start_at_hour, @item.start_at_hour_options %>
+    <%= f.select :week_in_start_at_minute, @item.start_at_minute_options %>
+    〜
+    <%= f.select :week_in_end_at_hour, @item.end_at_hour_options %>
+    <%= f.select :week_in_end_at_minute, @item.end_at_minute_options %>
+  </dd>
 
   <dt><%= @model.t :week_out_compensatory_minute %><%= @model.tt :week_out_compensatory_minute %></dt>
-  <dd><%= f.select :week_out_compensatory_minute, @item.week_out_compensatory_minute_options %></dd>
+  <dd>
+    <%= f.select :week_out_compensatory_minute, @item.week_out_compensatory_minute_options %>
+    <%= f.text_field :week_out_start_at_date, class: "date js-date" %>
+    <%= f.select :week_out_start_at_hour, @item.start_at_hour_options %>
+    <%= f.select :week_out_start_at_minute, @item.start_at_minute_options %>
+    〜
+    <%= f.select :week_out_end_at_hour, @item.end_at_hour_options %>
+    <%= f.select :week_out_end_at_minute, @item.end_at_minute_options %>
+  </dd>
 
   <dt><%= @model.t :remark %><%= @model.tt :remark %></dt>
   <dd><%= f.text_area :remark %></dd>

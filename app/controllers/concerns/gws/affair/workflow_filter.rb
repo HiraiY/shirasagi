@@ -177,6 +177,11 @@ module Gws::Affair::WorkflowFilter
       end
     end
 
+    if @item.state == "approve"
+      set_week_in_leave_file
+      set_week_out_leave_file
+    end
+
     render json: { workflow_state: workflow_state }
   end
 
@@ -280,5 +285,51 @@ module Gws::Affair::WorkflowFilter
     end
 
     render json: { workflow_state: @item.workflow_state }
+  end
+
+  def set_week_in_leave_file
+    if @item.try(:week_in_compensatory_minute)
+      if @item.week_in_compensatory_minute > 0
+        @leave = Gws::Affair::LeaveFile.create(
+          cur_user: @item.user,
+          cur_site: @item.site,
+          leave_type: "week_in_compensatory_leave",
+          week_in_compensatory_file_id: @item.id,
+          start_at: @item.week_in_start_at,
+          end_at: @item.week_in_end_at,
+          groups_hash: @item.groups_hash,
+          users_hash: @item.users_hash,
+          group_ids: @item.user.group_ids,
+          user_ids: [@item.user.id],
+          workflow_user_id: @item.workflow_user_id,
+          workflow_state: @item.workflow_state,
+          workflow_approvers: @item.workflow_approvers,
+          approved: @item.approved
+        )
+      end
+    end
+  end
+
+  def set_week_out_leave_file
+    if @item.try(:week_out_compensatory_minute)
+      if @item.week_out_start_at_date && @item.week_out_compensatory_minute > 0
+        @leave = Gws::Affair::LeaveFile.create(
+          cur_user: @item.user,
+          cur_site: @item.site,
+          leave_type: "week_out_compensatory_leave",
+          week_out_compensatory_file_id: @item.id,
+          start_at: @item.week_out_start_at,
+          end_at: @item.week_out_end_at,
+          groups_hash: @item.groups_hash,
+          users_hash: @item.users_hash,
+          group_ids: @item.user.group_ids,
+          user_ids: [@item.user.id],
+          workflow_user_id: @item.workflow_user_id,
+          workflow_state: @item.workflow_state,
+          workflow_approvers: @item.workflow_approvers,
+          approved: @item.approved
+        )
+      end
+    end
   end
 end
