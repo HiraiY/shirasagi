@@ -3,6 +3,7 @@ class Gws::Affair::LeaveFile
   include Gws::Referenceable
   include Gws::Reference::User
   include Gws::Reference::Site
+  include Gws::Addon::Affair::FileTarget
   include Gws::Addon::Affair::Approver
   include Gws::Addon::Affair::LeaveFile
   include Gws::Addon::GroupPermission

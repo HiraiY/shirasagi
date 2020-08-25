@@ -47,6 +47,7 @@ ja:
         week: 週
         day: 日
     notice:
+      select_target_user: "申請対象のユーザーを選択してください。"
       not_found_overtime_file: "設定可能な時間外申請がありませんでした。"
       time_card_unlocked:
         h2: "%{year}年%{month}月のタイムカードが締められていません。"
@@ -57,6 +58,7 @@ ja:
       delete_shift_calendar: "%{user} のシフト勤務カレンダーを削除してよろしいですか？"
     labels:
       overtime_file: 時間外申請
+      target_user: 申請対象ユーザー
       overtime:
         under_threshold:
           duty_day_time:
