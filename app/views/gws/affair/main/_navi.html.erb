@@ -57,8 +57,13 @@
   <% end %>
 
   <% if Gws::Affair::DutyHour.allowed?(:read, @cur_user, site: @cur_site) %>
-    <h3><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/user"), gws_affair_overtime_management_aggregate_users_main_path, class: "management" %></h3>
-    <h3><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/capital"), gws_affair_overtime_management_aggregate_groups_main_path, class: "management" %></h3>
+    <h3><%= link_to t("modules.gws/affair/overtime_file/management/aggregate"), gws_affair_overtime_management_aggregate_path, class: "management" %></h3>
+    <ul class="narrow-page">
+      <li><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/user"), gws_affair_overtime_management_aggregate_users_main_path, class: "management" %></li>
+      <li><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/capital"), gws_affair_overtime_management_aggregate_capitals_main_path, class: "management" %></li>
+      <li><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/search"), gws_affair_overtime_management_aggregate_search_main_path, class: "management" %></li>
+    </ul>
+
     <h3><%= link_to t("modules.gws/affair/working_time/management/aggregate"), gws_affair_working_time_management_aggregate_main_path, class: "management" %></h3>
     <h3><%= link_to t("modules.gws/affair/duty_calendar"), gws_affair_duty_calendars_path, class: "management" %></h3>
     <h3><%= link_to t("modules.gws/affair/duty_hour"), gws_affair_duty_hours_path, class: "management" %></h3>

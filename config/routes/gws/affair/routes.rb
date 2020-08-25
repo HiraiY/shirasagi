@@ -75,17 +75,35 @@ Rails.application.routes.draw do
       resources :results, only: [:edit, :update]
 
       namespace 'management' do
+        get "aggregate" => redirect { |p, req| "#{req.path}/users" }
+
         namespace 'aggregate' do
-          get "users" => redirect { |p, req| "#{req.path}/under" }, as: :users_main
+          get "users" => redirect { |p, req| "#{req.path}/total" }, as: :users_main
           get "users/:threshold" => "users#index", as: :users
           get "users/:threshold/download" => "users#download", as: :download_users
           post "users/:threshold/download" => "users#download"
 
-          get "groups" => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y')}" }, as: :groups_main
-          get "groups/:year" => "groups#index", as: :groups, year: /(\d{4}|ID)/
-          get "groups/:year/:month" => "groups#monthly", as: :groups_monthly, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
-          get "groups/:year/:month/:group" => "groups#groups", as: :groups_groups, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
-          get "groups/:year/:month/:group/:child_group" => "groups#users", as: :groups_users, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          get "capitals" => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y')}" }, as: :capitals_main
+          get "capitals/:year" => "capitals#index", as: :capitals, year: /(\d{4}|ID)/
+          get "capitals/groups/:year/:month/:group" => "capitals#groups", as: :capitals_groups, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          get "capitals/users/:year/:month/:group" => "capitals#users", as: :capitals_users, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+
+          get "capitals/download/:year" => "capitals#download", as: :capitals_download, year: /(\d{4}|ID)/
+          get "capitals/download/groups/:year/:month/:group" => "capitals#download_groups", as: :capitals_download_groups, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          get "capitals/download/users/:year/:month/:group" => "capitals#download_users", as: :capitals_download_users, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          post "capitals/download/:year" => "capitals#download", year: /(\d{4}|ID)/
+          post "capitals/download/groups/:year/:month/:group" => "capitals#download_groups", year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          post "capitals/download/users/:year/:month/:group" => "capitals#download_users", year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+
+          get "search" => redirect { |p, req| "#{req.path}/groups" }, as: :search_main
+          get "search/groups" => "search#groups", as: :search_groups
+          get "search/groups/results" => "search#groups_results"
+          get "search/users" => "search#users", as: :search_users
+          get "search/users/results" => "search#users_results"
+          get "search/download/groups" => "search#download_groups", as: :search_download_groups
+          get "search/download/users" => "search#download_users", as: :search_download_users
+          post "search/download/groups" => "search#download_groups"
+          post "search/download/users" => "search#download_users"
         end
       end
 

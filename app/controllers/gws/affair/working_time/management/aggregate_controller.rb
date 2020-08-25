@@ -81,7 +81,7 @@ class Gws::Affair::WorkingTime::Management::AggregateController < ApplicationCon
     safe_params = params.require(:s).permit(:encoding)
     encoding = safe_params[:encoding]
     filename = "working_time_#{Time.zone.now.to_i}.csv"
-    enum_csv = Gws::Affair::WorkingTimeEnumerator.new(@cur_site, @users, @time_cards, OpenStruct.new(encoding: encoding))
+    enum_csv = Gws::Affair::Enumerator::WorkingTime.new(@cur_site, @users, @time_cards, OpenStruct.new(encoding: encoding))
     send_enum(enum_csv, type: "text/csv; charset=#{encoding}", filename: filename)
   end
 end

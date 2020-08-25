@@ -1,0 +1,76 @@
+<%
+  def format_minute(minute)
+    (minute.to_i > 0) ? "#{minute / 60}:#{format("%02d", (minute % 60))}" : "--:--"
+  end
+%>
+
+<div class="gws-attendance">
+  <% if @unlocked_time_cards.present? %>
+    <div id="errorExplanation" class="errorExplanation">
+      <h2><%= t("gws/affair.notice.time_card_unlocked.h2", year: @year, month: @month) %></h2>
+      <p><%= t("gws/affair.notice.time_card_unlocked.p") %></p>
+      <ul>
+        <% @unlocked_time_cards.each do |title| %>
+          <li><%= title %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="attendance-box overtime-aggregate">
+    <div class="attendance-box-main">
+      <div class="title"><%= @title %></div>
+    </div>
+  </div>
+
+  <div class="gws-schedule-tabs">
+    <%= link_to({ action: :groups }) do %>
+      <span class="tab-name"><%= t("mongoid.models.gws/group") %></span>
+    <% end %>
+    <%= link_to({ action: :users }, { class: "current" }) do %>
+      <span class="tab-name"><%= t("mongoid.models.gws/user") %></span>
+    <% end %>
+  </div>
+
+  <div class="wrap-table" style="overflow-x: auto;">
+    <table class="index aggregate-capitals">
+      <thead>
+      <tr>
+        <th class="capital"><%= t("gws/affair.labels.overtime.capitals.capital") %></th>
+        <% @users.each do |user| %>
+          <th class="time"><%= user.name %></th>
+        <% end %>
+        <th class="time"><%= t("gws/affair.labels.overtime.capitals.total") %></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @capitals.each do |capital| %>
+        <tr>
+          <th class="capital"><%= capital.name %></th>
+          <% total = 0 %>
+          <% @users.each do |user| %>
+            <%
+              minute = @items.dig(user.id, capital.id).to_i
+              total += minute
+            %>
+            <td class="time"><%= format_minute(minute) %></td>
+          <% end %>
+          <td class="time"><%= format_minute(total) %></td>
+        </tr>
+      <% end %>
+      <tr>
+        <th><%= t("gws/affair.labels.overtime.capitals.total_capitals") %></th>
+        <% total = 0 %>
+        <% @users.each do |user| %>
+          <%
+            minute = @items.dig(user.id, "total").to_i
+            total += minute
+          %>
+          <td class="time"><%= format_minute(minute) %></td>
+        <% end %>
+        <td class="time"><%= format_minute(total) %></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

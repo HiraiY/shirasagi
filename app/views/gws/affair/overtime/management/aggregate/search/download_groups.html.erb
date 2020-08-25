@@ -1,0 +1,26 @@
+<%= form_for :s, url: { action: :download_groups }, html: { id: "item-form", method: :post, multipart: true, autocomplete: :off } do |f| %>
+  <%= hidden_field_tag "s[year]", @year, class: "hidden-ids" %>
+  <%= hidden_field_tag "s[month]", @month, class: "hidden-ids" %>
+  <% @group_ids.each do |id| %>
+    <%= hidden_field_tag "s[group_ids][]", id, class: "hidden-ids" %>
+  <% end %>
+  <% @user_ids.each do |id| %>
+    <%= hidden_field_tag "s[user_ids][]", id, class: "hidden-ids" %>
+  <% end %>
+
+  <div class="addon-views">
+    <div class="addon-view" id="addon-basic">
+      <div class="addon-head"><h2><%= t('gws/affair.confirm.download') %></h2></div>
+      <div class="addon-body">
+        <%= render file: '_download', locals: { f: f } %>
+      </div>
+    </div>
+  </div>
+
+  <footer class="send">
+    <%= f.submit t('ss.buttons.download'), class: 'btn-primary save' %>
+    <%= f.button t('ss.buttons.cancel'), class: 'btn-default', type: :reset, onclick: "location.href='#{url_for(action: :groups_results, s: @s.to_h)}'; return false;" %>
+  </footer>
+<% end %>
+
+<%= jquery do %> SS.confirmUnloading(); <% end %>

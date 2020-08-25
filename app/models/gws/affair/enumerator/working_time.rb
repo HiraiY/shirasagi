@@ -1,5 +1,4 @@
-class Gws::Affair::WorkingTimeEnumerator < Enumerator
-
+class Gws::Affair::Enumerator::WorkingTime < Gws::Affair::Enumerator::Base
   def initialize(site, users, time_cards, params)
     @cur_site = site
     @users = users
@@ -25,19 +24,5 @@ class Gws::Affair::WorkingTimeEnumerator < Enumerator
     terms << Gws::User.t(:organization_uid)
     terms << I18n.t("gws/attendance.views.total_working_minute")
     terms
-  end
-
-  private
-
-  def bom
-    return '' if @params.encoding == 'Shift_JIS'
-    "\uFEFF"
-  end
-
-  def encode(str)
-    return '' if str.blank?
-
-    str = str.encode('CP932', invalid: :replace, undef: :replace) if @params.encoding == 'Shift_JIS'
-    str
   end
 end

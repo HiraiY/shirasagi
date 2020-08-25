@@ -1,0 +1,9 @@
+<nav class="nav-menu">
+  <% if params[:action] == "groups_results" %>
+    <%= link_to t('ss.links.back'), { action: :groups, s: @s.to_h } %>
+    <%= link_to t('ss.links.download'), { action: :download_groups, s: @s.to_h } %>
+  <% elsif params[:action] == "users_results" %>
+    <%= link_to t('ss.links.back'), { action: :users, s: @s.to_h } %>
+    <%= link_to t('ss.links.download'), { action: :download_users, s: @s.to_h } %>
+  <% end %>
+</nav>

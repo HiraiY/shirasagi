@@ -52,6 +52,8 @@ ja:
       time_card_unlocked:
         h2: "%{year}年%{month}月のタイムカードが締められていません。"
         p: 以下のタイムカードが締められていません。
+      not_found_groups: グループが選択されていません。
+      not_found_users: ユーザーが選択されていません。
     confirm:
       download: ダウンロードしてよろしいですか？
       create_shift_calendar: "%{user} のシフト勤務カレンダーを作成してよろしいですか？"
@@ -96,6 +98,14 @@ ja:
           under: 通常分
           over: 超過分
           sum: 月合計
+        capitals:
+          capital: 費目
+          total: 合計
+          total_capitals: 費目合計
+          title: "%{year}年度"
+          title_groups: "費目別（%{year}年度 %{month}月：%{group}）"
+          title_users: "費目別（%{year}年度 %{month}月：%{group}）"
+          title_search: "%{year}年 %{month}月"
     apis:
       duty_hours:
         index: 勤務体系を選択する
@@ -114,8 +124,10 @@ ja:
     gws/affair/leave_file/approve: 依頼されたもの
     gws/affair/leave_file/all: 全ての管理
     gws/affair/working_time/management/aggregate: 勤務時間集計
-    gws/affair/overtime_file/management/aggregate/user: 時間外集計（職員別）
-    gws/affair/overtime_file/management/aggregate/capital: 時間外集計（費目別）
+    gws/affair/overtime_file/management/aggregate: 時間外集計
+    gws/affair/overtime_file/management/aggregate/user: 職員別
+    gws/affair/overtime_file/management/aggregate/capital: 費目別
+    gws/affair/overtime_file/management/aggregate/search: 費目別（検索）
     gws/affair/attendance/management/time_card: タイムカードの管理
     gws/affair/duty_hour: 勤務体系
     gws/affair/duty_calendar: 勤務カレンダー
@@ -229,6 +241,10 @@ ja:
       gws/addon/affair/file_target:
         target_group_id:  グループ
         target_user_id: ユーザー
+      gws/affair/overtime_day_result:
+        search_term: 期間
+        search_group: グループ
+        search_user: ユーザー
     errors:
       models:
         gws/affair/overtime_file:
@@ -352,3 +368,12 @@ ja:
     gws/addon/affair/file_target:
       target_group_id: 申請対象のグループを選択します。
       target_user_id: 申請対象のユーザーを選択します。
+    gws/affair/overtime_day_result:
+      search_term:
+        - 集計対象の期間を設定します。
+      search_group:
+        - 集計対象のグループを選択します。
+        - 配下のグループに所属しているユーザーの時間外を集計します。
+      search_user:
+        - 集計対象のユーザーを選択します。
+

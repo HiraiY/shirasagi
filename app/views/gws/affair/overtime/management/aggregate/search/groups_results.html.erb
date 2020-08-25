@@ -1,0 +1,54 @@
+<%
+  def format_minute(minute)
+    (minute.to_i > 0) ? "#{minute / 60}:#{format("%02d", (minute % 60))}" : "--:--"
+  end
+%>
+
+<div class="gws-attendance">
+  <div class="attendance-box">
+    <div class="attendance-box-main">
+      <%= t("gws/affair.labels.overtime.capitals.title_search", year: @year, month: @month) %>
+    </div>
+  </div>
+
+  <div class="wrap-table" style="overflow-x: auto;">
+    <% if @groups.present? %>
+      <table class="index aggregate-capitals">
+        <thead>
+        <tr>
+          <th class="capital"><%= t("gws/affair.labels.overtime.capitals.capital") %></th>
+          <% @groups.each do |group| %>
+            <th class="time"><%= group.trailing_name %></th>
+          <% end %>
+        </tr>
+        </thead>
+        <tbody>
+        <% @capitals.each do |capital| %>
+          <tr>
+            <th class="capital"><%= capital.name %></th>
+            <% @groups.each do |group| %>
+              <%
+                group_ids = [group.id] + @descendants[group.id].to_a.map(&:id)
+                minute = group_ids.map { |id| @items.dig(id, capital.id).to_i }.sum
+              %>
+              <td class="time"><%= format_minute(minute) %></td>
+            <% end %>
+          </tr>
+        <% end %>
+        <tr>
+          <th><%= t("gws/affair.labels.overtime.capitals.total_capitals") %></th>
+          <% @groups.each do |group| %>
+            <%
+              group_ids = [group.id] + @descendants[group.id].to_a.map(&:id)
+              minute = group_ids.map { |id| @items.dig(id, "total").to_i }.sum
+            %>
+            <td class="time"><%= format_minute(minute) %></td>
+          <% end %>
+        </tr>
+        </tbody>
+      </table>
+    <% else %>
+      <div><%= t("gws/affair.notice.not_found_groups") %></div>
+    <% end %>
+  </div>
+</div>

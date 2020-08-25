@@ -5,7 +5,7 @@ class Gws::Affair::OvertimeDayResult
   include Gws::Reference::Site
   include Gws::Addon::Affair::FileTarget
   include Gws::Affair::OvertimeDayResult::UserAggregate
-  include Gws::Affair::OvertimeDayResult::GroupAggregate
+  include Gws::Affair::OvertimeDayResult::CapitalAggregate
 
   belongs_to :file, class_name: "Gws::Affair::OvertimeFile"
 
@@ -58,88 +58,5 @@ class Gws::Affair::OvertimeDayResult
   def set_file_target
     self.target_user_id = file.target_user_id
     self.target_group_id = file.target_group_id
-  end
-
-  class << self
-    def aggregate_by_group
-      match_pipeline = self.criteria.selector
-      group_pipeline = {
-        _id: {
-          group_id: "$target_group_id",
-          capital_id: "$capital_id"
-        },
-        overtime_minute: { "$sum" => "$overtime_minute" }
-      }
-      pipes = []
-      pipes << { "$match" => match_pipeline }
-      pipes << { "$group" => group_pipeline }
-
-      prefs = {}
-      aggregation = self.collection.aggregate(pipes)
-      aggregation.each do |i|
-        group_id = i["_id"]["group_id"]
-        capital_id = i["_id"]["capital_id"]
-        overtime_minute = i["overtime_minute"]
-
-        prefs[group_id] ||= {}
-        prefs[group_id][capital_id] = overtime_minute
-      end
-      prefs
-    end
-
-    def aggregate_by_group_users
-      match_pipeline = self.criteria.selector
-      group_pipeline = {
-        _id: {
-          user_id: "$target_user_id",
-          capital_id: "$capital_id"
-        },
-        overtime_minute: { "$sum" => "$overtime_minute" }
-      }
-      pipes = []
-      pipes << { "$match" => match_pipeline }
-      pipes << { "$group" => group_pipeline }
-
-      prefs = {}
-      aggregation = self.collection.aggregate(pipes)
-      aggregation.each do |i|
-        user_id = i["_id"]["user_id"]
-        capital_id = i["_id"]["capital_id"]
-        overtime_minute = i["overtime_minute"]
-
-        prefs[user_id] ||= {}
-        prefs[user_id][capital_id] = overtime_minute
-      end
-      prefs
-    end
-
-    def aggregate_by_month
-      match_pipeline = self.criteria.selector
-      group_pipeline = {
-        _id: {
-          year: "$date_year",
-          month: "$date_month",
-          capital_id: "$capital_id"
-        },
-        overtime_minute: { "$sum" => "$overtime_minute" }
-      }
-      pipes = []
-      pipes << { "$match" => match_pipeline }
-      pipes << { "$group" => group_pipeline }
-
-      prefs = {}
-      aggregation = self.collection.aggregate(pipes)
-      aggregation.each do |i|
-        year = i["_id"]["year"]
-        month = i["_id"]["month"]
-        capital_id = i["_id"]["capital_id"]
-        overtime_minute = i["overtime_minute"]
-
-        prefs[year] ||= {}
-        prefs[year][month] ||= {}
-        prefs[year][month][capital_id] = overtime_minute
-      end
-      prefs
-    end
   end
 end

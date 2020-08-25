@@ -1,0 +1,80 @@
+<%
+  def format_minute(minute)
+    (minute.to_i > 0) ? "#{minute / 60}:#{format("%02d", (minute % 60))}" : "--:--"
+  end
+%>
+
+<%
+  def year_items
+    now ||= Time.zone.now
+    start_year = now.year - @cur_site.attendance_management_year
+    end_year = now.year
+    (start_year..end_year).to_a.reverse.map { |y| { _id: y, name: "#{y}#{t("gws/affair.year_id")}", trailing_name: "#{y}#{t("gws/affair.year_id")}" } }.to_json
+  end
+%>
+
+<%= jquery do %>
+var yearNavi = new Gws_Category_Navi('.year-navi');
+yearNavi.setBaseUrl('<%= url_for(year: "ID") %>');
+yearNavi.render(<%== year_items %>, { hideClose: true });
+<% end %>
+
+<div class="gws-attendance">
+  <div class="attendance-box overtime-aggregate">
+    <div class="attendance-box-main">
+      <div class="gws-category-navi year-navi dropdown">
+        <%= link_to({ year: @year, month: format('%02d', @month )}, { class: 'btn dropdown-toggle' }) do %>
+          <%= @title %>
+        <% end %>
+        <div class="dropdown-menu dropdown-menu--white"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap-table" style="overflow-x: auto;">
+    <table class="index aggregate-capitals">
+      <thead>
+      <tr>
+        <th class="capital"><%= t("gws/affair.labels.overtime.capitals.capital") %></th>
+        <% @dates.each do |date| %>
+          <th class="time">
+            <%= link_to action: :groups, month: date.strftime('%m'), group: @group.id do %>
+              <%= date.month %><%= t("datetime.prompts.month") %>
+            <% end %>
+          </th>
+        <% end %>
+        <th class="time"><%= t("gws/affair.labels.overtime.capitals.total") %></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @capitals.each do |capital| %>
+        <tr>
+          <th class="capital"><%= capital.name %></th>
+          <% total = 0 %>
+          <% @dates.each do |date| %>
+            <%
+              minute = @items.dig(date.year, date.month, capital.id).to_i
+              total += minute
+            %>
+            <td class="time"><%= format_minute(minute) %></td>
+          <% end %>
+          <td class="time"><%= format_minute(total) %></td>
+        </tr>
+      <% end %>
+      <tr>
+        <th><%= t("gws/affair.labels.overtime.capitals.total_capitals") %></th>
+        <% total = 0 %>
+        <% @dates.each do |date| %>
+            <%
+              minute = @items.dig(date.year, date.month, "total").to_i
+              total += minute
+            %>
+          <td class="time"><%= format_minute(minute) %></td>
+          </td>
+        <% end %>
+        <td class="time"><%=  format_minute(total) %></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
