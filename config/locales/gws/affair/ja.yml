@@ -179,9 +179,12 @@ ja:
         remark: 備考
         week_in_start_at: 同一週内振替開始時間
         week_in_end_at: 同一週内振替終了時間
-        week_in_start_at_date: 同一週内振替日
+        week_in_start_at_date: 同一週内振替開始日
+        week_in_end_at_date: 同一週内振替終了日
         week_out_start_at: 同一週外振替開始時間
         week_out_end_at: 同一週外振替終了時間
+        week_out_start_at_date: 同一週外振替開始日
+        week_out_end_at_date: 同一週外振替終了日
       gws/affair/leave_file:
         name: タイトル
         start_at: 開始時間
@@ -240,6 +243,7 @@ ja:
           over_change_hour: 開始時間〜終了時間が日替わり時刻を超えています。
           in_duty_hour: 開始時間〜終了時間が勤務時間内です。
           not_set_week_out_compensatory_minute: は同一週内振替と同時に入力はできません。
+          not_match_compensatory_minute_and_hour: と開始時間〜終了時間は同じにしてください。
 
   gws_role:
     read_gws_affair_duty_hours: 勤務体系の閲覧

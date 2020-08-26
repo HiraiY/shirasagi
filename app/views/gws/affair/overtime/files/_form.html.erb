@@ -1,16 +1,33 @@
+<%= jquery do %>
+  var toggleSelectCompensatoryFile = function() {
+  var weekInVal = $(".select-week-in").val();
+  var weekOutVal = $(".select-week-out").val();
+  $(".week-in-date").hide();
+  $(".week-out-date").hide();
+  if (weekInVal > 0) {
+  $(".week-in-date").show();
+  }
+  if (weekOutVal > 0) {
+  $(".week-out-date").show();
+  }
+  };
+  $(".select-week-in").on("change", toggleSelectCompensatoryFile);
+  $(".select-week-out").on("change", toggleSelectCompensatoryFile);
+  toggleSelectCompensatoryFile();
+<% end %>
+
 <%
   capital_options = Gws::Affair::Capital.site(@cur_site).pluck(:no, :name, :id)
   capital_options.map! { |no, name, id| [ [ no.presence, name.presence ].compact.join(" "), id ] }
 
   duty_calendar = @cur_user.effective_duty_calendar(@cur_site)
   duty_hour = duty_calendar.default_duty_hour
-  now = Time.zone.now
-
-  @item.start_at_date ||= now.strftime("%Y/%m/%d")
-  @item.start_at_hour ||= duty_hour.affair_end_at_hour(now)
-  @item.start_at_minute ||= duty_hour.affair_end_at_minute(now)
-  @item.end_at_hour ||= duty_hour.affair_end_at_hour(now) + 1
-  @item.end_at_minute ||= duty_hour.affair_end_at_minute(now)
+  @item.start_at_date ||= Time.zone.now.strftime("%Y/%m/%d")
+  @item.start_at_hour ||= duty_hour.affair_end_at_hour
+  @item.start_at_minute ||= duty_hour.affair_end_at_minute
+  @item.end_at_date ||= Time.zone.now.strftime("%Y/%m/%d")
+  @item.end_at_hour ||= duty_hour.affair_end_at_hour + 1
+  @item.end_at_minute ||= duty_hour.affair_end_at_minute
 %>
 
 <dl class="see">
@@ -26,30 +43,37 @@
     <%= f.select :start_at_hour, @item.start_at_hour_options %>
     <%= f.select :start_at_minute, @item.start_at_minute_options %>
     〜
+    <%= f.text_field :end_at_date, class: "date js-date" %>
     <%= f.select :end_at_hour, @item.end_at_hour_options %>
     <%= f.select :end_at_minute, @item.end_at_minute_options %>
   </dd>
 
   <dt><%= @model.t :week_in_compensatory_minute %><%= @model.tt :week_in_compensatory_minute %></dt>
   <dd>
-    <%= f.select :week_in_compensatory_minute, @item.week_in_compensatory_minute_options %>
-    <%= f.text_field :week_in_start_at_date, class: "date js-date" %>
-    <%= f.select :week_in_start_at_hour, @item.start_at_hour_options %>
-    <%= f.select :week_in_start_at_minute, @item.start_at_minute_options %>
-    〜
-    <%= f.select :week_in_end_at_hour, @item.end_at_hour_options %>
-    <%= f.select :week_in_end_at_minute, @item.end_at_minute_options %>
+    <%= f.select :week_in_compensatory_minute, @item.week_in_compensatory_minute_options, {}, { class: "select-week-in" } %>
+    <span class="week-in-date" style="display: none; margin-top: 10px;">
+      <%= f.text_field :week_in_start_at_date, class: "date js-date" %>
+      <%= f.select :week_in_start_at_hour, @item.start_at_hour_options %>
+      <%= f.select :week_in_start_at_minute, @item.start_at_minute_options %>
+      〜
+      <%= f.text_field :week_in_end_at_date, class: "date js-date" %>
+      <%= f.select :week_in_end_at_hour, @item.end_at_hour_options %>
+      <%= f.select :week_in_end_at_minute, @item.end_at_minute_options %>
+    </span>
   </dd>
 
   <dt><%= @model.t :week_out_compensatory_minute %><%= @model.tt :week_out_compensatory_minute %></dt>
   <dd>
-    <%= f.select :week_out_compensatory_minute, @item.week_out_compensatory_minute_options %>
-    <%= f.text_field :week_out_start_at_date, class: "date js-date" %>
-    <%= f.select :week_out_start_at_hour, @item.start_at_hour_options %>
-    <%= f.select :week_out_start_at_minute, @item.start_at_minute_options %>
-    〜
-    <%= f.select :week_out_end_at_hour, @item.end_at_hour_options %>
-    <%= f.select :week_out_end_at_minute, @item.end_at_minute_options %>
+    <%= f.select :week_out_compensatory_minute, @item.week_out_compensatory_minute_options, {}, { class: "select-week-out" } %>
+    <span class="week-out-date" style="display: none; margin-top: 10px;">
+      <%= f.text_field :week_out_start_at_date, class: "date js-date" %>
+      <%= f.select :week_out_start_at_hour, @item.start_at_hour_options %>
+      <%= f.select :week_out_start_at_minute, @item.start_at_minute_options %>
+      〜
+      <%= f.text_field :week_out_end_at_date, class: "date js-date" %>
+      <%= f.select :week_out_end_at_hour, @item.end_at_hour_options %>
+      <%= f.select :week_out_end_at_minute, @item.end_at_minute_options %>
+    </span>
   </dd>
 
   <dt><%= @model.t :remark %><%= @model.tt :remark %></dt>
