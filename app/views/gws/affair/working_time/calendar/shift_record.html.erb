@@ -3,10 +3,10 @@
   duty_hour = duty_calendar.effective_duty_hour(@cur_date)
 
   wday_type = duty_calendar.leave_day?(@cur_date) ? "holiday" : "workday"
-  affair_start_at_hour = duty_hour.affair_start_at_hour
-  affair_start_at_minute = duty_hour.affair_start_at_minute
-  affair_end_at_hour = duty_hour.affair_end_at_hour
-  affair_end_at_minute = duty_hour.affair_end_at_minute
+  affair_start_at_hour = duty_hour.affair_start_at_hour(@cur_date)
+  affair_start_at_minute = duty_hour.affair_start_at_minute(@cur_date)
+  affair_end_at_hour = duty_hour.affair_end_at_hour(@cur_date)
+  affair_end_at_minute = duty_hour.affair_end_at_minute(@cur_date)
 %>
 
 <%= form_for :item, url: { action: :shift_record }, html: { method: :post, multipart: true, class: 'cell-edit' } do |f| %>

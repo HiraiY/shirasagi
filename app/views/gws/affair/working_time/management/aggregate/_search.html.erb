@@ -28,3 +28,12 @@
     <% end %>
   </div>
 </div>
+
+<div class="gws-schedule-tabs">
+  <%= link_to gws_affair_working_time_management_aggregate_path(duty_type: "default", s: params.permit(s: [:group_id, :year, :month]).dig(:s)), class: params[:duty_type] == "default" ? "current" : nil do %>
+    <span class="tab-name">通常</span>
+  <% end %>
+  <%= link_to gws_affair_working_time_management_aggregate_path(duty_type: "flextime", s: params.permit(s: [:group_id, :year, :month]).dig(:s)), class: params[:duty_type] == "flextime" ? "current" : nil do %>
+    <span class="tab-name">自由時間勤務</span>
+  <% end %>
+</div>

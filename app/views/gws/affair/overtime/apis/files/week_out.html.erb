@@ -16,6 +16,7 @@
       <% end %>
       <th class="name"><%= t("gws/affair.labels.overtime_file") %></th>
       <th><%= t("gws/affair.options.leave_type.week_out_compensatory_leave") %></th>
+      <th><%= t("gws/affair.labels.target_user") %></th>
     </tr>
   </thead>
   <tbody class="items">
@@ -28,6 +29,7 @@
         <% end %>
         <td><%= link_to item.term_label, "#", class: @multi ? "select-item" : "select-single-item" %></td>
         <td><%= item.label :week_out_compensatory_minute %></td>
+        <td><%= item.target_user.try(:long_name) %></td>
       </tr>
     <% end %>
   </tbody>

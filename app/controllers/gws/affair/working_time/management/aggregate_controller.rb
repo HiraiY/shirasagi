@@ -39,10 +39,9 @@ class Gws::Affair::WorkingTime::Management::AggregateController < ApplicationCon
     @s[:group_id] ||= group.id
     @users = @model.active.in(group_ids: [group.id]).order_by_title(@cur_site)
 
-    # only flextime users
     @users = @users.select do |user|
       duty_calendar = user.effective_duty_calendar(@cur_site)
-      duty_calendar.flextime?
+      (params[:duty_type] == "flextime") ? duty_calendar.flextime? : !duty_calendar.flextime?
     end
   end
 

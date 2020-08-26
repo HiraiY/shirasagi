@@ -22,7 +22,6 @@ describe "gws_attendance_time_card", type: :feature, dbscope: :example, js: true
     hour = now.hour > 3 ? now.hour : now.hour + 24
     min = now.min
     expect(page).to have_css('.today-box .today .info .enter', text: format('%d:%02d', hour, min))
-    dump("enter")
   end
 
   def punch_leave(now)

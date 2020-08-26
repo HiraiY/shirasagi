@@ -1,0 +1,15 @@
+<%
+  def format_minute(minute)
+    (minute.to_i > 0) ? "#{minute / 60}:#{format("%02d", (minute % 60))}" : "--:--"
+  end
+%>
+
+<div class="gws-attendance">
+  <%= render partial: 'search', locals: { current: "index" } %>
+
+  <% if @threshold == "total" %>
+    <%= render partial: 'total', locals: { current: "index" } %>
+  <% else %>
+    <%= render partial: 'detail', locals: { current: "index" } %>
+  <% end %>
+</div>

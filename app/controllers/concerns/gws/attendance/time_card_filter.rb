@@ -36,7 +36,7 @@ module Gws::Attendance::TimeCardFilter
 
   def set_overtime_day_results
     @overtime_day_results = {}
-    Gws::Affair::OvertimeDayResult.site(@cur_site).user(@item.user).and(
+    Gws::Affair::OvertimeDayResult.site(@cur_site).where(target_user_id: @item.user_id).and(
       { "date" => { "$gte" => @cur_month } },
       { "date" => { "$lte" => @cur_month.end_of_month } },
     ).each do |item|
@@ -47,10 +47,10 @@ module Gws::Attendance::TimeCardFilter
 
   def set_leave_files
     @leave_files = {}
-    Gws::Affair::LeaveFile.site(@cur_site).user(@item.user).and(
-        { "start_at" => { "$gte" => @cur_month } },
-        { "start_at" => { "$lte" => @cur_month.end_of_month } },
-        { "workflow_state" => "approve" }
+    Gws::Affair::LeaveFile.site(@cur_site).where(target_user_id: @item.user_id).and(
+      { "start_at" => { "$gte" => @cur_month } },
+      { "start_at" => { "$lte" => @cur_month.end_of_month } },
+      { "workflow_state" => "approve" }
     ).each do |item|
       @leave_files[item.date] ||= []
       @leave_files[item.date] << item
@@ -129,6 +129,7 @@ module Gws::Attendance::TimeCardFilter
         date: @cur_date, field_name: @type, action: 'modify',
         time: time, reason_type: @cell.in_reason_type, reason: @cell.in_reason
       )
+      @record.duty_calendar = @duty_calendar
       @record.send("#{@type}=", time)
       result = @record.save
     end

@@ -39,12 +39,14 @@ ja:
         workday: 勤務日
         holiday: 休日
       notice_type:
-        time_limit: 時間制限
+        month_time_limit: 月の就業時間の上限
+        week_time_limit: 週の就業時間の上限
       period_type:
         month: 月
         week: 週
         day: 日
     notice:
+      select_target_user: "申請対象のユーザーを選択してください。"
       not_found_overtime_file: "設定可能な時間外申請がありませんでした。"
       time_card_unlocked:
         h2: "%{year}年%{month}月のタイムカードが締められていません。"
@@ -55,6 +57,7 @@ ja:
       delete_shift_calendar: "%{user} のシフト勤務カレンダーを削除してよろしいですか？"
     labels:
       overtime_file: 時間外申請
+      target_user: 申請対象ユーザー
       overtime:
         under_threshold:
           duty_day_time:
@@ -88,11 +91,17 @@ ja:
           week_out_compensatory:
             name: "同一週以外の振替"
             rate: "同一週以外の振替\n50/100"
+        total:
+          under: 通常分
+          over: 超過分
+          sum: 月合計
     apis:
       duty_hours:
         index: 勤務体系を選択する
       holiday_calendars:
         index: 休日カレンダーを選択する
+      duty_notices:
+        index: タイムカード警告文を選択する
 
   modules:
     gws/affair: 庶務事務
@@ -103,8 +112,9 @@ ja:
     gws/affair/leave_file: 休暇申請
     gws/affair/leave_file/approve: 依頼されたもの
     gws/affair/leave_file/all: 全ての管理
-    gws/affair/working_time/management/aggregate: 自由勤務時間集計
-    gws/affair/overtime_file/management/aggregate: 時間外集計
+    gws/affair/working_time/management/aggregate: 勤務時間集計
+    gws/affair/overtime_file/management/aggregate/user: 時間外集計（職員別）
+    gws/affair/overtime_file/management/aggregate/capital: 時間外集計（費目別）
     gws/affair/attendance/management/time_card: タイムカードの管理
     gws/affair/duty_hour: 勤務体系
     gws/affair/duty_calendar: 勤務カレンダー
@@ -112,6 +122,7 @@ ja:
     gws/affair/capital: 原資区分
     gws/affair/working_time: 勤務表
     gws/affair/shift_calendar: シフト勤務
+    gws/affair/duty_notice: タイムカード警告文
     addons:
       gws/affair/overtime_file: 時間外申請書
       gws/affair/overtime_result: 結果
@@ -120,6 +131,8 @@ ja:
       gws/affair/duty_hour: 勤務体系
       gws/affair/holiday: 休日
       gws/affair/flextime: 自由時間勤務
+      gws/affair/duty_notice: タイムカード警告文
+      gws/affair/file_target: 申請対象
 
   mongoid:
     models:
@@ -195,6 +208,8 @@ ja:
       gws/addon/affair/holiday:
         holiday_type: 休日種別
         holiday_calendar_ids: 休日カレンダー
+      gws/addon/affair/duty_notice:
+        duty_notice_ids: タイムカード警告文
       gws/affair/holiday_calendar:
         name: タイトル
         wday_settings: 休日設定
@@ -209,10 +224,15 @@ ja:
         holidays: 他の所定休日
       gws/addon/affair/flextime:
         flextime_state: 自由時間勤務
-      gws/affair/time_card_notice:
+      gws/affair/duty_notice:
+        name: タイトル
         notice_type: 種別
         period_type: 期間
         threshold_hour: 上限時間
+        body: 警告文
+      gws/addon/affair/file_target:
+        target_group_id:  グループ
+        target_user_id: ユーザー
     errors:
       models:
         gws/affair/overtime_file:
@@ -330,8 +350,15 @@ ja:
     gws/affair/duty_hour:
       name:
         - 勤務体系名を入力します。
-    gws/affair/time_card_notice:
+    gws/affair/duty_notice:
+      name:
+        - タイトルを入力します。
       notice_type:
         - 種別を選択します。
       threshold_hour:
         - 上限時間を入力します。
+      body:
+        - 注意文を入力します。
+    gws/addon/affair/file_target:
+      target_group_id: 申請対象のグループを選択します。
+      target_user_id: 申請対象のユーザーを選択します。

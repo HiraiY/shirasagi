@@ -24,6 +24,22 @@ class Gws::Affair::ShiftRecord
   validates :affair_end_at_minute, presence: true
   validates :wday_type, presence: true
 
+  def affair_start_at_hour(time = nil)
+    super()
+  end
+
+  def affair_start_at_minute(time = nil)
+    super()
+  end
+
+  def affair_end_at_hour(time = nil)
+    super()
+  end
+
+  def affair_end_at_minute(time = nil)
+    super()
+  end
+
   def affair_start_at_hour_options
     (0..23).map do |h|
       [ "#{h}#{I18n.t('datetime.prompts.hour')}", h.to_s ]
@@ -53,7 +69,7 @@ class Gws::Affair::ShiftRecord
   end
 
   def default_duty_hour
-    shift_calendar.default_duty_calendar.duty_hours.first || Gws::Affair::DefaultDutyHour.new(cur_site: @cur_site || site)
+    shift_calendar.default_duty_calendar.default_duty_hour
   end
 
   def calc_attendance_date(time = Time.zone.now)
@@ -80,19 +96,38 @@ class Gws::Affair::ShiftRecord
     default_duty_hour.night_time_end(time)
   end
 
-  def working_minute(time)
-    affair_on_duty_working_minute = default_duty_hour.affair_on_duty_working_minute
-    affair_on_duty_break_minute = default_duty_hour.affair_on_duty_break_minute
+  def affair_on_duty_working_minute
+    default_duty_hour.affair_on_duty_working_minute
+  end
 
-    start_at = Time.zone.parse("#{affair_start_at_hour}:#{affair_start_at_minute}").to_datetime
-    end_at = Time.zone.parse("#{affair_end_at_hour}:#{affair_end_at_minute}").to_datetime
+  def affair_on_duty_break_minute
+    default_duty_hour.affair_on_duty_break_minute
+  end
+
+  def affair_overtime_working_minute
+    default_duty_hour.affair_overtime_working_minute
+  end
+
+  def affair_overtime_break_minute
+    default_duty_hour.affair_overtime_break_minute
+  end
+
+  def working_minute(time)
+    start_at = affair_start(time)
+    end_at = affair_end(time)
     return 0 if start_at >= end_at
 
-    minute = (end_at - start_at) * 24 * 64
-    if affair_on_duty_working_minute && affair_on_duty_break_minute
-      minute -= affair_on_duty_break_minute if minute > affair_on_duty_working_minute
+    duty_working_minute = affair_on_duty_working_minute.to_i
+    duty_break_minute = affair_on_duty_break_minute.to_i
+
+    minutes = ((end_at.to_datetime - start_at.to_datetime) * 24 * 60).to_i
+    if duty_working_minute > 0 && minutes > duty_working_minute
+      break_minute = duty_break_minute * (minutes / duty_working_minute)
+      minutes -= break_minute
     end
-    minute
+
+    minutes = 0 if minutes < 0
+    minutes
   end
 
   def holiday?(date)

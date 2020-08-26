@@ -168,7 +168,7 @@ class Gws::Affair::Attendance::TimeCardsController < ApplicationController
     end
 
     render_opts = { location: location, render: { file: :index }, notice: t('gws/attendance.notice.punched') }
-    render_update @item.punch("#{params[:action]}#{params[:index]}", date, now), render_opts
+    render_update @item.punch("#{params[:action]}#{params[:index]}", date, now, @duty_calendar), render_opts
   end
 
   alias leave enter
