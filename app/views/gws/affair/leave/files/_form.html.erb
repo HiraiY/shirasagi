@@ -18,17 +18,11 @@ $('a.select-affair-file').on("click", function () {
 
   if (uid) {
     href = href.replace("UID", uid);
-    $.colorbox({
-      fixed: true,
-      width: "90%",
-      height: "90%",
-      href: href
-    });
+    $(this).attr("href", href);
   } else {
     alert("<%= t("gws/affair.notice.select_target_user") %>");
+    return false;
   }
-
-  return false;
 });
 <% end %>
 
@@ -63,7 +57,7 @@ $('a.select-affair-file').on("click", function () {
   <dt><%= @model.t :week_in_compensatory_file_id %></dt>
   <dd>
     <%= f.hidden_field "week_in_compensatory_file_id", value: "", class: "hidden-ids" %>
-    <%= link_to t("ss.links.select"), gws_affair_overtime_apis_files_week_in_path(uid: "UID", id: @item.id), class: "select-affair-file btn" %>
+    <%= link_to t("ss.links.select"), gws_affair_overtime_apis_files_week_in_path(uid: "UID", id: @item.id), class: "ajax-box select-affair-file btn" %>
   </dd>
   <dd>
     <table class="index ajax-selected">
@@ -92,7 +86,7 @@ $('a.select-affair-file').on("click", function () {
   <dt><%= @model.t :week_out_compensatory_file_id %></dt>
   <dd>
     <%= f.hidden_field "week_out_compensatory_file_id", value: "", class: "hidden-ids" %>
-    <%= link_to t("ss.links.select"), gws_affair_overtime_apis_files_week_out_path(uid: "UID", id: @item.id), class: "select-affair-file btn" %>
+    <%= link_to t("ss.links.select"), gws_affair_overtime_apis_files_week_out_path(uid: "UID", id: @item.id), class: "ajax-box select-affair-file btn" %>
   </dd>
   <dd>
     <table class="index ajax-selected">
