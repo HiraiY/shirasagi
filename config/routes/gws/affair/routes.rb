@@ -104,6 +104,9 @@ Rails.application.routes.draw do
           get "search/download/users" => "search#download_users", as: :search_download_users
           post "search/download/groups" => "search#download_groups"
           post "search/download/users" => "search#download_users"
+
+          get "rkk/download" => "rkk#download", as: :download
+          post "rkk/download" => "rkk#download"
         end
       end
 
