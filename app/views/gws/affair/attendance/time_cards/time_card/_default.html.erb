@@ -145,13 +145,20 @@
         <td class="time"><%=br compensatory_minute_labels.join("\n") %></td>
 
         <td class="leave">
-          <% (@leave_files[date.to_datetime] || []).each do |leave_file|%>
-            <div class="leave-file">
-              <%= leave_file.label :leave_type %>
-              <div class="leave-file-tooltip" data-href="<%= gws_affair_leave_apis_file_path(id: leave_file.id) %>">
-                <i class="material-icons md-13">&#xE0C9;</i>
+          <% @leave_files.each do |leave_file|%>
+            <% date_range = leave_file.start_at.strftime("%Y/%m/%d")..leave_file.end_at.strftime("%Y/%m/%d") %>
+            <% if date_range.cover?(date.to_datetime.strftime("%Y/%m/%d")) %>
+              <div class="leave-file">
+                <% if leave_file.leave_type == "week_in_compensatory_leave" %>
+                  <%= I18n.t("gws/affair.leave_type.week_in_compensatory_leave") %>
+                <% else %>
+                  <%= leave_file.label :leave_type %>
+                <% end %>
+                <div class="leave-file-tooltip" data-href="<%= gws_affair_leave_apis_file_path(id: leave_file.id) %>">
+                  <i class="material-icons md-13">&#xE0C9;</i>
+                </div>
               </div>
-            </div>
+            <% end %>
           <% end %>
         </td>
 

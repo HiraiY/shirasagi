@@ -4,11 +4,11 @@ module Gws::Addon::Affair::OvertimeFile
 
   included do
     attr_accessor :start_at_date, :start_at_hour, :start_at_minute
-    attr_accessor :end_at_hour, :end_at_minute
+    attr_accessor :end_at_date, :end_at_hour, :end_at_minute
     attr_accessor :week_in_start_at_date, :week_in_start_at_hour, :week_in_start_at_minute
-    attr_accessor :week_in_end_at_hour, :week_in_end_at_minute
+    attr_accessor :week_in_end_at_date, :week_in_end_at_hour, :week_in_end_at_minute
     attr_accessor :week_out_start_at_date, :week_out_start_at_hour, :week_out_start_at_minute
-    attr_accessor :week_out_end_at_hour, :week_out_end_at_minute
+    attr_accessor :week_out_end_at_date, :week_out_end_at_hour, :week_out_end_at_minute
 
     field :overtime_name, type: String
     field :date, type: DateTime
@@ -25,11 +25,11 @@ module Gws::Addon::Affair::OvertimeFile
 
     permit_params :overtime_name
     permit_params :start_at_date, :start_at_hour, :start_at_minute
-    permit_params :end_at_hour, :end_at_minute
+    permit_params :end_at_date, :end_at_hour, :end_at_minute
     permit_params :week_in_start_at_date, :week_in_start_at_hour, :week_in_start_at_minute
-    permit_params :week_in_end_at_hour, :week_in_end_at_minute
+    permit_params :week_in_end_at_date, :week_in_end_at_hour, :week_in_end_at_minute
     permit_params :week_out_start_at_date, :week_out_start_at_hour, :week_out_start_at_minute
-    permit_params :week_out_end_at_hour, :week_out_end_at_minute
+    permit_params :week_out_end_at_date, :week_out_end_at_hour, :week_out_end_at_minute
 
     permit_params :week_in_compensatory_minute
     permit_params :week_out_compensatory_minute
@@ -54,6 +54,7 @@ module Gws::Addon::Affair::OvertimeFile
       end
 
       if end_at
+        self.end_at_date = end_at.strftime("%Y/%m/%d")
         self.end_at_hour = end_at.hour
         self.end_at_minute = end_at.minute
       end
@@ -65,6 +66,7 @@ module Gws::Addon::Affair::OvertimeFile
       end
 
       if week_in_end_at
+        self.week_in_end_at_date = week_in_end_at.strftime("%Y/%m/%d")
         self.week_in_end_at_hour = week_in_end_at.hour
         self.week_in_end_at_minute = week_in_end_at.minute
       end
@@ -76,6 +78,7 @@ module Gws::Addon::Affair::OvertimeFile
       end
 
       if week_out_end_at
+        self.week_out_end_at_date = week_out_end_at.strftime("%Y/%m/%d")
         self.week_out_end_at_hour = week_out_end_at.hour
         self.week_out_end_at_minute = week_out_end_at.minute
       end
@@ -110,7 +113,7 @@ module Gws::Addon::Affair::OvertimeFile
 
   def validate_date
     return if start_at_date.blank? || start_at_hour.blank? || start_at_minute.blank?
-    return if end_at_hour.blank? || end_at_minute.blank?
+    return if end_at_date.blank? || end_at_hour.blank? || end_at_minute.blank?
 
     site = self.site || cur_site
 
@@ -121,8 +124,7 @@ module Gws::Addon::Affair::OvertimeFile
     return if user.blank?
 
     self.start_at = Time.zone.parse("#{start_at_date} #{start_at_hour}:#{start_at_minute}")
-    self.end_at = Time.zone.parse("#{start_at_date} #{end_at_hour}:#{end_at_minute}")
-    self.end_at += 1.day if self.end_at < self.start_at
+    self.end_at = Time.zone.parse("#{end_at_date} #{end_at_hour}:#{end_at_minute}")
 
     if start_at >= end_at
       errors.add :end_at, :greater_than, count: t(:start_at)
@@ -156,44 +158,64 @@ module Gws::Addon::Affair::OvertimeFile
   end
 
   def validate_week_in_date
-    return self.week_in_start_at = nil if week_in_start_at_date.blank?
-    return if week_in_start_at_hour.blank? || week_in_start_at_minute.blank?
-    return if week_in_end_at_hour.blank? || week_in_end_at_minute.blank?
+    if week_in_compensatory_minute == 0
+      self.week_in_start_at = nil
+      self.week_in_end_at = nil
+    else
+      self.week_in_start_at = Time.zone.parse("#{week_in_start_at_date} #{week_in_start_at_hour}:#{week_in_start_at_minute}")
+      self.week_in_end_at = Time.zone.parse("#{week_in_end_at_date} #{week_in_end_at_hour}:#{week_in_end_at_minute}")
 
-    self.week_in_start_at = Time.zone.parse("#{week_in_start_at_date} #{week_in_start_at_hour}:#{week_in_start_at_minute}")
-    self.week_in_end_at = Time.zone.parse("#{week_in_start_at_date} #{week_in_end_at_hour}:#{week_in_end_at_minute}")
-    self.week_in_end_at += 1.day if self.week_in_end_at < self.week_in_start_at
+      if week_in_start_at >= week_in_end_at
+        errors.add :week_in_end_at, :greater_than, count: t(:week_in_start_at)
+      end
 
-    if week_in_start_at >= week_in_end_at
-      errors.add :week_in_end_at, :greater_than, count: t(:week_in_start_at)
-    end
+      if week_in_end_at >= week_in_start_at.advance(days: 1)
+        errors.add :base, :over_one_day
+      end
 
-    if week_in_end_at >= week_in_start_at.advance(days: 1)
-      errors.add :base, :over_one_day
+      if ((week_in_end_at - week_in_start_at) * 24 * 60).to_i != week_in_compensatory_minute
+        errors.add :week_in_compensatory_minute, :not_match_compensatory_minute_and_hour
+      end
     end
   end
 
   def validate_week_out_date
-    return self.week_out_start_at = nil if week_out_start_at_date.blank?
-    return if week_out_start_at_hour.blank? || week_out_start_at_minute.blank?
-    return if week_out_end_at_hour.blank? || week_out_end_at_minute.blank?
+    if week_out_compensatory_minute == 0
+      self.week_out_start_at = nil
+      self.week_out_end_at = nil
+    else
+      self.week_out_start_at = nil if week_out_start_at_date.blank?
+      self.week_out_end_at = nil if week_out_end_at_date.blank?
 
-    self.week_out_start_at = Time.zone.parse("#{week_out_start_at_date} #{week_out_start_at_hour}:#{week_out_start_at_minute}")
-    self.week_out_end_at = Time.zone.parse("#{week_out_start_at_date} #{week_out_end_at_hour}:#{week_out_end_at_minute}")
-    self.week_out_end_at += 1.day if self.week_out_end_at < self.week_out_start_at
+      if week_out_start_at_date.present? && week_out_end_at_date.present?
+        self.week_out_start_at = Time.zone.parse("#{week_out_start_at_date} #{week_out_start_at_hour}:#{week_out_start_at_minute}")
+        self.week_out_end_at = Time.zone.parse("#{week_out_end_at_date} #{week_out_end_at_hour}:#{week_out_end_at_minute}")
 
-    if week_out_start_at >= week_out_end_at
-      errors.add :week_out_end_at, :greater_than, count: t(:week_out_start_at)
-    end
+        if week_out_start_at >= week_out_end_at
+          errors.add :week_out_end_at, :greater_than, count: t(:week_out_start_at)
+        end
 
-    if week_out_end_at >= week_out_start_at.advance(days: 1)
-      errors.add :base, :over_one_day
+        if week_out_end_at >= week_out_start_at.advance(days: 1)
+          errors.add :base, :over_one_day
+        end
+
+        if ((week_out_end_at - week_out_start_at) * 24 * 60).to_i != week_out_compensatory_minute
+          errors.add :week_out_compensatory_minute, :not_match_compensatory_minute_and_hour
+        end
+      elsif week_out_start_at_date.present? && week_out_end_at_date.blank?
+        errors.add :week_out_end_at_date, :blank
+      elsif week_out_start_at_date.blank? && week_out_end_at_date.present?
+        errors.add :week_out_start_at_date, :blank
+      end
     end
   end
 
   def validate_week_in_compensatory_minute
     if week_in_compensatory_minute > 0 && week_in_start_at_date.blank?
-      errors.add :week_in_start_at_date, :blank
+      errors.add :week_in_start_at, :blank
+    end
+    if week_in_compensatory_minute > 0 && week_in_end_at_date.blank?
+      errors.add :week_in_end_at, :blank
     end
   end
 
@@ -204,25 +226,34 @@ module Gws::Addon::Affair::OvertimeFile
   end
 
   def start_end_term
-    hour = ((end_at - start_at) * 24).to_i
     start_time = "#{start_at.hour}:#{format('%02d', start_at.minute)}"
-    end_time = "#{start_at.hour + hour}:#{format('%02d', end_at.minute)}"
-    "#{start_at.strftime("%Y/%m/%d")} #{start_time}#{I18n.t("ss.wave_dash")}#{end_time}"
+    end_time = "#{end_at.hour}:#{format('%02d', end_at.minute)}"
+    if start_at_date == end_at_date
+      "#{start_at.strftime("%Y/%m/%d")} #{start_time}#{I18n.t("ss.wave_dash")}#{end_time}"
+    else
+      "#{start_at.strftime("%Y/%m/%d")} #{start_time}#{I18n.t("ss.wave_dash")}#{end_at.strftime("%Y/%m/%d")} #{end_time}"
+    end
   end
 
   def week_in_start_end_term
-    hour = ((week_in_end_at - week_in_start_at) * 24).to_i
     week_in_start_time = "#{week_in_start_at.hour}:#{format('%02d', week_in_start_at.minute)}"
-    week_in_end_time = "#{week_in_start_at.hour + hour}:#{format('%02d', week_in_end_at.minute)}"
-    "#{week_in_start_at.strftime("%Y/%m/%d")} #{week_in_start_time}#{I18n.t("ss.wave_dash")}#{week_in_end_time}"
+    week_in_end_time = "#{week_in_end_at.hour}:#{format('%02d', week_in_end_at.minute)}"
+    if week_in_start_at_date == end_at_date
+      "#{week_in_start_at.strftime("%Y/%m/%d")} #{week_in_start_time}#{I18n.t("ss.wave_dash")}#{week_in_end_time}"
+    else
+      "#{week_in_start_at.strftime("%Y/%m/%d")} #{week_in_start_time}#{I18n.t("ss.wave_dash")}#{week_in_end_at.strftime("%Y/%m/%d")} #{week_in_end_time}"
+    end
   end
 
   def week_out_start_end_term
     return if week_out_start_at.blank?
-    hour = ((week_out_end_at - week_out_start_at) * 24).to_i
     week_out_start_time = "#{week_out_start_at.hour}:#{format('%02d', week_out_start_at.minute)}"
-    week_out_end_time = "#{week_out_start_at.hour + hour}:#{format('%02d', week_out_end_at.minute)}"
-    "#{week_out_start_at.strftime("%Y/%m/%d")} #{week_out_start_time}#{I18n.t("ss.wave_dash")}#{week_out_end_time}"
+    week_out_end_time = "#{week_out_end_at.hour}:#{format('%02d', week_out_end_at.minute)}"
+    if start_at_date == end_at_date
+      "#{week_out_start_at.strftime("%Y/%m/%d")} #{week_out_start_time}#{I18n.t("ss.wave_dash")}#{week_out_end_time}"
+    else
+      "#{week_out_start_at.strftime("%Y/%m/%d")} #{week_out_start_time}#{I18n.t("ss.wave_dash")}#{week_out_end_at.strftime("%Y/%m/%d")} #{week_out_end_time}"
+    end
   end
 
   def term_label

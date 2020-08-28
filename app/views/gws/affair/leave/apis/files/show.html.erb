@@ -10,7 +10,11 @@
     <dd><%= tryb { @item.end_at.strftime("%Y/%m/%d %H:%M") } %></dd>
 
     <dt><%= @model.t :leave_type %></dt>
-    <dd><%= @item.label :leave_type %></dd>
+    <% if @item.leave_type == "week_in_compensatory_leave" %>
+      <dd><%= I18n.t("gws/affair.leave_type.week_in_compensatory_leave") %></dd>
+    <% else %>
+      <dd><%= @item.label :leave_type %></dd>
+    <% end %>
 
     <% if @item.week_in_compensatory_file %>
       <dt><%= @model.t :week_in_compensatory_file_id %></dt>

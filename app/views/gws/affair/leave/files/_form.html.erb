@@ -16,6 +16,7 @@ toggleSelectCompensatoryFile();
   @item.start_at_date ||= Time.zone.now.strftime("%Y/%m/%d")
   @item.start_at_hour ||= duty_hour.affair_start_at_hour
   @item.start_at_minute ||= duty_hour.affair_start_at_minute
+  @item.end_at_date ||= Time.zone.now.strftime("%Y/%m/%d")
   @item.end_at_hour ||= duty_hour.affair_end_at_hour
   @item.end_at_minute ||= duty_hour.affair_end_at_minute
 %>
@@ -27,6 +28,7 @@ toggleSelectCompensatoryFile();
     <%= f.select :start_at_hour, @item.start_at_hour_options, include_blank: true %>
     <%= f.select :start_at_minute, @item.start_at_minute_options, include_blank: true %>
     〜
+    <%= f.text_field :end_at_date, class: "date js-date" %>
     <%= f.select :end_at_hour, @item.end_at_hour_options, include_blank: true %>
     <%= f.select :end_at_minute, @item.end_at_minute_options, include_blank: true %>
   </dd>

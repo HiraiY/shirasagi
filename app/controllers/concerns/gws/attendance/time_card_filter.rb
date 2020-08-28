@@ -46,15 +46,7 @@ module Gws::Attendance::TimeCardFilter
   end
 
   def set_leave_files
-    @leave_files = {}
-    Gws::Affair::LeaveFile.site(@cur_site).user(@item.user).and(
-        { "start_at" => { "$gte" => @cur_month } },
-        { "start_at" => { "$lte" => @cur_month.end_of_month } },
-        { "workflow_state" => "approve" }
-    ).each do |item|
-      @leave_files[item.date] ||= []
-      @leave_files[item.date] << item
-    end
+    @leave_files = Gws::Affair::LeaveFile.site(@cur_site).user(@item.user).and({ "workflow_state" => "approve" })
   end
 
   def format_time(date, time)
