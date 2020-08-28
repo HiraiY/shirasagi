@@ -77,7 +77,10 @@ module Gws::Addon::Affair::LeaveFile
     return if end_at_date.blank? || end_at_hour.blank? || end_at_minute.blank?
 
     site = cur_site || self.site
-    user = cur_user || self.user
+
+    # 作成者ではなく申請者の勤務時間を確認する
+    user = target_user
+
     return if site.blank?
     return if user.blank?
 

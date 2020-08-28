@@ -299,6 +299,8 @@ module Gws::Affair::WorkflowFilter
         return @leave_file = Gws::Affair::LeaveFile.create(
           cur_user: @item.user,
           cur_site: @item.site,
+          target_user_id: @item.target_user_id,
+          target_group_id: @item.target_group_id,
           leave_type: "week_in_compensatory_leave",
           week_in_compensatory_file_id: @item.id,
           start_at: @item.week_in_start_at,
@@ -321,6 +323,8 @@ module Gws::Affair::WorkflowFilter
       @leave_file.update(
         cur_user: @item.user,
         cur_site: @item.site,
+        target_user_id: @item.target_user_id,
+        target_group_id: @item.target_group_id,
         leave_type: @leave_type,
         week_in_compensatory_file_id: @week_in_compensatory_file_id,
         week_out_compensatory_file_id: @week_out_compensatory_file_id,
@@ -357,6 +361,8 @@ module Gws::Affair::WorkflowFilter
         return @leave_file = Gws::Affair::LeaveFile.create(
           cur_user: @item.user,
           cur_site: @item.site,
+          target_user_id: @item.target_user_id,
+          target_group_id: @item.target_group_id,
           leave_type: "week_out_compensatory_leave",
           week_out_compensatory_file_id: @item.id,
           start_at: @item.week_out_start_at,
@@ -379,6 +385,8 @@ module Gws::Affair::WorkflowFilter
       @leave_file.update(
         cur_user: @item.user,
         cur_site: @item.site,
+        target_user_id: @item.target_user_id,
+        target_group_id: @item.target_group_id,
         leave_type: @leave_type,
         week_in_compensatory_file_id: @week_in_compensatory_file_id,
         week_out_compensatory_file_id: @week_out_compensatory_file_id,

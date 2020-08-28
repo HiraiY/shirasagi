@@ -66,4 +66,8 @@ class Gws::Affair::DefaultDutyCalendar
   def flextime?
     false
   end
+
+  def notice_messages(user, time = Time.zone.now)
+    []
+  end
 end

@@ -3,6 +3,7 @@ class Gws::Affair::LeaveFile
   include Gws::Referenceable
   include Gws::Reference::User
   include Gws::Reference::Site
+  include Gws::Addon::Affair::FileTarget
   include Gws::Addon::Affair::Approver
   include Gws::Addon::Affair::LeaveFile
   include Gws::Addon::GroupPermission
@@ -21,10 +22,6 @@ class Gws::Affair::LeaveFile
   before_validation :set_name_by_start_end
 
   validates :name, length: { maximum: 80 }
-
-  # indexing to elasticsearch via companion object
-  #around_save ::Gws::Elasticsearch::Indexer::LeaveFileJob.callback
-  #around_destroy ::Gws::Elasticsearch::Indexer::LeaveFileJob.callback
 
   default_scope -> {
     order_by updated: -1

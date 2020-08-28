@@ -1,0 +1,54 @@
+<div class="gws-attendance">
+  <div class="gws-schedule-tabs">
+    <%= link_to({ action: :groups }) do %>
+      <span class="tab-name"><%= t("mongoid.models.gws/group") %></span>
+    <% end %>
+    <%= link_to({ action: :users }, { class: "current" }) do %>
+      <span class="tab-name"><%= t("mongoid.models.gws/user") %></span>
+    <% end %>
+  </div>
+
+  <div class="attendance-box">
+    <div class="attendance-box-main">
+      <%
+        year_options = ((@current.year - 5)..(@current.year)).map { |y| ["#{y}#{t("datetime.prompts.year")}", y] }.reverse
+        month_options = (1..12).map { |m| ["#{m}#{t("datetime.prompts.month")}", m] }
+      %>
+      <%= form_for :s, url: { action: :users_results }, html: { method: :get } do |f| %>
+        <dl class="see">
+          <dt><%= @model.t(:search_term) %><%= @model.tt(:search_term) %></dt>
+          <dd>
+            <%= f.select :year, year_options %>
+            <%= f.select :month, month_options %>
+          </dd>
+
+          <dt><%= @model.t(:search_user) %><%= @model.tt(:search_user) %></dt>
+          <dd>
+            <%= hidden_field_tag "s[user_ids][]", nil, class: "hidden-ids" %>
+            <%= link_to t("ss.apis.users.index"), gws_apis_users_path, class: "btn ajax-box" %>
+          </dd>
+          <dd>
+            <table class="index ajax-selected">
+              <thead>
+              <tr>
+                <th class="name"><%= t("mongoid.models.gws/user") %></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                <% @users.each do |user| %>
+                  <tr data-id="<%= user.id %>">
+                    <td><%= f.hidden_field "user_ids[]", value: user.id, id: nil %> <%= user.name %></td>
+                    <td><%= link_to t("ss.buttons.delete"), "#", class: "deselect btn" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </dd>
+        </dl>
+
+        <input type="submit" value="<%= t('ss.buttons.search') %>" class="btn" />
+      <% end %>
+    </div>
+  </div>
+</div>

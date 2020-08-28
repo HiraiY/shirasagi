@@ -3,6 +3,7 @@ class Gws::Affair::OvertimeFile
   include Gws::Referenceable
   include Gws::Reference::User
   include Gws::Reference::Site
+  include Gws::Addon::Affair::FileTarget
   include Gws::Addon::Affair::OvertimeResult
   include Gws::Addon::Affair::OvertimeDayResult
   include Gws::Addon::Affair::Approver
@@ -25,10 +26,6 @@ class Gws::Affair::OvertimeFile
 
   validates :name, presence: true, length: { maximum: 80 }
   validates :capital_id, presence: true
-
-  # indexing to elasticsearch via companion object
-  #around_save ::Gws::Elasticsearch::Indexer::OvertimeFileJob.callback
-  #around_destroy ::Gws::Elasticsearch::Indexer::OvertimeFileJob.callback
 
   default_scope -> {
     order_by updated: -1

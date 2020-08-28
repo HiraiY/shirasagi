@@ -3,7 +3,7 @@
   duty_hour = duty_calendar.default_duty_hour if duty_calendar.present?
   duty_hour ||= Gws::Affair::DefaultDutyHour.new(cur_site: @cur_site)
 
-  holiday_calendar = duty_calendar.effective_holiday_calendar
+  holiday_calendar = duty_calendar.effective_holiday_calendar(Time.zone.now)
 %>
 <div class="main-box">
   <dl class="see">

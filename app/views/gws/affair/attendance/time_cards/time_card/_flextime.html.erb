@@ -3,7 +3,7 @@
 </div>
 
 <%
-  messages = @duty_calendar.notices(@item)
+  messages = @duty_calendar.notice_messages(@cur_user)
   if messages.present?
 %>
 <ul class="time-card-notices">
@@ -47,7 +47,7 @@
 <% end %>
 
 <% render_working_time = proc do |date, record, field_name| %>
-  <% td_classes = %w(working-time) %>
+  <% td_classes = %w(working-time working-time-edit) %>
   <% td_classes << field_name %>
   <% td_classes << (date.day >= 16 ? 'top' : nil) %>
   <% mode = "edit" %>
@@ -60,8 +60,7 @@
 <% end %>
 
 <%
-  leave_files = @leave_files = Gws::Affair::LeaveFile.site(@cur_site).user(@item.user).and({ "workflow_state" => "approve" })
-
+  leave_files = Gws::Affair::LeaveFile.site(@cur_site).where(target_user_id: @item.user_id).and({ "workflow_state" => "approve" })
 
   def format_minute(minute)
     (minute.to_i > 0) ? "#{minute / 60}:#{format("%02d", (minute % 60))}" : "--:--"

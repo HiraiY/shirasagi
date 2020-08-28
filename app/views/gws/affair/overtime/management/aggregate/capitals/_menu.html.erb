@@ -1,0 +1,24 @@
+<nav class="nav-menu">
+  <% if params[:action] == "groups" || params[:action] == "users" %>
+    <% parent = @group.parents.to_a.last %>
+    <% if parent %>
+      <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_capitals_groups_path(group: parent) %>
+    <% else %>
+      <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_capitals_path %>
+    <% end %>
+  <% elsif params[:action] == "download" %>
+    <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_capitals_path %>
+  <% elsif params[:action] == "download_groups" %>
+    <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_capitals_groups_path %>
+  <% elsif params[:action] == "download_users" %>
+    <%= link_to t('ss.links.back'), gws_affair_overtime_management_aggregate_capitals_users_path %>
+  <% end %>
+
+  <% if params[:action] == "index" %>
+    <%= link_to t("ss.links.download"), { action: :download } %>
+  <% elsif params[:action] == "groups" %>
+    <%= link_to t("ss.links.download"), { action: :download_groups } %>
+  <% elsif params[:action] == "users" %>
+    <%= link_to t("ss.links.download"), { action: :download_users } %>
+  <% end %>
+</nav>

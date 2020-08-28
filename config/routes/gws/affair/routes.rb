@@ -34,10 +34,8 @@ Rails.application.routes.draw do
     get '/' => redirect { |p, req| "#{req.path}/attendance/time_cards/#{Time.zone.now.strftime('%Y%m')}" }, as: :main
 
     resources :capitals, concerns: :deletion
-    resources :duty_calendars, concerns: :deletion do
-      resources :time_card_notices, concerns: :deletion
-    end
-
+    resources :duty_calendars, concerns: :deletion
+    resources :duty_notices, concerns: :deletion
     resources :shift_calendars, only: [:index]
     resources :shift_calendars, concerns: :deletion, except: [:index], path: "shift_calendars/u-:user" do
       get '/shift_records/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y/%m')}" }, as: :shift_record_main
@@ -59,9 +57,10 @@ Rails.application.routes.draw do
       get '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
       post '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
       namespace 'management' do
-        get "aggregate" => "aggregate#index", as: :aggregate
-        get "aggregate/download" => "aggregate#download", as: :download_aggregate
-        post "aggregate/download" => "aggregate#download"
+        get "aggregate" => redirect { |p, req| "#{req.path}/default" }, as: :aggregate_main
+        get "aggregate/:duty_type" => "aggregate#index", as: :aggregate
+        get "aggregate/:duty_type/download" => "aggregate#download", as: :download_aggregate
+        post "aggregate/:duty_type/download" => "aggregate#download"
       end
     end
 
@@ -76,10 +75,39 @@ Rails.application.routes.draw do
       resources :results, only: [:edit, :update]
 
       namespace 'management' do
-        get "aggregate" => redirect { |p, req| "#{req.path}/under" }, as: :aggregate_main
-        get "aggregate/:threshold" => "aggregate#index", as: :aggregate
-        get "aggregate/:threshold/download" => "aggregate#download", as: :download_aggregate
-        post "aggregate/:threshold/download" => "aggregate#download"
+        get "aggregate" => redirect { |p, req| "#{req.path}/users" }
+
+        namespace 'aggregate' do
+          get "users" => redirect { |p, req| "#{req.path}/total" }, as: :users_main
+          get "users/:threshold" => "users#index", as: :users
+          get "users/:threshold/download" => "users#download", as: :download_users
+          post "users/:threshold/download" => "users#download"
+
+          get "capitals" => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y')}" }, as: :capitals_main
+          get "capitals/:year" => "capitals#index", as: :capitals, year: /(\d{4}|ID)/
+          get "capitals/groups/:year/:month/:group" => "capitals#groups", as: :capitals_groups, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          get "capitals/users/:year/:month/:group" => "capitals#users", as: :capitals_users, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+
+          get "capitals/download/:year" => "capitals#download", as: :capitals_download, year: /(\d{4}|ID)/
+          get "capitals/download/groups/:year/:month/:group" => "capitals#download_groups", as: :capitals_download_groups, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          get "capitals/download/users/:year/:month/:group" => "capitals#download_users", as: :capitals_download_users, year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          post "capitals/download/:year" => "capitals#download", year: /(\d{4}|ID)/
+          post "capitals/download/groups/:year/:month/:group" => "capitals#download_groups", year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+          post "capitals/download/users/:year/:month/:group" => "capitals#download_users", year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+
+          get "search" => redirect { |p, req| "#{req.path}/groups" }, as: :search_main
+          get "search/groups" => "search#groups", as: :search_groups
+          get "search/groups/results" => "search#groups_results"
+          get "search/users" => "search#users", as: :search_users
+          get "search/users/results" => "search#users_results"
+          get "search/download/groups" => "search#download_groups", as: :search_download_groups
+          get "search/download/users" => "search#download_users", as: :search_download_users
+          post "search/download/groups" => "search#download_groups"
+          post "search/download/users" => "search#download_users"
+
+          get "rkk/download" => "rkk#download", as: :download
+          post "rkk/download" => "rkk#download"
+        end
       end
 
       namespace "apis" do
@@ -106,6 +134,7 @@ Rails.application.routes.draw do
         resources :results, only: [:edit, :update]
       end
       get "duty_hours" => "duty_hours#index"
+      get "duty_notices" => "duty_notices#index"
       get "holiday_calendars" => "holiday_calendars#index"
     end
 

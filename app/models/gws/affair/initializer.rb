@@ -43,5 +43,7 @@ module Gws::Affair
     Gws::Role.permission :edit_other_gws_affair_shift_calendars, module_name: 'gws/affair'
     Gws::Role.permission :delete_private_gws_affair_shift_calendars, module_name: 'gws/affair'
     Gws::Role.permission :delete_other_gws_affair_shift_calendars, module_name: 'gws/affair'
+
+    Gws::Role.permission :use_gws_rkk, module_name: 'gws/affair'
   end
 end

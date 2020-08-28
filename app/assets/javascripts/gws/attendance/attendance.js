@@ -72,7 +72,7 @@ Gws_Attendance.prototype.render = function() {
     _this.onClickMemo($(this));
   });
 
-  $(document).on('click', this.el + ' .time-card .working-time', function(ev) {
+  $(document).on('click', this.el + ' .time-card .working-time-edit', function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
 

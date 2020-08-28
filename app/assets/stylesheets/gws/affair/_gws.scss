@@ -6,7 +6,25 @@
     text-align: center;
   }
 }
-
+.overtime-aggregate {
+  height: 50px;
+  .title {
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 6px;
+  }
+}
+.aggregate-capitals {
+  th, td {
+    white-space: nowrap;
+  }
+  .time {
+    text-align: center;
+  }
+  .capital {
+    width: 200px;
+  }
+}
 .gws-affair-overtime-aggregate-tabs {
   @include clear;
   margin-top: -1px;

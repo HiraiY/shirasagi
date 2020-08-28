@@ -22,12 +22,14 @@
 
   duty_calendar = @cur_user.effective_duty_calendar(@cur_site)
   duty_hour = duty_calendar.default_duty_hour
-  @item.start_at_date ||= Time.zone.now.strftime("%Y/%m/%d")
-  @item.start_at_hour ||= duty_hour.affair_end_at_hour
-  @item.start_at_minute ||= duty_hour.affair_end_at_minute
-  @item.end_at_date ||= Time.zone.now.strftime("%Y/%m/%d")
-  @item.end_at_hour ||= duty_hour.affair_end_at_hour + 1
-  @item.end_at_minute ||= duty_hour.affair_end_at_minute
+  now = Time.zone.now
+
+  @item.start_at_date ||= now.strftime("%Y/%m/%d")
+  @item.start_at_hour ||= duty_hour.affair_end_at_hour(now)
+  @item.start_at_minute ||= duty_hour.affair_end_at_minute(now)
+  @item.end_at_date ||= now.strftime("%Y/%m/%d")
+  @item.end_at_hour ||= duty_hour.affair_end_at_hour(now) + 1
+  @item.end_at_minute ||= duty_hour.affair_end_at_minute(now)
 %>
 
 <dl class="see">

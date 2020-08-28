@@ -4,8 +4,13 @@ class Gws::Affair::Overtime::Apis::FilesController < ApplicationController
   model Gws::Affair::OvertimeFile
 
   def week_in
-    @user = Gws::User.find(params[:uid])
-    @leave_file = Gws::Affair::LeaveFile.find(params[:id]) rescue nil
+    @user = Gws::User.active.where(id: params[:uid]).first
+    if @user.blank?
+      @items = []
+      return
+    end
+
+    @leave_file = Gws::Affair::LeaveFile.where(id: params[:id]).first
 
     file_ids = Gws::Affair::LeaveFile.site(@cur_site).where(workflow_state: "approve").
       pluck(:week_in_compensatory_file_id).compact
@@ -19,8 +24,13 @@ class Gws::Affair::Overtime::Apis::FilesController < ApplicationController
   end
   
   def week_out
-    @user = Gws::User.find(params[:uid])
-    @leave_file = Gws::Affair::LeaveFile.find(params[:id]) rescue nil
+    @user = Gws::User.active.where(id: params[:uid]).first
+    if @user.blank?
+      @items = []
+      return
+    end
+
+    @leave_file = Gws::Affair::LeaveFile.where(id: params[:id]).first
 
     file_ids = Gws::Affair::LeaveFile.site(@cur_site).where(workflow_state: "approve").
       pluck(:week_out_compensatory_file_id).compact
