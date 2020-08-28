@@ -36,33 +36,6 @@ Rails.application.routes.draw do
     resources :capitals, concerns: :deletion
     resources :duty_calendars, concerns: :deletion
     resources :duty_notices, concerns: :deletion
-    resources :shift_calendars, only: [:index]
-    resources :shift_calendars, concerns: :deletion, except: [:index], path: "shift_calendars/u-:user" do
-      get '/shift_records/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y/%m')}" }, as: :shift_record_main
-      resources :shift_records, path: 'shift_records/:year/:month', concerns: [:deletion, :export], year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
-    end
-
-    resources :duty_hours, concerns: :deletion
-    resources :holiday_calendars, concerns: :deletion do
-      resources :holidays, concerns: :deletion, path: "holidays/:year" do
-        get :download, on: :collection
-        match :import, on: :collection, via: %i[get post]
-      end
-    end
-
-    get '/working_time/' => redirect { |p, req| "#{req.path}/calendar/" }, as: :working_time_main
-    namespace "working_time" do
-      get '/calendar/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y%m')}" }, as: :calendar_main
-      get '/calendar/:year_month' => 'calendar#index', as: :calendar
-      get '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
-      post '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
-      namespace 'management' do
-        get "aggregate" => redirect { |p, req| "#{req.path}/default" }, as: :aggregate_main
-        get "aggregate/:duty_type" => "aggregate#index", as: :aggregate
-        get "aggregate/:duty_type/download" => "aggregate#download", as: :download_aggregate
-        post "aggregate/:duty_type/download" => "aggregate#download"
-      end
-    end
 
     namespace "overtime" do
       resources :files, path: 'files/:state', concerns: [:deletion, :workflow]
@@ -126,6 +99,37 @@ Rails.application.routes.draw do
 
       namespace "apis" do
         get "files/:id" => "files#show", as: :file
+      end
+    end
+
+    namespace "working_time" do
+      namespace 'management' do
+        get "aggregate" => redirect { |p, req| "#{req.path}/default" }, as: :aggregate_main
+        get "aggregate/:duty_type" => "aggregate#index", as: :aggregate
+        get "aggregate/:duty_type/download" => "aggregate#download", as: :download_aggregate
+        post "aggregate/:duty_type/download" => "aggregate#download"
+      end
+    end
+
+    get '/shift_work/' => redirect { |p, req| "#{req.path}/calendar/" }, as: :shift_work_main
+    namespace "shift_work" do
+      get '/calendar/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y%m')}" }, as: :calendar_main
+      get '/calendar/:year_month' => 'calendar#index', as: :calendar
+      get '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
+      post '/calendar/:year_month/:day/:user/shift_record' => 'calendar#shift_record'
+
+      resources :shift_calendars, only: [:index]
+      resources :shift_calendars, concerns: :deletion, except: [:index], path: "shift_calendars/u-:user" do
+        get '/shift_records/' => redirect { |p, req| "#{req.path}/#{Time.zone.now.strftime('%Y/%m')}" }, as: :shift_record_main
+        resources :shift_records, path: 'shift_records/:year/:month', concerns: [:deletion, :export], year: /(\d{4}|ID)/, month: /(\d{2}|ID)/
+      end
+    end
+
+    resources :duty_hours, concerns: :deletion
+    resources :holiday_calendars, concerns: :deletion do
+      resources :holidays, concerns: :deletion, path: "holidays/:year" do
+        get :download, on: :collection
+        match :import, on: :collection, via: %i[get post]
       end
     end
 

@@ -1,4 +1,4 @@
-class Gws::Affair::WorkingTime::CalendarController < ApplicationController
+class Gws::Affair::ShiftWork::CalendarController < ApplicationController
   include Gws::BaseFilter
   include Gws::CrudFilter
 
@@ -8,13 +8,13 @@ class Gws::Affair::WorkingTime::CalendarController < ApplicationController
 
   navi_view "gws/affair/main/navi"
 
-  append_view_path 'app/views/gws/affair/working_time/calendar'
+  append_view_path 'app/views/gws/affair/shift_work/calendar'
 
   private
 
   def set_crumbs
     @crumbs << [@cur_site.menu_affair_label || t('modules.gws/affair'), gws_affair_main_path]
-    @crumbs << [t("modules.gws/affair/working_time"), gws_affair_working_time_calendar_path]
+    @crumbs << [t("modules.gws/affair/working_time"), gws_affair_shift_work_calendar_path]
   end
 
   def set_user

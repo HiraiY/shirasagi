@@ -1,4 +1,4 @@
-class Gws::Affair::ShiftRecordsController < ApplicationController
+class Gws::Affair::ShiftWork::ShiftRecordsController < ApplicationController
   include Gws::BaseFilter
   include Gws::CrudFilter
 
@@ -19,8 +19,8 @@ class Gws::Affair::ShiftRecordsController < ApplicationController
 
   def set_crumbs
     @crumbs << [ @cur_site.menu_affair_label || t('modules.gws/affair'), gws_affair_main_path ]
-    @crumbs << [ t("modules.gws/affair/shift_calendar"), gws_affair_shift_calendars_path ]
-    @crumbs << [ @user.name, gws_affair_shift_calendar_shift_records_path ]
+    @crumbs << [ t("modules.gws/affair/shift_calendar"), gws_affair_shift_work_shift_calendars_path ]
+    @crumbs << [ @user.name, gws_affair_shift_work_shift_calendar_shift_records_path ]
   end
 
   def set_cur_month

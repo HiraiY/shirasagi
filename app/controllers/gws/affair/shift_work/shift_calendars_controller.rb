@@ -1,4 +1,4 @@
-class Gws::Affair::ShiftCalendarsController < ApplicationController
+class Gws::Affair::ShiftWork::ShiftCalendarsController < ApplicationController
   include Gws::BaseFilter
   include Gws::CrudFilter
 
@@ -29,7 +29,7 @@ class Gws::Affair::ShiftCalendarsController < ApplicationController
 
   def set_crumbs
     @crumbs << [ @cur_site.menu_affair_label || t('modules.gws/affair'), gws_affair_main_path ]
-    @crumbs << [ t("modules.gws/affair/shift_calendar"), gws_affair_shift_calendars_path ]
+    @crumbs << [ t("modules.gws/affair/shift_calendar"), gws_affair_shift_work_shift_calendars_path ]
   end
 
   def set_query
