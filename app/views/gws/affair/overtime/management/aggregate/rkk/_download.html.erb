@@ -1,4 +1,15 @@
+<%
+  year_options = ((@current.year - 5)..(@current.year)).map { |y| ["#{y}#{t("datetime.prompts.year")}", y] }.reverse
+  month_options = (1..12).map { |m| ["#{m}#{t("datetime.prompts.month")}", m] }
+%>
+
 <dl class="see">
+  <dt><%= @model.t(:search_term) %><%= @model.tt(:search_term) %></dt>
+  <dd>
+    <%= f.select :year, year_options %>
+    <%= f.select :month, month_options %>
+  </dd>
+
   <dt><%= t('ss.encoding') %><%= tt(:encoding, scope: 'gws/attendance.tooltips') %></dt>
   <dd>
     <% %w(Shift_JIS UTF-8).each do |encoding| %>
