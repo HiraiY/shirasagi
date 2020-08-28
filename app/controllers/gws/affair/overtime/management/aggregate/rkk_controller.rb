@@ -54,8 +54,6 @@ class Gws::Affair::Overtime::Management::Aggregate::RkkController < ApplicationC
 
     @items = @model.site(@cur_site).and(cond).user_aggregate
 
-    dump(@items)
-
     enum_csv = Gws::Affair::Enumerator::Rkk::RegularUsers.new(@items, @users, @download_params)
     send_enum(enum_csv,
       type: "text/csv; charset=#{@download_params.encoding}",
