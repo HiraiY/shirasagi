@@ -51,7 +51,7 @@ module Gws::Affair::Searchable
           workflow_approvers: { '$elemMatch' => { 'user_id' => cur_user.id, 'state' => 'request' } }
         )
       when 'mine'
-        base_criteria.or([user_id: cur_user.id, target_user_id: cur_user.id])
+        base_criteria.or([{ user_id: cur_user.id }, { target_user_id: cur_user.id }])
       else
         none
       end
