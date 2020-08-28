@@ -16,7 +16,7 @@ class Gws::Affair::Leave::FilesController < ApplicationController
     if %w(approve all).include?(params[:state])
       @crumbs << [
         t("modules.gws/affair/overtime_file/#{params[:state]}"),
-        gws_affair_overtime_files_path(state: params[:state])
+        gws_affair_leave_files_path(state: params[:state])
       ]
     end
   end
