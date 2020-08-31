@@ -2,11 +2,15 @@
 // init
 
 @import "compass-mixins/lib/compass";
+@font-face {
+  font-family: 'NotoSansCJKjp-hinted';
+  src: url(/assets/fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Regular.otf) format('opentype');
+}
 
 // -------------------------------------------------------------------------------------------------
 // define
 
-$font-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", Meiryo, "メイリオ", "MS PGothic", "ＭＳ　Ｐゴシック", sans-serif;
+$font-base: 'NotoSansCJKjp-hinted';
 
 //font-size
 $px10:72%;
