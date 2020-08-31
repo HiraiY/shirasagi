@@ -24,6 +24,19 @@ class Gws::Affair::ShiftRecord
   validates :affair_end_at_minute, presence: true
   validates :wday_type, presence: true
 
+  validate :validate_affair_start_at, if: -> { affair_start_at_hour && affair_start_at_minute }
+  validate :validate_affair_end_at, if: -> { affair_end_at_hour && affair_end_at_minute }
+
+  def validate_affair_start_at
+    return if (0..24).to_a.include?(affair_start_at_hour) && 0.step(55, 5).to_a.include?(affair_start_at_minute)
+    errors.add :base, :invalid_affair_start_at
+  end
+
+  def validate_affair_end_at
+    return if (0..24).to_a.include?(affair_end_at_hour) && 0.step(55, 5).to_a.include?(affair_end_at_minute)
+    errors.add :base, :invalid_affair_end_at
+  end
+
   def affair_start_at_hour(time = nil)
     super()
   end

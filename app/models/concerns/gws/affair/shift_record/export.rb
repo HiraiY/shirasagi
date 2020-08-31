@@ -81,6 +81,8 @@ module Gws::Affair::ShiftRecord::Export
       end_at = Time.zone.parse(end_at).try(:to_datetime)
 
       item = self.find_or_initialize_by(shift_calendar_id: shift_calendar.id, date: date)
+      item.reload if item.persisted?
+
       item.errors.add :date, :invalid if date.nil?
       item.errors.add :start_at, :invalid if start_at.nil?
       item.errors.add :end_at, :invalid if end_at.nil?
