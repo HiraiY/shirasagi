@@ -45,6 +45,7 @@ ja:
         month: 月
         week: 週
         day: 日
+      time_remaining: "(残り%{total_time}時間)"
     notice:
       select_target_user: "申請対象のユーザーを選択してください。"
       not_found_overtime_file: "設定可能な時間外申請がありませんでした。"
@@ -112,6 +113,7 @@ ja:
         index: 休日カレンダーを選択する
       duty_notices:
         index: タイムカード警告文を選択する
+    limit: 有効期限
 
   modules:
     gws/affair: 庶務事務
