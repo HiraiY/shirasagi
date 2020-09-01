@@ -45,10 +45,10 @@
   <% end %>
 
   <% if Gws::Affair::ShiftCalendar.allowed?(:read, @cur_user, site: @cur_site) %>
-    <h3><%= link_to "シフト勤務", gws_affair_working_time_main_path %></h3>
+    <h3><%= link_to "シフト勤務", gws_affair_shift_work_main_path %></h3>
     <ul class="narrow-page">
-      <li><%= link_to t('modules.gws/affair/working_time'), gws_affair_working_time_calendar_main_path %></li>
-      <li><%= link_to "勤務カレンダー", gws_affair_shift_calendars_path %></li>
+      <li><%= link_to t('modules.gws/affair/working_time'), gws_affair_shift_work_calendar_main_path %></li>
+      <li><%= link_to "勤務カレンダー", gws_affair_shift_work_shift_calendars_path %></li>
     </ul>
   <% end %>
 

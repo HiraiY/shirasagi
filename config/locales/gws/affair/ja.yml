@@ -263,6 +263,9 @@ ja:
           in_duty_hour: 開始時間〜終了時間が勤務時間内です。
           not_set_week_out_compensatory_minute: は同一週内振替と同時に入力はできません。
           not_match_compensatory_minute_and_hour: と開始時間〜終了時間は同じにしてください。
+        gws/affair/shift_record:
+          invalid_affair_start_at: 開始時間が不正です。5分単位での時刻を入力してください。
+          invalid_affair_end_at: 終了時間が不正です。5分単位での時刻を入力してください。
 
   gws_role:
     read_gws_affair_duty_hours: 勤務体系の閲覧

@@ -1,0 +1,17 @@
+<div class="attendance-box">
+  <div class="attendance-box-main">
+    <%
+      group_options = @groups.map { |g| [g.name, g.id] }
+      year_options = ((@cur_month.year - 5)..(@cur_month.year)).map { |y| ["#{y}#{t("datetime.prompts.year")}", y] }.reverse
+      month_options = (1..12).map { |m| ["#{m}#{t("datetime.prompts.month")}", m] }
+    %>
+    <%= form_for :s, url: "", html: { method: :get } do |f| %>
+      <%= f.select :group_id, group_options %>
+      <%= f.select :year, year_options %>
+      <%= f.select :month, month_options %>
+
+      <input type="submit" value="<%= t('ss.buttons.search') %>" class="btn" />
+      <%= link_to t("ss.buttons.reset"), gws_affair_shift_work_calendar_path, class: "btn" %>
+    <% end %>
+  </div>
+</div>
