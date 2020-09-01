@@ -3,14 +3,14 @@
 
 @import "compass-mixins/lib/compass";
 @font-face {
-  font-family: 'NotoSansCJKjp-hinted';
+  font-family: 'noto-sans-cjk-jp';
   src: url(/assets/fonts/NotoSansCJKjp-hinted/NotoSansCJKjp-Regular.otf) format('opentype');
 }
 
 // -------------------------------------------------------------------------------------------------
 // define
 
-$font-base: 'NotoSansCJKjp-hinted';
+$font-base: 'noto-sans-cjk-jp', sans-serif;
 
 //font-size
 $px10:72%;

@@ -21,10 +21,13 @@ module Gws::Addon::Attendance::GroupSetting
     end
 
     field :affair_rounding_time_minute, type: Integer, default: 15
+    field :week_out_compensatory_file_limit, type: Integer, default: 2
+    field :week_out_compensatory_file_limit_unit, type: String, default: 'month'
 
     permit_params :attendance_year_changed_month, :attendance_management_year
     permit_params :attendance_enter_label, :attendance_leave_label
     permit_params :affair_rounding_time_minute
+    permit_params :week_out_compensatory_file_limit, :week_out_compensatory_file_limit_unit
 
     validates :attendance_year_changed_month, presence: true,
               numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 12, allow_blank: true }
@@ -63,5 +66,11 @@ module Gws::Addon::Attendance::GroupSetting
     end_at = start_at + 1.year - 1.day
     end_at = end_at.end_of_day
     [ start_at, end_at ]
+  end
+
+  def week_out_compensatory_file_limit_unit_options
+    %w(day week month year).collect do |unit|
+      [I18n.t("ss.options.datetime_unit.#{unit}"), unit]
+    end
   end
 end

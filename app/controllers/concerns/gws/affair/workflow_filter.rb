@@ -177,6 +177,12 @@ module Gws::Affair::WorkflowFilter
       end
     end
 
+    if @item.state == "approve"
+      set_week_in_leave_file
+      set_week_out_leave_file
+      delete_leave_file
+    end
+
     render json: { workflow_state: workflow_state }
   end
 
@@ -280,5 +286,171 @@ module Gws::Affair::WorkflowFilter
     end
 
     render json: { workflow_state: @item.workflow_state }
+  end
+
+  def set_week_in_leave_file
+    return if !@item.try(:week_in_compensatory_minute)
+    if @item.week_in_compensatory_minute > 0
+      if Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first.present?
+        @leave_file = Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first
+      elsif Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first.present?
+        @leave_file = Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first
+      elsif Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first.blank?
+        return @leave_file = Gws::Affair::LeaveFile.create(
+          cur_user: @item.user,
+          cur_site: @item.site,
+          target_user_id: @item.target_user_id,
+          target_group_id: @item.target_group_id,
+          leave_type: "week_in_compensatory_leave",
+          week_in_compensatory_file_id: @item.id,
+          start_at: @item.week_in_start_at,
+          end_at: @item.week_in_end_at,
+          permission_level: @item.permission_level,
+          groups_hash: @item.groups_hash,
+          users_hash: @item.users_hash,
+          group_ids: @item.user.group_ids,
+          user_ids: [@item.user.id],
+          workflow_user_id: @item.workflow_user_id,
+          workflow_state: @item.workflow_state,
+          workflow_approvers: @item.workflow_approvers,
+          workflow_required_counts: @item.workflow_required_counts,
+          workflow_circulations: @item.workflow_circulations,
+          workflow_current_circulation_level: @item.workflow_current_circulation_level,
+          approved: @item.approved
+        )
+      end
+      set_week_in_params(@item)
+      @leave_file.update(
+        cur_user: @item.user,
+        cur_site: @item.site,
+        target_user_id: @item.target_user_id,
+        target_group_id: @item.target_group_id,
+        leave_type: @leave_type,
+        week_in_compensatory_file_id: @week_in_compensatory_file_id,
+        week_out_compensatory_file_id: @week_out_compensatory_file_id,
+        start_at_date: @start_at_date,
+        start_at_hour: @start_at_hour,
+        start_at_minute: @start_at_minute,
+        end_at_date: @end_at_date,
+        end_at_hour: @end_at_hour,
+        end_at_minute: @end_at_minute,
+        permission_level: @item.permission_level,
+        groups_hash: @item.groups_hash,
+        users_hash: @item.users_hash,
+        group_ids: @item.user.group_ids,
+        user_ids: [@item.user.id],
+        workflow_user_id: @item.workflow_user_id,
+        workflow_state: @item.workflow_state,
+        workflow_approvers: @item.workflow_approvers,
+        workflow_required_counts: @item.workflow_required_counts,
+        workflow_circulations: @item.workflow_circulations,
+        workflow_current_circulation_level: @item.workflow_current_circulation_level,
+        approved: @item.approved
+      )
+    end
+  end
+
+  def set_week_out_leave_file
+    return if !@item.try(:week_out_compensatory_minute)
+    if @item.week_out_start_at_date && @item.week_out_compensatory_minute > 0
+      if Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first.present?
+        @leave_file = Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first
+      elsif Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first.present?
+        @leave_file = Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first
+      elsif Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first.blank?
+        return @leave_file = Gws::Affair::LeaveFile.create(
+          cur_user: @item.user,
+          cur_site: @item.site,
+          target_user_id: @item.target_user_id,
+          target_group_id: @item.target_group_id,
+          leave_type: "week_out_compensatory_leave",
+          week_out_compensatory_file_id: @item.id,
+          start_at: @item.week_out_start_at,
+          end_at: @item.week_out_end_at,
+          permission_level: @item.permission_level,
+          groups_hash: @item.groups_hash,
+          users_hash: @item.users_hash,
+          group_ids: @item.user.group_ids,
+          user_ids: [@item.user.id],
+          workflow_user_id: @item.workflow_user_id,
+          workflow_state: @item.workflow_state,
+          workflow_approvers: @item.workflow_approvers,
+          workflow_required_counts: @item.workflow_required_counts,
+          workflow_circulations: @item.workflow_circulations,
+          workflow_current_circulation_level: @item.workflow_current_circulation_level,
+          approved: @item.approved
+        )
+      end
+      set_week_out_params(@item)
+      @leave_file.update(
+        cur_user: @item.user,
+        cur_site: @item.site,
+        target_user_id: @item.target_user_id,
+        target_group_id: @item.target_group_id,
+        leave_type: @leave_type,
+        week_in_compensatory_file_id: @week_in_compensatory_file_id,
+        week_out_compensatory_file_id: @week_out_compensatory_file_id,
+        start_at_date: @start_at_date,
+        start_at_hour: @start_at_hour,
+        start_at_minute: @start_at_minute,
+        end_at_date: @end_at_date,
+        end_at_hour: @end_at_hour,
+        end_at_minute: @end_at_minute,
+        permission_level: @item.permission_level,
+        groups_hash: @item.groups_hash,
+        users_hash: @item.users_hash,
+        group_ids: @item.user.group_ids,
+        user_ids: [@item.user.id],
+        workflow_user_id: @item.workflow_user_id,
+        workflow_state: @item.workflow_state,
+        workflow_approvers: @item.workflow_approvers,
+        workflow_required_counts: @item.workflow_required_counts,
+        workflow_circulations: @item.workflow_circulations,
+        workflow_current_circulation_level: @item.workflow_current_circulation_level,
+        approved: @item.approved
+      )
+    end
+  end
+
+  def delete_leave_file
+    return if !@item.try(:week_in_compensatory_minute)
+    return if !@item.try(:week_out_compensatory_minute)
+    if @item.week_in_compensatory_minute == 0 && @item.week_out_compensatory_minute == 0
+      if Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first.present?
+        Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first.delete
+      elsif Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first.present?
+        Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first.delete
+      end
+    elsif @item.week_out_compensatory_minute > 0 && @item.week_out_start_at.blank?
+      if Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first.present?
+        Gws::Affair::LeaveFile.where(week_out_compensatory_file_id: @item.id).first.delete
+      elsif Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first.present?
+        Gws::Affair::LeaveFile.where(week_in_compensatory_file_id: @item.id).first.delete
+      end
+    end
+  end
+
+  def set_week_in_params(item)
+    @leave_type = "week_in_compensatory_leave"
+    @week_in_compensatory_file_id = item.id
+    @week_out_compensatory_file_id = nil
+    @start_at_date = item.week_in_start_at_date
+    @start_at_hour = item.week_in_start_at_hour
+    @start_at_minute = item.week_in_start_at_minute
+    @end_at_date = item.week_in_end_at_date
+    @end_at_hour = item.week_in_end_at_hour
+    @end_at_minute = item.week_in_end_at_minute
+  end
+
+  def set_week_out_params(item)
+    @leave_type = "week_out_compensatory_leave"
+    @week_in_compensatory_file_id = nil
+    @week_out_compensatory_file_id = item.id
+    @start_at_date = item.week_out_start_at_date
+    @start_at_hour = item.week_out_start_at_hour
+    @start_at_minute = item.week_out_start_at_minute
+    @end_at_date = item.week_out_end_at_date
+    @end_at_hour = item.week_out_end_at_hour
+    @end_at_minute = item.week_out_end_at_minute
   end
 end

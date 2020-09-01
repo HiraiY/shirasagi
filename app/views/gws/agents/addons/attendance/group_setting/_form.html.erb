@@ -13,6 +13,9 @@
   <dt><%= @model.t :affair_rounding_time_minute %><%= @model.tt :affair_rounding_time_minute %></dt>
   <dd><%= f.select :affair_rounding_time_minute, @item.affair_rounding_time_minute_options %></dd>
 
+  <dt><%= @model.t :week_out_compensatory_file_limit %><%= @model.tt :week_out_compensatory_file_limit %></dt>
+  <dd><%= number_field_with_datetime_unit(:item, :week_out_compensatory_file_limit, @item.week_out_compensatory_file_limit_unit_options, min: 1) %></dd>
+
   <dt><%= t('gws/attendance.enter_leave') %></dt>
   <dd>
     <%= f.text_field :attendance_enter_label, placeholder: Gws::Attendance::Record.t(:enter), style: 'width: 10.5em;' %>

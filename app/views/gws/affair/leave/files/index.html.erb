@@ -19,7 +19,11 @@
   <span class="id">#<%= item.id %></span>
   <span class="datetime"><%= item.start_at.strftime("%Y/%m/%d") %></span>
   <span class="state"><%= t "ss.state.#{item.status}" %></span>
-  <span class="state"><%= item.label :leave_type %></span>
+  <% if item.leave_type == "week_in_compensatory_leave" %>
+    <span><%= I18n.t("gws/affair.leave_type.week_in_compensatory_leave") %></span>
+  <% else %>
+    <span class="state"><%= item.label :leave_type %></span>
+  <% end %>
   <% if request[:state] != "mine" %>
     <span class="user"><%= t('gws/workflow.labels.user') %>: <%= item.user_name %></span>
   <% end %>

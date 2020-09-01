@@ -13,6 +13,9 @@
   <dt><%= @model.t :affair_rounding_time_minute %></dt>
   <dd><%= @item.label :affair_rounding_time_minute %></dd>
 
+  <dt><%= @model.t :week_out_compensatory_file_limit %></dt>
+  <dd><%= number_with_datetime_unit(@item, :week_out_compensatory_file_limit) %></dd>
+
   <dt><%= t('gws/attendance.enter_leave') %></dt>
   <dd>
     <%= @item.attendance_enter_label.presence || Gws::Attendance::Record.t(:enter) %>

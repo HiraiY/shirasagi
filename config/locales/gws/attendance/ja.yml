@@ -117,6 +117,7 @@ ja:
         attendance_break_enter3_label: 休憩3開始ラベル
         attendance_break_leave3_label: 休憩3終了ラベル
         affair_rounding_time_minute: 丸め
+        week_out_compensatory_file_limit: 同一週外振替有効期限
     errors:
       models:
         gws/attendance/time_card:
@@ -152,3 +153,6 @@ ja:
       affair_rounding_time_minute:
         - 出勤の切り上げおよび退勤の切り捨てに関する設定です。
         - 休憩時間は丸めの対象とはなりません。
+      week_out_compensatory_file_limit:
+        - 同一週外振替の有効期限を設定できます。
+        - 有効期限を過ぎたものは休暇申請で利用できなくなります。
