@@ -12,16 +12,18 @@ module Gws::Addon::Affair::LeaveFile
 
     field :leave_type, type: String
     field :reason, type: String
+
     belongs_to :week_in_compensatory_file, class_name: "Gws::Affair::OvertimeFile"
     belongs_to :week_out_compensatory_file, class_name: "Gws::Affair::OvertimeFile"
+    belongs_to :special_leave, class_name: "Gws::Affair::SpecialLeave"
 
     permit_params :start_at_date, :start_at_hour, :start_at_minute
     permit_params :end_at_date, :end_at_hour, :end_at_minute
 
-    permit_params :leave_type
-    permit_params :reason
+    permit_params :leave_type, :reason, :special_leave
     permit_params :week_in_compensatory_file_id
     permit_params :week_out_compensatory_file_id
+    permit_params :special_leave_id
 
     before_validation :validate_date
     before_validation :compensatory_file
@@ -152,5 +154,9 @@ module Gws::Addon::Affair::LeaveFile
     return if name_label.blank? || term_label.blank?
 
     "#{name_label}の休暇申請（#{term_label}）"
+  end
+
+  def special_leave_options
+    ["a", "b"].map { |c| c }
   end
 end

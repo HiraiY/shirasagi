@@ -45,5 +45,13 @@ module Gws::Affair
     Gws::Role.permission :delete_other_gws_affair_shift_calendars, module_name: 'gws/affair'
 
     Gws::Role.permission :use_gws_rkk, module_name: 'gws/affair'
+
+    Gws::Role.permission :read_gws_affair_special_leaves, module_name: 'gws/affair'
+    Gws::Role.permission :edit_gws_affair_special_leaves, module_name: 'gws/affair'
+    Gws::Role.permission :delete_gws_affair_special_leaves, module_name: 'gws/affair'
+
+    Gws::Role.permission :read_gws_affair_staff_categories, module_name: 'gws/affair'
+    Gws::Role.permission :edit_gws_affair_staff_categories, module_name: 'gws/affair'
+    Gws::Role.permission :delete_gws_affair_staff_categories, module_name: 'gws/affair'
   end
 end

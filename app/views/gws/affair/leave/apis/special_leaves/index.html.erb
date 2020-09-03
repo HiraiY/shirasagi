@@ -1,0 +1,43 @@
+<%= jquery do %>
+  SS_SearchUI.modal();
+<% end %>
+
+<% tabs = Gws::Affair::StaffCategory.site(@cur_site).order_by(order: 1) %>
+<div class="search-ui-form">
+  <%= form_for :s, url: { action: :index }, html: { method: "GET", class: :search } do |f| %>
+    <dl class="see">
+      <dt><%= @model.t :staff_category_id %></dt>
+      <dd>
+        <%= f.select :staff_category_id, tabs.map {|c| [c.name, c.id]},
+                     { selected: params[:s].try(:[], :staff_category_id), include_blank: true },
+                     { class: "submit-on-change" } %>
+      </dd>
+      <dt><%= @model.t :name %></dt>
+      <dd>
+        <%= f.text_field :keyword, value: params[:s].try(:[], :keyword) %>
+        <%= f.submit  t("ss.buttons.search"), class: :btn %>
+      </dd>
+    </dl>
+  <% end %>
+</div>
+
+<table class="index">
+  <thead class="list-head">
+  <tr>
+    <th class="name"><%= @model.t :code %></th>
+    <th class="name"><%= @model.t :name %></th>
+    <th class="name"><%= @model.t :staff_category_id %></th>
+  </tr>
+  </thead>
+  <tbody class="items">
+  <% @items.each do |item| %>
+    <tr class="list-item" data-id="<%= item.id %>" data-name="<%= item.name %>">
+      <td><%= item.code %></td>
+      <td><%= link_to item.name, "#", class: "select-single-item" %></td>
+      <td><%= item.staff_category.name %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<%= paginate @items if @items.try(:current_page) %>

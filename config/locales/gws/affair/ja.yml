@@ -113,6 +113,8 @@ ja:
         index: 休日カレンダーを選択する
       duty_notices:
         index: タイムカード警告文を選択する
+      special_leaves:
+        index: 特別休暇区分を選択する
     limit: 有効期限
 
   modules:
@@ -138,6 +140,8 @@ ja:
     gws/affair/working_time: 勤務表
     gws/affair/shift_calendar: シフト勤務
     gws/affair/duty_notice: タイムカード警告文
+    gws/affair/special_leave: 特別休暇区分
+    gws/affair/staff_category: 職員区分
     addons:
       gws/affair/overtime_file: 時間外申請書
       gws/affair/overtime_result: 結果
@@ -206,6 +210,7 @@ ja:
         end_at: 終了時間
         leave_type: 休暇区分
         reason: 理由
+        special_leave_id: 特別休暇区分
         week_in_compensatory_file_id: 振替申請（同一週内）
         week_out_compensatory_file_id: 振替申請（同一週外）
       gws/affair/overtime_result:
@@ -255,6 +260,14 @@ ja:
         search_term: 期間
         search_group: グループ
         search_user: ユーザー
+      gws/affair/special_leave:
+        code: コード
+        name: 名前
+        order: 並び順
+        staff_category_id: 職員区分
+      gws/affair/staff_category:
+        name: 名前
+        order: 並び順
     errors:
       models:
         gws/affair/overtime_file:
@@ -301,6 +314,12 @@ ja:
     delete_other_gws_affair_shift_calendars: シフト勤務の削除（全て）
     delete_private_gws_affair_shift_calendars: シフト勤務の削除（自所属）
     use_gws_rkk: 会計システム連携機能の利用
+    read_gws_affair_special_leaves: 特別休暇区分の閲覧
+    edit_gws_affair_special_leaves: 特別休暇区分の編集
+    delete_gws_affair_special_leaves: 特別休暇区分の削除
+    read_gws_affair_staff_categories: 職員区分の閲覧
+    edit_gws_affair_staff_categories: 職員区分の編集
+    delete_gws_affair_staff_categories: 職員区分の削除
 
   gws_notification:
     gws/affair/overtime_file:
@@ -360,6 +379,8 @@ ja:
         - 休暇区分を入力します。
       reason:
         - 備考を入力します。
+      special_leave_id:
+        - 特別休暇区分を入力します。
       week_in_compensatory_file_id:
         - 振替申請（同一週内）を設定します。
       week_out_compensatory_file_id:
@@ -398,4 +419,16 @@ ja:
         - 配下のグループに所属しているユーザーの時間外を集計します。
       search_user:
         - 集計対象のユーザーを選択します。
+    gws/affair/special_leave:
+      code: コードを入力します。
+      name: 名前を入力します。
+      order:
+        - フォルダーの並び順を数字で入力します。
+        - 番号の小さい順にフォルダーが表示されます。
+      staff_category_id: 職員区分を選択します。
+    gws/affair/staff_category:
+      name: 名前を入力します。
+      order:
+        - フォルダーの並び順を数字で入力します。
+        - 番号の小さい順にフォルダーが表示されます。
 

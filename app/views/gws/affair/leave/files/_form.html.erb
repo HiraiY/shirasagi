@@ -2,8 +2,12 @@
 var toggleSelectCompensatoryFile = function() {
   var val = $(".select-leave-type").val();
   $(".select-week-out").hide();
+  $(".select-special-leave").hide();
   if (val == "week_out_compensatory_leave") {
     $(".select-week-out").show();
+  }
+  if (val == "paidleave") {
+  　　$(".select-special-leave").show();
   }
 };
 $(".select-leave-type").on("change", toggleSelectCompensatoryFile);
@@ -58,6 +62,30 @@ $('a.select-affair-file').on("click", function () {
     <dt><%= @model.t :week_in_compensatory_file_id %></dt>
     <dd><%= link_to @item.week_in_compensatory_file.term_label, gws_affair_overtime_file_path(site: @cur_site.id, id: @item.week_in_compensatory_file) %></dd>
   <% end %>
+</dl>
+
+<dl class="see select-special-leave" style="display: none; margin-top: 10px;">
+  <dt><%= @model.t :special_leave_id %><%= @model.tt :special_leave_id %></dt>
+  <dd>
+    <%= f.hidden_field "special_leave_id", value: "", class: "hidden-ids" %>
+    <%= link_to t("gws/affair.apis.special_leaves.index"), gws_affair_leave_apis_special_leaves_path, class: "ajax-box" %>
+  </dd>
+  <dd>
+    <table class="index ajax-selected">
+      <thead><tr><th class="name"><%= Gws::Affair::SpecialLeave.t :name %></th><th class="deselect"></th></tr></thead>
+      <tbody>
+      <% if @item.special_leave %>
+        <tr data-id="<%= @item.id %>">
+          <td>
+            <%= f.hidden_field "special_leave_id", value: @item.special_leave_id, class: "hidden-ids" %>
+            <%= @item.special_leave.name %>
+          </td>
+          <td><%= link_to t("ss.buttons.delete"), "#", class: "deselect btn" %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </dd>
 </dl>
 
 <dl class="see select-week-out" style="display: none; margin-top: 10px;">

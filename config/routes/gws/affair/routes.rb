@@ -36,6 +36,8 @@ Rails.application.routes.draw do
     resources :capitals, concerns: :deletion
     resources :duty_calendars, concerns: :deletion
     resources :duty_notices, concerns: :deletion
+    resources :special_leaves, concerns: [:deletion, :export]
+    resources :staff_categories, concerns: :deletion
 
     namespace "overtime" do
       resources :files, path: 'files/:state', concerns: [:deletion, :workflow]
@@ -99,6 +101,7 @@ Rails.application.routes.draw do
 
       namespace "apis" do
         get "files/:id" => "files#show", as: :file
+        get "special_leaves" => "special_leaves#index", as: :special_leaves
       end
     end
 
