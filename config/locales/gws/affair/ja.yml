@@ -115,6 +115,8 @@ ja:
         index: タイムカード警告文を選択する
       special_leaves:
         index: 特別休暇区分を選択する
+      capitals:
+        index: 緊急時はこちら
     limit: 有効期限
 
   modules:
@@ -163,8 +165,11 @@ ja:
       gws/affair/capital:
         no: 原資区分番号
         name: 原資区分名
+        business_code: 事業コード
+        details: 明細
         order: 並び順
         remark: 説明
+        capital_user_ids: ユーザー
       gws/affair/duty_calendar:
         name: タイトル
       gws/affair/shift_record:
@@ -280,6 +285,10 @@ ja:
         gws/affair/shift_record:
           invalid_affair_start_at: 開始時間が不正です。5分単位での時刻を入力してください。
           invalid_affair_end_at: 終了時間が不正です。5分単位での時刻を入力してください。
+        gws/affair/special_leave:
+          not_found: "%{line_no}: ID %{id}は存在しません。"
+        gws/affair/capital:
+          not_found: "%{line_no}: ID %{id}は存在しません。"
 
   gws_role:
     read_gws_affair_duty_hours: 勤務体系の閲覧
@@ -320,6 +329,9 @@ ja:
     read_gws_affair_staff_categories: 職員区分の閲覧
     edit_gws_affair_staff_categories: 職員区分の編集
     delete_gws_affair_staff_categories: 職員区分の削除
+    read_gws_affair_capitals: 原資区分の閲覧
+    edit_gws_affair_capitals: 原資区分の編集
+    delete_gws_affair_capitals: 原資区分の削除
 
   gws_notification:
     gws/affair/overtime_file:
@@ -341,10 +353,16 @@ ja:
         - 原資区分番号を入力します。
       name:
         - 原資区分名を入力します。
+      business_code:
+        - 事業コードを入力します。
+      details:
+        - 明細を入力します。
       order:
         - 並び順を入力します。
       remark:
         - 説明を入力します。
+      capital_user_ids:
+        - 原資区分を適用するユーザーを設定します。
     gws/affair/overtime_file:
       name:
         - タイトルを入力します。

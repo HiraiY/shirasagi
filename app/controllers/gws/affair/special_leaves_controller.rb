@@ -5,7 +5,7 @@ class Gws::Affair::SpecialLeavesController < ApplicationController
   model Gws::Affair::SpecialLeave
 
   navi_view "gws/affair/main/navi"
-  menu_view "gws/affair/special_leaves/menu"
+  menu_view "gws/affair/main/menu"
 
   private
 
@@ -42,7 +42,7 @@ class Gws::Affair::SpecialLeavesController < ApplicationController
   end
 
   def download
-    raise "403" unless @model.allowed?(:edit, @cur_user, site: @cur_site)
+    raise "403" unless @model.allowed?(:read, @cur_user, site: @cur_site)
 
     set_items
     csv = @items.to_csv

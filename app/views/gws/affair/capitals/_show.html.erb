@@ -5,9 +5,18 @@
   <dt><%= @model.t :name %></dt>
   <dd><%= @item.name %></dd>
 
+  <dt><%= @model.t :business_code %></dt>
+  <dd><%= @item.business_code %></dd>
+
+  <dt><%= @model.t :details %></dt>
+  <dd><%= @item.details %></dd>
+
   <dt><%= @model.t :order %></dt>
   <dd><%= @item.order %></dd>
 
   <dt><%= @model.t :remark %></dt>
   <dd><%=br @item.remark %></dd>
+
+  <dt><%= @model.t :capital_user_ids %></dt>
+  <dd><%=br @item.capital_users.map(&:long_name) %></dd>
 </dl>

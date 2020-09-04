@@ -3,17 +3,24 @@ class Gws::Affair::Capital
   include Gws::Referenceable
   include Gws::Reference::User
   include Gws::Reference::Site
+  include Gws::Addon::GroupPermission
   include Gws::SitePermission
+  include Gws::Addon::Import::Affair::Capital
 
-  set_permission_name 'gws_affair_duty_hours'
+  set_permission_name 'gws_affair_capitals'
 
   seqid :id
   field :no, type: String
   field :name, type: String
+  field :business_code, type: String
+  field :details, type: String
   field :order, type: Integer, default: 0
   field :remark, type: String
 
-  permit_params :no, :name, :order, :remark
+  embeds_ids :capital_users, class_name: "Gws::User"
+
+  permit_params :no, :name, :business_code, :details, :order, :remark
+  permit_params capital_user_ids: []
 
   validates :no, presence: true, length: { maximum: 20 }
   validates :name, presence: true, length: { maximum: 80 }

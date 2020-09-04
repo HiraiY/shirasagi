@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   gws "affair" do
     get '/' => redirect { |p, req| "#{req.path}/attendance/time_cards/#{Time.zone.now.strftime('%Y%m')}" }, as: :main
 
-    resources :capitals, concerns: :deletion
+    resources :capitals, concerns: [:deletion, :export]
     resources :duty_calendars, concerns: :deletion
     resources :duty_notices, concerns: :deletion
     resources :special_leaves, concerns: [:deletion, :export]
@@ -88,6 +88,7 @@ Rails.application.routes.draw do
       namespace "apis" do
         get "week_in_files/:uid" => "files#week_in", as: :files_week_in
         get "week_out_files/:uid" => "files#week_out", as: :files_week_out
+        get "capitals" => "capitals#index", as: :capitals
       end
     end
 

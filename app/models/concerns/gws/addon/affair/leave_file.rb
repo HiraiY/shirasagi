@@ -155,8 +155,4 @@ module Gws::Addon::Affair::LeaveFile
 
     "#{name_label}の休暇申請（#{term_label}）"
   end
-
-  def special_leave_options
-    ["a", "b"].map { |c| c }
-  end
 end

@@ -32,9 +32,34 @@
   @item.end_at_minute ||= duty_hour.affair_end_at_minute(now)
 %>
 
-<dl class="see">
+<%
+  if @item.capital.blank?
+    @item.capital = Gws::Affair::Capital.site(@cur_site).in(capital_user_ids: @cur_user.id).first
+  end
+%>
+
+<dl class="see select-capital">
   <dt><%= @model.t :capital_id %><%= @model.tt :capital_id %></dt>
-  <dd><%= f.select :capital_id, capital_options, include_blank: true %></dd>
+  <%= f.hidden_field "capital_id", value: "", class: "hidden-ids" %>
+  <dd>
+    <table class="index ajax-selected">
+      <thead><tr><th class="name"><%= Gws::Affair::OvertimeFile.t :capital_id %></th><th class="deselect"></th></tr></thead>
+      <tbody>
+      <% if @item.capital %>
+        <tr data-id="<%= @item.id %>">
+          <td>
+            <%= f.hidden_field "capital_id", value: @item.capital_id, class: "hidden-ids" %>
+            <%= tryb { [ @item.capital.no.presence, @item.capital.name.presence ].compact.join(" ") } %>
+          </td>
+          <td><%= link_to t("ss.buttons.delete"), "#", class: "deselect btn" %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </dd>
+  <dd>
+    <%= link_to t("gws/affair.apis.capitals.index"), gws_affair_overtime_apis_capitals_path, class: "ajax-box" %>
+  </dd>
 
   <dt><%= @model.t :overtime_name %><%= @model.tt :overtime_name %></dt>
   <dd><%= f.text_field :overtime_name %></dd>

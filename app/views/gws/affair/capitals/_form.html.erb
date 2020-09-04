@@ -5,9 +5,38 @@
   <dt><%= @model.t :name %><%= @model.tt :name %></dt>
   <dd><%= f.text_field :name %></dd>
 
+  <dt><%= @model.t :business_code %><%= @model.tt :business_code %></dt>
+  <dd><%= f.text_field :business_code %></dd>
+
+  <dt><%= @model.t :details %><%= @model.tt :details %></dt>
+  <dd><%= f.text_field :details %></dd>
+
   <dt><%= @model.t :order %><%= @model.tt :order %></dt>
   <dd><%= f.number_field :order %></dd>
 
   <dt><%= @model.t :remark %><%= @model.tt :remark %></dt>
   <dd><%= f.text_area :remark %></dd>
+</dl>
+
+<dl class="see">
+  <dt><%= @model.t :capital_user_ids %><%= @model.tt :capital_user_ids %></dt>
+  <dd>
+    <%= f.hidden_field "capital_user_ids[]", value: "", class: "hidden-ids" %>
+    <%= link_to t("ss.apis.users.index"), gws_apis_users_path, class: "btn ajax-box" %>
+  </dd>
+  <dd>
+    <table class="index ajax-selected">
+      <thead><tr><th class="name"><%= Gws::User.t :name %></th><th class="deselect"></th></tr></thead>
+      <tbody>
+      <% if @item.capital_users %>
+        <% @item.capital_users.each do |user| %>
+          <tr data-id="<%= user.id %>">
+            <td><%= f.hidden_field "capital_user_ids[]", value: user.id, id: nil %> <%= user.long_name %></td>
+            <td><%= link_to t("ss.buttons.delete"), "#", class: "deselect btn" %></td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  </dd>
 </dl>
