@@ -149,7 +149,7 @@ module Gws::Addon::Affair::LeaveFile
   end
 
   def term_label
-    name_label = user_name
+    name_label = target_user.try(:name)
     term_label = start_end_term
     return if name_label.blank? || term_label.blank?
 

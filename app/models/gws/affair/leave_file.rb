@@ -45,6 +45,6 @@ class Gws::Affair::LeaveFile
   private
 
   def set_name_by_start_end
-    self.name ||= term_label
+    self.name = term_label
   end
 end

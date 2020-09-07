@@ -43,7 +43,7 @@ module Gws::Addon::Affair::OvertimeFile
     before_validation :validate_compensatory_minute
     before_validation :validate_start_at
 
-    validates :overtime_name, presence: true
+    validates :overtime_name, presence: true, length: { maximum: 80 }
     validates :start_at, presence: true, datetime: true
     validates :end_at, presence: true, datetime: true
 
@@ -227,11 +227,13 @@ module Gws::Addon::Affair::OvertimeFile
   end
 
   def validate_start_at
+    return if end_at.blank?
     if week_in_start_at.present?
       if week_in_start_at <= end_at
         errors.add :week_in_start_at_date, :greater_than_end_at
       end
     end
+
     if week_out_start_at.present?
       if week_out_start_at <= end_at
         errors.add :week_out_start_at_date, :greater_than_end_at
