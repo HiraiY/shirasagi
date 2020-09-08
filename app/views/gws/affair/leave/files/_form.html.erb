@@ -14,7 +14,7 @@ $(".select-leave-type").on("change", toggleSelectCompensatoryFile);
 toggleSelectCompensatoryFile();
 
 $('a.select-affair-file').on("click", function () {
-  var href = $(this).attr("href");
+  var href = $(this).attr("data-href");
   var uid = $('.ajax-selected [name="item[target_user_id]"]').val();
 
   if (uid) {
@@ -92,7 +92,7 @@ $('a.select-affair-file').on("click", function () {
   <dt><%= @model.t :week_out_compensatory_file_id %></dt>
   <dd>
     <%= f.hidden_field "week_out_compensatory_file_id", value: "", class: "hidden-ids" %>
-    <%= link_to t("ss.links.select"), gws_affair_overtime_apis_files_week_out_path(uid: "UID", id: @item.id), class: "ajax-box select-affair-file btn" %>
+    <%= link_to t("ss.links.select"), "", class: "ajax-box select-affair-file btn", "data-href": gws_affair_overtime_apis_files_week_out_path(uid: "UID", id: @item.id) %>
   </dd>
   <dd>
     <table class="index ajax-selected">

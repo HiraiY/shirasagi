@@ -16,7 +16,8 @@ class Gws::Affair::Overtime::Apis::FilesController < ApplicationController
       pluck(:week_in_compensatory_file_id).compact
     file_ids -= [@leave_file.week_in_compensatory_file_id] if @leave_file
 
-    @items = @model.site(@cur_site).user(@user).where(
+    @items = @model.site(@cur_site).where(
+      target_user_id: @user.id,
       workflow_state: "approve",
       week_in_compensatory_minute: { "$gt" => 0 },
       id: { "$nin" => file_ids }
