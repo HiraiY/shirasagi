@@ -1,4 +1,4 @@
-<% staff_category_options = SS.config.gws.user["staff_category"] %>
+<% staff_category_options = SS.config.gws.user["staff_category"] || [] %>
 <dl class="see">
   <dt><%= @model.t :code %><%= @model.tt :code %></dt>
   <dd><%= f.text_field :code %></dd>

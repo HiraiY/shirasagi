@@ -29,7 +29,7 @@ class Gws::Affair::SpecialLeavesController < ApplicationController
   def index
     raise "403" unless @model.allowed?(:edit, @cur_user, site: @cur_site)
 
-    @tabs = SS.config.gws.user["staff_category"]
+    @tabs = SS.config.gws.user["staff_category"] || []
     @items = @model.site(@cur_site).
       allow(:read, @cur_user, site: @cur_site).
       search(params[:s]).

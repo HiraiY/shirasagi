@@ -2,16 +2,16 @@
   SS_SearchUI.modal();
 <% end %>
 
-<% tabs = SS.config.gws.user["staff_category"] %>
+<%
+  if params[:uid]
+    staff_category = Gws::User.site(@cur_site).find(params[:uid]).staff_category
+    @items = @items.where(staff_category: staff_category) if staff_category
+  end
+%>
+
 <div class="search-ui-form">
   <%= form_for :s, url: { action: :index }, html: { method: "GET", class: :search } do |f| %>
     <dl class="see">
-      <dt><%= @model.t :staff_category %></dt>
-      <dd>
-        <%= f.select :staff_category, tabs,
-                     { selected: params[:s].try(:[], :staff_category), include_blank: true },
-                     { class: "submit-on-change" } %>
-      </dd>
       <dt><%= @model.t :name %></dt>
       <dd>
         <%= f.text_field :keyword, value: params[:s].try(:[], :keyword) %>

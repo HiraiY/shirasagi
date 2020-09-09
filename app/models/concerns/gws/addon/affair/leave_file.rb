@@ -34,6 +34,7 @@ module Gws::Addon::Affair::LeaveFile
 
     validates :week_in_compensatory_file_id, presence: true, if: ->{ leave_type == "week_in_compensatory_leave" }
     validates :week_out_compensatory_file_id, presence: true, if: ->{ leave_type == "week_out_compensatory_leave" }
+    validates :special_leave_id, presence: true, if: ->{ leave_type == "paidleave" }
 
     validate :validate_week_in_compensatory_file, if: ->{ week_in_compensatory_file }
     validate :validate_week_out_compensatory_file, if: ->{ week_out_compensatory_file }

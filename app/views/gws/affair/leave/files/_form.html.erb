@@ -25,6 +25,19 @@ $('a.select-affair-file').on("click", function () {
     return false;
   }
 });
+
+$('a.select-special-leaves').on("click", function () {
+  var href = $(this).attr("data-href");
+  var uid = $('.ajax-selected [name="item[target_user_id]"]').val();
+
+  if (uid) {
+    href = href.replace("UID", uid);
+    $(this).attr("href", href);
+  } else {
+    alert("<%= t("gws/affair.notice.select_target_user") %>");
+    return false;
+  }
+});
 <% end %>
 
 <%
@@ -68,7 +81,7 @@ $('a.select-affair-file').on("click", function () {
   <dt><%= @model.t :special_leave_id %><%= @model.tt :special_leave_id %></dt>
   <dd>
     <%= f.hidden_field "special_leave_id", value: "", class: "hidden-ids" %>
-    <%= link_to t("gws/affair.apis.special_leaves.index"), gws_affair_leave_apis_special_leaves_path, class: "ajax-box" %>
+    <%= link_to t("gws/affair.apis.special_leaves.index"), "", class: "ajax-box select-special-leaves btn", "data-href": gws_affair_leave_apis_special_leaves_path(uid: "UID", id: @item.id) %>
   </dd>
   <dd>
     <table class="index ajax-selected">

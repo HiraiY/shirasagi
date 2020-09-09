@@ -101,7 +101,7 @@ Rails.application.routes.draw do
 
       namespace "apis" do
         get "files/:id" => "files#show", as: :file
-        get "special_leaves" => "special_leaves#index", as: :special_leaves
+        get "special_leaves/:uid" => "special_leaves#index", as: :special_leaves
       end
     end
 
