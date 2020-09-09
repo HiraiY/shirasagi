@@ -37,7 +37,6 @@ Rails.application.routes.draw do
     resources :duty_calendars, concerns: :deletion
     resources :duty_notices, concerns: :deletion
     resources :special_leaves, concerns: [:deletion, :export]
-    resources :staff_categories, concerns: :deletion
 
     namespace "overtime" do
       resources :files, path: 'files/:state', concerns: [:deletion, :workflow]

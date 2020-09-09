@@ -12,7 +12,7 @@ module Gws::Addon::Import::Affair
 
     module ClassMethods
       def csv_headers
-        %w(id code name order staff_category_id group_ids user_ids permission_level)
+        %w(id code name order staff_category group_ids user_ids permission_level)
       end
 
       def to_csv
@@ -24,7 +24,7 @@ module Gws::Addon::Import::Affair
             line << item.code
             line << item.name
             line << item.order
-            line << item.staff_category.name if item.staff_category.present?
+            line << item.staff_category
             line << item.group_names.join("\n")
             line << item.user_names.join("\n")
             line << item.permission_level
@@ -71,7 +71,7 @@ module Gws::Addon::Import::Affair
       code              = row[t("code")].to_s.strip
       name              = row[t("name")].to_s.strip
       order             = row[t("order")].to_s.strip
-      staff_category_id = row[t("staff_category_id")].to_s.strip
+      staff_category = row[t("staff_category")].to_s.strip
       group_names       = row[t("group_ids")].to_s.strip.split("\n")
       user_names        = row[t("user_ids")].to_s.strip.split("\n")
       permission_level  = row[t("permission_level")].to_s.strip
@@ -92,14 +92,12 @@ module Gws::Addon::Import::Affair
         item = self.class.new
       end
 
-      staff_category_id = Gws::Affair::StaffCategory.site(@cur_site).where(name: staff_category_id).first.try(:id)
-
       item.site              = @cur_site
       item.user              = @cur_user
       item.code              = code
       item.name              = name
       item.order             = order
-      item.staff_category_id = staff_category_id if staff_category_id.present?
+      item.staff_category = staff_category
       item.group_ids         = group_names_to_ids(group_names)
       item.user_ids          = user_names_to_ids(user_names)
       item.permission_level  = permission_level

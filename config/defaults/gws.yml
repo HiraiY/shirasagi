@@ -187,6 +187,11 @@ production: &production
   share:
     max_history_count: 20
 
+  user:
+    staff_category:
+      - "正規職員"
+      - "会計年度任用職員"
+
 test:
   <<: *production
   disable: false

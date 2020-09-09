@@ -29,14 +29,14 @@ class Gws::Affair::SpecialLeavesController < ApplicationController
   def index
     raise "403" unless @model.allowed?(:edit, @cur_user, site: @cur_site)
 
-    @tabs = Gws::Affair::StaffCategory.site(@cur_site).order_by(order: 1)
+    @tabs = SS.config.gws.user["staff_category"]
     @items = @model.site(@cur_site).
       allow(:read, @cur_user, site: @cur_site).
       search(params[:s]).
       order_by(order: 1)
 
     if params[:staff_category].present?
-      @items = @items.where(staff_category: params[:staff_category].to_i)
+      @items = @items.where(staff_category: params[:staff_category])
     end
     @items = @items.page(params[:page]).per(50)
   end

@@ -1,4 +1,4 @@
-<% tabs = Gws::Affair::StaffCategory.site(@cur_site).order_by(order: 1) %>
+<% staff_category_options = SS.config.gws.user["staff_category"] %>
 <dl class="see">
   <dt><%= @model.t :code %><%= @model.tt :code %></dt>
   <dd><%= f.text_field :code %></dd>
@@ -9,6 +9,6 @@
   <dt><%= @model.t :order %><%= @model.tt :order %></dt>
   <dd><%= f.number_field :order %></dd>
 
-  <dt><%= @model.t :staff_category_id %><%= @model.tt :staff_category_id %></dt>
-  <dd><%= f.select :staff_category_id, tabs.map { |t| [t.name, t.id] }, include_blank: "" %></dd>
+  <dt><%= @model.t :staff_category %><%= @model.tt :staff_category %></dt>
+  <dd><%= f.select :staff_category, staff_category_options, include_blank: "" %></dd>
 </dl>

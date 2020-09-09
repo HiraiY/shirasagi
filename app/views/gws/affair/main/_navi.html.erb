@@ -82,10 +82,6 @@
   <% if Gws::Affair::SpecialLeave.allowed?(:read, @cur_user, site: @cur_site) %>
     <h3><%= link_to t("modules.gws/affair/special_leave"), gws_affair_special_leaves_path, class: "management" %></h3>
   <% end %>
-
-  <% if Gws::Affair::StaffCategory.allowed?(:read, @cur_user, site: @cur_site) %>
-    <h3><%= link_to t("modules.gws/affair/staff_category"), gws_affair_staff_categories_path, class: "management" %></h3>
-  <% end %>
 </nav>
 
 <%= render partial: 'gws/main/navi' %>

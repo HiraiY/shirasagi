@@ -2,14 +2,14 @@
   SS_SearchUI.modal();
 <% end %>
 
-<% tabs = Gws::Affair::StaffCategory.site(@cur_site).order_by(order: 1) %>
+<% tabs = SS.config.gws.user["staff_category"] %>
 <div class="search-ui-form">
   <%= form_for :s, url: { action: :index }, html: { method: "GET", class: :search } do |f| %>
     <dl class="see">
-      <dt><%= @model.t :staff_category_id %></dt>
+      <dt><%= @model.t :staff_category %></dt>
       <dd>
-        <%= f.select :staff_category_id, tabs.map {|c| [c.name, c.id]},
-                     { selected: params[:s].try(:[], :staff_category_id), include_blank: true },
+        <%= f.select :staff_category, tabs,
+                     { selected: params[:s].try(:[], :staff_category), include_blank: true },
                      { class: "submit-on-change" } %>
       </dd>
       <dt><%= @model.t :name %></dt>
@@ -26,7 +26,7 @@
   <tr>
     <th class="name"><%= @model.t :code %></th>
     <th class="name"><%= @model.t :name %></th>
-    <th class="name"><%= @model.t :staff_category_id %></th>
+    <th class="name"><%= @model.t :staff_category %></th>
   </tr>
   </thead>
   <tbody class="items">
@@ -34,7 +34,7 @@
     <tr class="list-item" data-id="<%= item.id %>" data-name="<%= item.name %>">
       <td><%= item.code %></td>
       <td><%= link_to item.name, "#", class: "select-single-item" %></td>
-      <td><%= item.staff_category.name %></td>
+      <td><%= item.staff_category %></td>
     </tr>
   <% end %>
   </tbody>

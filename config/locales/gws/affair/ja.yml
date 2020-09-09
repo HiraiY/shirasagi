@@ -143,7 +143,6 @@ ja:
     gws/affair/shift_calendar: シフト勤務
     gws/affair/duty_notice: タイムカード警告文
     gws/affair/special_leave: 特別休暇区分
-    gws/affair/staff_category: 職員区分
     addons:
       gws/affair/overtime_file: 時間外申請書
       gws/affair/overtime_result: 結果
@@ -269,7 +268,7 @@ ja:
         code: コード
         name: 名前
         order: 並び順
-        staff_category_id: 職員区分
+        staff_category: 職員区分
       gws/affair/staff_category:
         name: 名前
         order: 並び順
@@ -326,9 +325,6 @@ ja:
     read_gws_affair_special_leaves: 特別休暇区分の閲覧
     edit_gws_affair_special_leaves: 特別休暇区分の編集
     delete_gws_affair_special_leaves: 特別休暇区分の削除
-    read_gws_affair_staff_categories: 職員区分の閲覧
-    edit_gws_affair_staff_categories: 職員区分の編集
-    delete_gws_affair_staff_categories: 職員区分の削除
     read_gws_affair_capitals: 原資区分の閲覧
     edit_gws_affair_capitals: 原資区分の編集
     delete_gws_affair_capitals: 原資区分の削除
@@ -443,10 +439,5 @@ ja:
       order:
         - フォルダーの並び順を数字で入力します。
         - 番号の小さい順にフォルダーが表示されます。
-      staff_category_id: 職員区分を選択します。
-    gws/affair/staff_category:
-      name: 名前を入力します。
-      order:
-        - フォルダーの並び順を数字で入力します。
-        - 番号の小さい順にフォルダーが表示されます。
+      staff_category: 職員区分を選択します。
 

@@ -14,15 +14,12 @@ class Gws::Affair::SpecialLeave
   field :code, type: String
   field :name, type: String
   field :order, type: Integer, default: 0
+  field :staff_category, type: String
 
-  belongs_to :staff_category, class_name: "Gws::Affair::StaffCategory"
-
-  permit_params :staff_category_id
-
-  permit_params :code, :name, :order
+  permit_params :code, :name, :order, :staff_category
 
   validates :name, presence: true, length: { maximum: 80 }
-  validates :staff_category_id, presence: true
+  validates :staff_category, presence: true
 
   class << self
     def search(params)
@@ -35,8 +32,8 @@ class Gws::Affair::SpecialLeave
       if params[:keyword].present?
         criteria = criteria.keyword_in params[:keyword], :no, :name, :remark
       end
-      if params[:staff_category_id].present?
-        criteria = criteria.where(staff_category: params[:staff_category_id].to_i)
+      if params[:staff_category].present?
+        criteria = criteria.where(staff_category: params[:staff_category])
       end
       criteria
     end
