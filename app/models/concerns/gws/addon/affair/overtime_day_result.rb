@@ -16,7 +16,7 @@ module Gws::Addon::Affair::OvertimeDayResult
   end
 
   def create_day_results
-    duty_calendar = user.effective_duty_calendar(site)
+    duty_calendar = target_user.effective_duty_calendar(site)
 
     results = [[result.date, result.start_at, result.end_at]]
 
