@@ -76,7 +76,7 @@ class Gws::Affair::Overtime::Management::Aggregate::UsersController < Applicatio
 
     set_download_params
     set_items
-    enum_csv = Gws::Affair::Enumerator::OvertimeDayResult.new(@items, @users, @threshold, @download_params)
+    enum_csv = Gws::Affair::Enumerator::OvertimeDayResult.new(@items, @users, @threshold, @capital_id.to_i, @download_params)
     send_enum(enum_csv,
       type: "text/csv; charset=#{@download_params.encoding}",
       filename: "aggregate_#{@threshold}_#{Time.zone.now.to_i}.csv"

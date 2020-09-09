@@ -76,8 +76,7 @@ ja:
             name: "時間外（週休日・休日）"
             rate: "深夜\n160/100"
           duty_day_in_work_time:
-            name: "時間外（勤務内）"
-            rate: "100/100"
+            rate: "時短\n100/100"
           week_out_compensatory:
             name: "同一週以外の振替"
             rate: "同一週以外の振替\n25/100"

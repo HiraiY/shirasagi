@@ -13,9 +13,8 @@
         <tr>
           <th class="start-at" rowspan="2"><%= @item.result.t(:start_at) %></th>
           <th class="end-at" rowspan="2"><%= @item.result.t(:end_at) %></th>
-          <th class="time" colspan="2"><%= "時間外（勤務日）" %></th>
+          <th class="time" colspan="3"><%= "時間外（勤務日）" %></th>
           <th class="time" colspan="2"><%= "時間外（週休日・休日）" %></th>
-          <th class="time"><%= "時間外（勤務内）" %></th>
           <th class="time" rowspan="2"><%= "同一週内振替" %></th>
           <th class="time" rowspan="2"><%= "同一週外振替" %></th>
           <th class="time" rowspan="2"><%= "休憩" %></th>
@@ -23,9 +22,9 @@
         <tr>
           <th class="time"><%=br "普通\n125/100" %></th>
           <th class="time"><%=br "深夜\n150/100" %></th>
+          <th class="time"><%=br "時短\n100/100" %></th>
           <th class="time"><%=br "普通\n135/100" %></th>
           <th class="time"><%=br "深夜\n160/100" %></th>
-          <th class="time"><%=br "100/100" %></th>
         </tr>
       </thead>
       <tbody class="items">
@@ -35,9 +34,9 @@
             <td class="end-at"><%= day_result.end_at.strftime("%Y/%m/%d %H:%M") %></td>
             <td class="time"><%= format_minute(day_result.duty_day_time_minute) %></td>
             <td class="time"><%= format_minute(day_result.duty_night_time_minute) %></td>
+            <td class="time"><%= format_minute(day_result.duty_day_in_work_time_minute) %></td>
             <td class="time"><%= format_minute(day_result.leave_day_time_minute) %></td>
             <td class="time"><%= format_minute(day_result.leave_night_time_minute) %></td>
-            <td class="time"><%= format_minute(day_result.duty_day_in_work_time_minute) %></td>
             <td class="time"><%= format_minute(day_result.week_in_compensatory_minute) %></td>
             <td class="time"><%= format_minute(day_result.week_out_compensatory_minute) %></td>
             <td class="time"><%= format_minute(day_result.break_time_minute) %></td>
