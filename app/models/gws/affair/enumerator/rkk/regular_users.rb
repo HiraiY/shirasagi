@@ -31,6 +31,8 @@ class Gws::Affair::Enumerator::Rkk::RegularUsers < Gws::Affair::Enumerator::Base
     over_leave_night = @prefs.dig(user.id, "over_threshold", "leave_night_time_minute").to_i
     over_week_out    = @prefs.dig(user.id, "over_threshold", "week_out_compensatory_minute").to_i
 
+    duty_day_in_work = @prefs.dig(user.id, "under_threshold", "duty_day_in_work_time_minute").to_i
+
     # under_duty_day    1.25
     # under_duty_night  1.5
     # under_leave_day   1.35
@@ -42,20 +44,30 @@ class Gws::Affair::Enumerator::Rkk::RegularUsers < Gws::Affair::Enumerator::Base
     # over_leave_day    1.5
     # over_leave_night  1.75
     # over_week_out     0.5
+    #
+    # duty_day_in_work  1.0
 
     line = []
     line << "10"
     line << user.organization_uid
     line << ""
-    line << under_duty_day
-    line << under_duty_night + under_duty_night + over_leave_day
-    line << under_leave_day
-    line << under_leave_night
-    line << under_week_out
-    line << over_duty_night + over_leave_night
-    line << over_week_out
-    line << 0
+    line << format_minute(under_duty_day)
+    line << format_minute(under_duty_night + under_duty_night + over_leave_day)
+    line << format_minute(under_leave_day)
+    line << format_minute(under_leave_night)
+    line << format_minute(under_week_out)
+    line << format_minute(over_duty_night + over_leave_night)
+    line << format_minute(over_week_out)
+    line << format_minute(duty_day_in_work)
 
     yielder << encode(line.to_csv)
+  end
+
+  def format_minute(minute)
+    hours = minute / 60
+    minutes = minute % 60
+
+    hours += 1 if minutes >= 30
+    hours
   end
 end

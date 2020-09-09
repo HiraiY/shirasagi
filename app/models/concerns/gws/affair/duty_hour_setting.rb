@@ -27,10 +27,13 @@ module Gws::Affair::DutyHourSetting
     field :affair_overtime_working_minute, type: Integer
     field :affair_overtime_break_minute, type: Integer
 
+    field :overtime_in_work, type: String, default: "disabled"
+
     permit_params :in_attendance_time_change_hour
     permit_params :affair_time_wday
     permit_params :affair_on_duty_working_minute, :affair_on_duty_break_minute
     permit_params :affair_overtime_working_minute, :affair_overtime_break_minute
+    permit_params :overtime_in_work
 
     before_validation :set_attendance_time_changed_minute
 
@@ -70,6 +73,13 @@ module Gws::Affair::DutyHourSetting
     0.step(59, 5).map do |h|
       [ "#{h}#{I18n.t('datetime.prompts.minute')}", h.to_s ]
     end
+  end
+
+  def overtime_in_work_options
+    [
+      [I18n.t("ss.options.state.enabled"), "enabled"],
+      [I18n.t("ss.options.state.disabled"), "disabled"],
+    ]
   end
 
   (0..6).each do |wday|
@@ -155,6 +165,10 @@ module Gws::Affair::DutyHourSetting
 
     minutes = 0 if minutes < 0
     minutes
+  end
+
+  def overtime_in_work?
+    overtime_in_work == "enabled"
   end
 
   private

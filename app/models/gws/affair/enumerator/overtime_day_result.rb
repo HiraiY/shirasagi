@@ -21,14 +21,23 @@ class Gws::Affair::Enumerator::OvertimeDayResult < Gws::Affair::Enumerator::Base
       line << I18n.t("gws/affair.labels.overtime.total.under")
       line << I18n.t("gws/affair.labels.overtime.total.over")
       line << I18n.t("gws/affair.labels.overtime.total.sum")
-    else
+    elsif @threshold == "under"
       line << Gws::User.t(:name)
       line << Gws::User.t(:organization_uid)
-      line << I18n.t("gws/affair.labels.overtime.#{@threshold}_threshold.duty_day_time.rate")
-      line << I18n.t("gws/affair.labels.overtime.#{@threshold}_threshold.duty_night_time.rate")
-      line << I18n.t("gws/affair.labels.overtime.#{@threshold}_threshold.leave_day_time.rate")
-      line << I18n.t("gws/affair.labels.overtime.#{@threshold}_threshold.leave_night_time.rate")
-      line << I18n.t("gws/affair.labels.overtime.#{@threshold}_threshold.week_out_compensatory.rate")
+      line << I18n.t("gws/affair.labels.overtime.under_threshold.duty_day_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.under_threshold.duty_night_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.under_threshold.leave_day_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.under_threshold.leave_night_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.under_threshold.duty_day_in_work_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.under_threshold.week_out_compensatory.rate")
+    elsif @threshold == "over"
+      line << Gws::User.t(:name)
+      line << Gws::User.t(:organization_uid)
+      line << I18n.t("gws/affair.labels.overtime.over_threshold.duty_day_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.over_threshold.duty_night_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.over_threshold.leave_day_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.over_threshold.leave_night_time.rate")
+      line << I18n.t("gws/affair.labels.overtime.over_threshold.week_out_compensatory.rate")
     end
     line
   end
@@ -48,12 +57,26 @@ class Gws::Affair::Enumerator::OvertimeDayResult < Gws::Affair::Enumerator::Base
       line << format_minute(total_under_minutes)
       line << format_minute(total_over_minutes)
       line << format_minute(overtime_minute)
-    else
-      duty_day_time_minute = @prefs.dig(user.id, "#{@threshold}_threshold", "duty_day_time_minute")
-      duty_night_time_minute = @prefs.dig(user.id, "#{@threshold}_threshold", "duty_night_time_minute")
-      leave_day_time_minute = @prefs.dig(user.id, "#{@threshold}_threshold", "leave_day_time_minute")
-      leave_night_time_minute = @prefs.dig(user.id, "#{@threshold}_threshold", "leave_night_time_minute")
-      week_out_compensatory_minute = @prefs.dig(user.id, "#{@threshold}_threshold", "week_out_compensatory_minute")
+    elsif @threshold == "under"
+      duty_day_time_minute = @prefs.dig(user.id, "under_threshold", "duty_day_time_minute")
+      duty_night_time_minute = @prefs.dig(user.id, "under_threshold", "duty_night_time_minute")
+      leave_day_time_minute = @prefs.dig(user.id, "under_threshold", "leave_day_time_minute")
+      leave_night_time_minute = @prefs.dig(user.id, "under_threshold", "leave_night_time_minute")
+      duty_day_in_work_time_minute = @prefs.dig(user.id, "under_threshold", "duty_day_in_work_time_minute")
+      week_out_compensatory_minute = @prefs.dig(user.id, "under_threshold", "week_out_compensatory_minute")
+
+      line << format_minute(duty_day_time_minute)
+      line << format_minute(duty_night_time_minute)
+      line << format_minute(leave_day_time_minute)
+      line << format_minute(leave_night_time_minute)
+      line << format_minute(duty_day_in_work_time_minute)
+      line << format_minute(week_out_compensatory_minute)
+    elsif @threshold == "over"
+      duty_day_time_minute = @prefs.dig(user.id, "over_threshold", "duty_day_time_minute")
+      duty_night_time_minute = @prefs.dig(user.id, "over_threshold", "duty_night_time_minute")
+      leave_day_time_minute = @prefs.dig(user.id, "over_threshold", "leave_day_time_minute")
+      leave_night_time_minute = @prefs.dig(user.id, "over_threshold", "leave_night_time_minute")
+      week_out_compensatory_minute = @prefs.dig(user.id, "over_threshold", "week_out_compensatory_minute")
 
       line << format_minute(duty_day_time_minute)
       line << format_minute(duty_night_time_minute)

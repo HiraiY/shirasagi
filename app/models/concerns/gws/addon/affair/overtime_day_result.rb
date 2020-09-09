@@ -37,10 +37,15 @@ module Gws::Addon::Affair::OvertimeDayResult
     week_in_subtractor = Gws::Affair::Subtractor.new(week_in_compensatory_minute)
     week_out_subtractor = Gws::Affair::Subtractor.new(week_out_compensatory_minute)
 
+    # 100/100 残業（標準勤務時間）
+    default_duty_hour = Gws::Affair::DefaultDutyHour.new(cur_site: site)
+
     # 日替わり時刻を超えているものがあるかもしれないので、全削除
     day_results.destroy_all
 
     results.each do |r_date, r_start_at, r_end_at|
+      duty_hour = duty_calendar.effective_duty_hour(r_date)
+
       overtime_minute = ((r_end_at - r_start_at) * 24 * 60).to_i
 
       night_time_start = duty_calendar.night_time_start(r_date.to_datetime).to_datetime
@@ -139,6 +144,30 @@ module Gws::Addon::Affair::OvertimeDayResult
       end
 
       overtime_minute = duty_day_time_minute + duty_night_time_minute + leave_day_time_minute + leave_night_time_minute + week_out_compensatory_minute
+
+      # 100/100 残業
+      if duty_hour.overtime_in_work? && duty_day_time_minute > 0
+        default_affair_start = default_duty_hour.affair_start(r_date)
+        default_affair_end = default_duty_hour.affair_end(r_date)
+
+        if r_start_at >= default_affair_end
+          duty_day_in_work_time_minute = 0
+        elsif r_end_at < default_affair_start
+          duty_day_in_work_time_minute = 0
+        elsif r_start_at >= default_affair_start && r_end_at < default_affair_end
+          duty_day_in_work_time_minute = ((r_end_at - r_start_at) * 24 * 60).to_i
+        elsif r_start_at < default_affair_start && r_end_at < default_affair_end
+          duty_day_in_work_time_minute = ((r_end_at - default_affair_start) * 24 * 60).to_i
+        else #r_start_at >= default_affair_start && r_end_at >= default_affair_end
+          duty_day_in_work_time_minute = ((default_affair_end - r_start_at) * 24 * 60).to_i
+        end
+
+        duty_day_time_minute -= duty_day_in_work_time_minute
+        duty_day_time_minute = duty_day_time_minute > 0 ? duty_day_time_minute : 0
+      else
+        duty_day_in_work_time_minute = 0
+      end
+
       cond = {
         site_id: site.id,
         user_id: user.id,
@@ -167,6 +196,8 @@ module Gws::Addon::Affair::OvertimeDayResult
 
       item.week_in_compensatory_minute = week_in_compensatory_minute
       item.week_out_compensatory_minute = week_out_compensatory_minute
+
+      item.duty_day_in_work_time_minute = duty_day_in_work_time_minute
 
       item.save
     end

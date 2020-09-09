@@ -26,6 +26,7 @@ class Gws::Affair::OvertimeDayResult
   field :week_in_compensatory_minute, type: Integer
   field :week_out_compensatory_minute, type: Integer
   field :break_time_minute, type: Integer
+  field :duty_day_in_work_time_minute, type: Integer
 
   validates :file_id, presence: true
   validates :date, presence: true, uniqueness: { scope: [:site_id, :user_id, :file_id] }

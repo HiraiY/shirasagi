@@ -9,7 +9,9 @@
 
   <% if @threshold == "total" %>
     <%= render partial: 'total', locals: { current: "index" } %>
-  <% else %>
-    <%= render partial: 'detail', locals: { current: "index" } %>
+  <% elsif @threshold == "over" %>
+    <%= render partial: 'over', locals: { current: "index" } %>
+  <% elsif @threshold == "under" %>
+    <%= render partial: 'under', locals: { current: "index" } %>
   <% end %>
 </div>

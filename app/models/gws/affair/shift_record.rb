@@ -158,4 +158,8 @@ class Gws::Affair::ShiftRecord
   def notices(time_card)
     duty_calendar.notices(time_card)
   end
+
+  def overtime_in_work?
+    default_duty_hour.overtime_in_work?
+  end
 end

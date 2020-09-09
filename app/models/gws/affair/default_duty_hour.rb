@@ -89,4 +89,7 @@ class Gws::Affair::DefaultDutyHour
     minutes
   end
 
+  def overtime_in_work?
+    false
+  end
 end

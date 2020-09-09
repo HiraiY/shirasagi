@@ -75,6 +75,9 @@ ja:
           leave_night_time:
             name: "時間外（週休日・休日）"
             rate: "深夜\n160/100"
+          duty_day_in_work_time:
+            name: "時間外（勤務内）"
+            rate: "100/100"
           week_out_compensatory:
             name: "同一週以外の振替"
             rate: "同一週以外の振替\n25/100"
@@ -221,6 +224,7 @@ ja:
         affair_on_duty_break_minute: 休憩時間（分）
         affair_overtime_working_minute: 就業時間（分）
         affair_overtime_break_minute: 休憩時間（分）
+        overtime_in_work: 標準勤務時間内での残業
       gws/addon/affair/duty_hour:
         duty_hour_ids: 勤務体系
       gws/addon/affair/holiday:
