@@ -6,8 +6,14 @@ class Gws::Affair::Enumerator::Rkk::RegularUsers < Gws::Affair::Enumerator::Base
 
     super() do |y|
       y << bom + encode(headers.to_csv)
-      @users.each do |user|
-        enum_record(y, user)
+
+      @prefs.each do |user_id, all_values|
+        user = users.select { |user| user.id == user_id }.first
+
+        all_values.each do |capital_id, values|
+          next if capital_id == 0
+          enum_record(y, user, capital_id, values)
+        end
       end
     end
   end
@@ -18,20 +24,20 @@ class Gws::Affair::Enumerator::Rkk::RegularUsers < Gws::Affair::Enumerator::Base
 
   private
 
-  def enum_record(yielder, user)
-    under_duty_day    = @prefs.dig(user.id, "under_threshold", "duty_day_time_minute").to_i
-    under_duty_night  = @prefs.dig(user.id, "under_threshold", "duty_night_time_minute").to_i
-    under_leave_day   = @prefs.dig(user.id, "under_threshold", "leave_day_time_minute").to_i
-    under_leave_night = @prefs.dig(user.id, "under_threshold", "leave_night_time_minute").to_i
-    under_week_out    = @prefs.dig(user.id, "under_threshold", "week_out_compensatory_minute").to_i
+  def enum_record(yielder, user, capital_id, values)
+    under_duty_day    = values.dig("under_threshold", "duty_day_time_minute").to_i
+    under_duty_night  = values.dig("under_threshold", "duty_night_time_minute").to_i
+    under_leave_day   = values.dig("under_threshold", "leave_day_time_minute").to_i
+    under_leave_night = values.dig("under_threshold", "leave_night_time_minute").to_i
+    under_week_out    = values.dig("under_threshold", "week_out_compensatory_minute").to_i
 
-    over_duty_day    = @prefs.dig(user.id, "over_threshold", "duty_day_time_minute").to_i
-    over_duty_night  = @prefs.dig(user.id, "over_threshold", "duty_night_time_minute").to_i
-    over_leave_day   = @prefs.dig(user.id, "over_threshold", "leave_day_time_minute").to_i
-    over_leave_night = @prefs.dig(user.id, "over_threshold", "leave_night_time_minute").to_i
-    over_week_out    = @prefs.dig(user.id, "over_threshold", "week_out_compensatory_minute").to_i
+    over_duty_day    = values.dig("over_threshold", "duty_day_time_minute").to_i
+    over_duty_night  = values.dig("over_threshold", "duty_night_time_minute").to_i
+    over_leave_day   = values.dig("over_threshold", "leave_day_time_minute").to_i
+    over_leave_night = values.dig("over_threshold", "leave_night_time_minute").to_i
+    over_week_out    = values.dig("over_threshold", "week_out_compensatory_minute").to_i
 
-    duty_day_in_work = @prefs.dig(user.id, "under_threshold", "duty_day_in_work_time_minute").to_i
+    duty_day_in_work = values.dig("under_threshold", "duty_day_in_work_time_minute").to_i
 
     # under_duty_day    1.25
     # under_duty_night  1.5
@@ -50,9 +56,9 @@ class Gws::Affair::Enumerator::Rkk::RegularUsers < Gws::Affair::Enumerator::Base
     line = []
     line << "10"
     line << user.organization_uid
-    line << ""
+    line << capital_id
     line << format_minute(under_duty_day)
-    line << format_minute(under_duty_night + under_duty_night + over_leave_day)
+    line << format_minute(under_duty_night + over_duty_day + over_leave_day)
     line << format_minute(under_leave_day)
     line << format_minute(under_leave_night)
     line << format_minute(under_week_out)

@@ -17,11 +17,12 @@
   <tbody>
   <% @users.each do |user| %>
     <%
-      duty_day_time_minute = @items.dig(user.id, "over_threshold", "duty_day_time_minute")
-      duty_night_time_minute = @items.dig(user.id, "over_threshold", "duty_night_time_minute")
-      leave_day_time_minute = @items.dig(user.id, "over_threshold", "leave_day_time_minute")
-      leave_night_time_minute = @items.dig(user.id, "over_threshold", "leave_night_time_minute")
-      week_out_compensatory_minute = @items.dig(user.id, "over_threshold", "week_out_compensatory_minute")
+      capital_id = @capital_id.to_i
+      duty_day_time_minute = @items.dig(user.id, capital_id, "over_threshold", "duty_day_time_minute")
+      duty_night_time_minute = @items.dig(user.id, capital_id, "over_threshold", "duty_night_time_minute")
+      leave_day_time_minute = @items.dig(user.id, capital_id, "over_threshold", "leave_day_time_minute")
+      leave_night_time_minute = @items.dig(user.id, capital_id, "over_threshold", "leave_night_time_minute")
+      week_out_compensatory_minute = @items.dig(user.id, capital_id, "over_threshold", "week_out_compensatory_minute")
     %>
     <tr>
       <td><%= user.long_name %></td>

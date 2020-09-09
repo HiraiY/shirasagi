@@ -58,7 +58,7 @@ module Gws::Affair::OvertimeDayResult::CapitalAggregate
         prefs[group_id][capital_id] = overtime_minute
 
         prefs[group_id]["total"] ||= 0
-        prefs[group_id]["total"] = overtime_minute
+        prefs[group_id]["total"] += overtime_minute
       end
       prefs
     end
@@ -87,7 +87,7 @@ module Gws::Affair::OvertimeDayResult::CapitalAggregate
         prefs[user_id][capital_id] = overtime_minute
 
         prefs[user_id]["total"] ||= 0
-        prefs[user_id]["total"] = overtime_minute
+        prefs[user_id]["total"] += overtime_minute
       end
       prefs
     end

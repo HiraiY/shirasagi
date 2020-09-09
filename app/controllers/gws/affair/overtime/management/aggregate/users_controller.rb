@@ -61,10 +61,6 @@ class Gws::Affair::Overtime::Management::Aggregate::UsersController < Applicatio
       { "user_id" => { "$in" => user_ids } }
     ]
 
-    if @capital_id.present?
-      cond << { "capital_id" => @capital_id.to_i }
-    end
-
     @items = @model.site(@cur_site).and(cond).user_aggregate
   end
 

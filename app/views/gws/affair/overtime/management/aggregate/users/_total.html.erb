@@ -11,8 +11,9 @@
   <tbody>
   <% @users.each do |user| %>
     <%
-      under_working_minute = @items.dig(user.id, "under_threshold", "overtime_minute").to_i
-      over_working_minute = @items.dig(user.id, "over_threshold", "overtime_minute").to_i
+      capital_id = @capital_id.to_i
+      under_working_minute = @items.dig(user.id, capital_id, "under_threshold", "overtime_minute").to_i
+      over_working_minute = @items.dig(user.id, capital_id, "over_threshold", "overtime_minute").to_i
       working_minute = under_working_minute + over_working_minute
     %>
     <tr>
