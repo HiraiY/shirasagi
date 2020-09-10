@@ -21,14 +21,14 @@ module Gws::Addon::Affair::OvertimeDayResult
     results = [[result.date, result.start_at, result.end_at]]
 
     # 日替わり時刻を超えているか
-    changed_at = duty_calendar.affair_next_changed(result.start_at)
-    if result.end_at > changed_at
-      r_date = changed_at.change(hour: 0, min: 0, sec: 0)
-      results = [
-        [r_date.advance(days: -1), result.start_at, changed_at],
-        [r_date, changed_at, result.end_at]
-      ]
-    end
+    #changed_at = duty_calendar.affair_next_changed(result.start_at)
+    #if result.end_at > changed_at
+    #  r_date = changed_at.change(hour: 0, min: 0, sec: 0)
+    #  results = [
+    #    [r_date.advance(days: -1), result.start_at, changed_at],
+    #    [r_date, changed_at, result.end_at]
+    #  ]
+    #end
 
     # 休憩時間
     break_time_subtractor = Gws::Affair::Subtractor.new(result.break_time_minute)
@@ -49,24 +49,36 @@ module Gws::Addon::Affair::OvertimeDayResult
       overtime_minute = ((r_end_at - r_start_at) * 24 * 60).to_i
 
       night_time_start = duty_calendar.night_time_start(r_date.to_datetime).to_datetime
-      night_time_end = duty_calendar.night_time_end(r_date.to_datetime).to_datetime
+      #night_time_end = duty_calendar.night_time_end(r_date.to_datetime).to_datetime
 
       # 通常 深夜 休日通常 休日深夜
-      if r_start_at >= night_time_start && r_end_at <= night_time_end
+      #if r_start_at >= night_time_start && r_end_at <= night_time_end
+      #  day_time_minute = 0
+      #  night_time_minute = overtime_minute
+      #elsif r_start_at >= night_time_end
+      #  day_time_minute = overtime_minute
+      #  night_time_minute = 0
+      #elsif r_start_at > night_time_start
+      #  day_time_minute = ((r_end_at - night_time_end) * 24 * 60).to_i
+      #  night_time_minute = ((night_time_end - r_start_at) * 24 * 60).to_i
+      #elsif r_end_at > night_time_start
+      #  day_time_minute = ((night_time_start - r_start_at) * 24 * 60).to_i
+      #  night_time_minute = ((r_end_at - night_time_start) * 24 * 60).to_i
+      #else #r_end_at <= night_time_start
+      #  day_time_minute = overtime_minute
+      #  night_time_minute = 0
+      #end
+
+      # 通常 深夜 休日通常 休日深夜
+      if r_start_at >= night_time_start
         day_time_minute = 0
         night_time_minute = overtime_minute
-      elsif r_start_at >= night_time_end
+      elsif r_end_at < night_time_start
         day_time_minute = overtime_minute
         night_time_minute = 0
-      elsif r_start_at > night_time_start
-        day_time_minute = ((r_end_at - night_time_end) * 24 * 60).to_i
-        night_time_minute = ((night_time_end - r_start_at) * 24 * 60).to_i
-      elsif r_end_at > night_time_start
+      else #r_start_at < night_time_start && r_end_at >= night_time_start
         day_time_minute = ((night_time_start - r_start_at) * 24 * 60).to_i
         night_time_minute = ((r_end_at - night_time_start) * 24 * 60).to_i
-      else #r_end_at <= night_time_start
-        day_time_minute = overtime_minute
-        night_time_minute = 0
       end
 
       is_holiday = duty_calendar.holiday?(r_date)
