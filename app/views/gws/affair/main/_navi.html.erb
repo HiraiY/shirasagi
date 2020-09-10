@@ -64,7 +64,7 @@
       <li><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/search"), gws_affair_overtime_management_aggregate_search_main_path, class: "management" %></li>
 
       <% if Gws::RKK.allowed?(:use, @cur_user, site: @cur_site) %>
-        <li><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/rkk"), gws_affair_overtime_management_aggregate_rkk_download_path, class: "management" %></li>
+        <li><%= link_to t("modules.gws/affair/overtime_file/management/aggregate/rkk"), gws_affair_overtime_management_aggregate_rkk_download_path(staff_type: "regular"), class: "management" %></li>
       <% end %>
     </ul>
 

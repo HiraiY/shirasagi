@@ -78,8 +78,8 @@ Rails.application.routes.draw do
           post "search/download/groups" => "search#download_groups"
           post "search/download/users" => "search#download_users"
 
-          get "rkk/download" => "rkk#download", as: :download
-          post "rkk/download" => "rkk#download"
+          get "rkk/:staff_type/download" => "rkk#download", as: :rkk_download
+          post "rkk/:staff_type/download" => "rkk#download"
         end
       end
 

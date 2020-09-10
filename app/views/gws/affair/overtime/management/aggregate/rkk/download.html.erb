@@ -1,7 +1,18 @@
+<div class="gws-schedule-tabs">
+  <%= link_to({ action: :download, staff_type: "regular" }) do %>
+    <span class="tab-name">正職員</span>
+  <% end %>
+  <%= link_to({ action: :download, staff_type: "fiscal_year_appointment_staff" }) do %>
+    <span class="tab-name">会計年度任用職員</span>
+  <% end %>
+</div>
+
 <%= form_for :s, url: { action: :download }, html: { id: "item-form", method: :post, multipart: true, autocomplete: :off } do |f| %>
   <div class="addon-views">
     <div class="addon-view" id="addon-basic">
-      <div class="addon-head"><h2><%= "給与 時間外手当" %></h2></div>
+      <div class="addon-head">
+        <h2><%= t("gws/rkk.views.title.#{@staff_type}") %></h2>
+      </div>
       <div class="addon-body">
         <%= render file: '_download', locals: { f: f } %>
       </div>
