@@ -18,7 +18,7 @@ class Gws::Affair::Capital
   validates :no, presence: true, length: { maximum: 20 }
   validates :name, presence: true, length: { maximum: 80 }
 
-  #scope :site, ->(site) { self.in(group_ids: Gws::Group.site(site).pluck(:id)) }
+  scope :site, ->(site) { self.in(group_ids: Gws::Group.site(site).pluck(:id)) }
 
   class << self
     def search(params)
