@@ -73,7 +73,14 @@
     <h3><%= link_to t("modules.gws/affair/duty_hour"), gws_affair_duty_hours_path, class: "management" %></h3>
     <h3><%= link_to t("modules.gws/affair/holiday_calendar"), gws_affair_holiday_calendars_path, class: "management" %></h3>
     <h3><%= link_to t("modules.gws/affair/duty_notice"), gws_affair_duty_notices_path, class: "management" %></h3>
-    <h3><%= link_to t("modules.gws/affair/capital"), gws_affair_capitals_path, class: "management" %></h3>
+  <% end %>
+
+  <% if Gws::Affair::Capital.allowed?(:read, @cur_user, site: @cur_site) %>
+    <h3><%= link_to t("modules.gws/affair/capital_years"), gws_affair_capital_years_path, class: "management" %></h3>
+  <% end %>
+
+  <% if Gws::Affair::SpecialLeave.allowed?(:read, @cur_user, site: @cur_site) %>
+    <h3><%= link_to t("modules.gws/affair/special_leave"), gws_affair_special_leaves_path, class: "management" %></h3>
   <% end %>
 </nav>
 

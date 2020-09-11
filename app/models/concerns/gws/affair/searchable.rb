@@ -12,6 +12,7 @@ module Gws::Affair::Searchable
       criteria = criteria.search_date(params)
       criteria = criteria.search_state(params)
       criteria = criteria.search_capital(params)
+      criteria = criteria.search_workflow_state(params)
       criteria
     end
 
@@ -64,6 +65,12 @@ module Gws::Affair::Searchable
       return all if capital.blank?
 
       all.where(capital_id: capital.id)
+    end
+
+    def search_workflow_state(params)
+      return all if params[:workflow_state].blank?
+      params[:workflow_state] == "draft" ? params[:workflow_state] = nil : params[:workflow_state]
+      all.where(workflow_state: params[:workflow_state])
     end
   end
 end

@@ -155,6 +155,7 @@ ja:
       gws/user/duty_hour: 勤務体系
       gws/link: リンク
       gws/site_usage: 使用量
+      gws/user/staff_category: 職員区分
 
   mongoid:
     models:
@@ -446,6 +447,8 @@ ja:
         charge_tel: 担当電話
         charge_address: 担当住所
         divide_duties: 分掌事務
+      gws/addon/user/staff_category:
+        staff_category: 職員区分
       gws/contrast:
         name: 名前
         order: 並び順
@@ -586,6 +589,8 @@ ja:
     gws/role:
       permission_level:
         - 権限レベルを設定します。
+    gws/addon/user/staff_category:
+      staff_category: 職員区分を設定します。
 
   activemodel:
     models:

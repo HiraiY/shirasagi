@@ -12,16 +12,18 @@ module Gws::Addon::Affair::LeaveFile
 
     field :leave_type, type: String
     field :reason, type: String
+
     belongs_to :week_in_compensatory_file, class_name: "Gws::Affair::OvertimeFile"
     belongs_to :week_out_compensatory_file, class_name: "Gws::Affair::OvertimeFile"
+    belongs_to :special_leave, class_name: "Gws::Affair::SpecialLeave"
 
     permit_params :start_at_date, :start_at_hour, :start_at_minute
     permit_params :end_at_date, :end_at_hour, :end_at_minute
 
-    permit_params :leave_type
-    permit_params :reason
+    permit_params :leave_type, :reason, :special_leave
     permit_params :week_in_compensatory_file_id
     permit_params :week_out_compensatory_file_id
+    permit_params :special_leave_id
 
     before_validation :validate_date
     before_validation :compensatory_file
@@ -32,6 +34,7 @@ module Gws::Addon::Affair::LeaveFile
 
     validates :week_in_compensatory_file_id, presence: true, if: ->{ leave_type == "week_in_compensatory_leave" }
     validates :week_out_compensatory_file_id, presence: true, if: ->{ leave_type == "week_out_compensatory_leave" }
+    validates :special_leave_id, presence: true, if: ->{ leave_type == "paidleave" }
 
     validate :validate_week_in_compensatory_file, if: ->{ week_in_compensatory_file }
     validate :validate_week_out_compensatory_file, if: ->{ week_out_compensatory_file }
@@ -147,7 +150,7 @@ module Gws::Addon::Affair::LeaveFile
   end
 
   def term_label
-    name_label = user_name
+    name_label = target_user.try(:name)
     term_label = start_end_term
     return if name_label.blank? || term_label.blank?
 

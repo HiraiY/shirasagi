@@ -1,33 +1,25 @@
-class Gws::Affair::CapitalsController < ApplicationController
+class Gws::Affair::SpecialLeavesController < ApplicationController
   include Gws::BaseFilter
   include Gws::CrudFilter
 
-  model Gws::Affair::Capital
+  model Gws::Affair::SpecialLeave
 
   navi_view "gws/affair/main/navi"
   menu_view "gws/affair/main/menu"
 
-  before_action :set_year
-
   private
 
   def set_crumbs
-    @cur_year = Gws::Affair::CapitalYear.site(@cur_site).find(params[:year])
     @crumbs << [@cur_site.menu_affair_label || t('modules.gws/affair'), gws_affair_main_path]
-    @crumbs << [t("mongoid.models.gws/affair/capital_year"), gws_affair_capital_years_path]
-    @crumbs << ["#{@cur_year.name} " + t('modules.gws/affair/capital'), gws_affair_capitals_path]
-  end
-
-  def set_year
-    @cur_year ||= Gws::Affair::CapitalYear.site(@cur_site).find(params[:year])
+    @crumbs << [t('modules.gws/affair/special_leave'), action: :index]
   end
 
   def fix_params
-    { cur_user: @cur_user, cur_site: @cur_site, year_id: @cur_year.id }
+    { cur_user: @cur_user, cur_site: @cur_site }
   end
 
   def set_items
-    @items = @cur_year.yearly_capitals.site(@cur_site).
+    @items = @model.site(@cur_site).
       allow(:read, @cur_user, site: @cur_site).
       order_by(id: 1)
   end
@@ -35,10 +27,18 @@ class Gws::Affair::CapitalsController < ApplicationController
   public
 
   def index
-    @items = @cur_year.yearly_capitals.site(@cur_site).
+    raise "403" unless @model.allowed?(:edit, @cur_user, site: @cur_site)
+
+    @tabs = SS.config.gws.user["staff_category"] || []
+    @items = @model.site(@cur_site).
       allow(:read, @cur_user, site: @cur_site).
       search(params[:s]).
-      page(params[:page]).per(50)
+      order_by(order: 1)
+
+    if params[:staff_category].present?
+      @items = @items.where(staff_category: params[:staff_category])
+    end
+    @items = @items.page(params[:page]).per(50)
   end
 
   def download
@@ -46,7 +46,7 @@ class Gws::Affair::CapitalsController < ApplicationController
 
     set_items
     csv = @items.to_csv
-    send_data csv.encode("SJIS", invalid: :replace, undef: :replace), filename: "gws_affair_capitals_#{Time.zone.now.to_i}.csv"
+    send_data csv.encode("SJIS", invalid: :replace, undef: :replace), filename: "gws_affair_special_leaves_#{Time.zone.now.to_i}.csv"
   end
 
   def import

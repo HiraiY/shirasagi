@@ -24,7 +24,6 @@ class Gws::Affair::OvertimeFile
 
   permit_params :capital_id
 
-  validates :name, presence: true, length: { maximum: 80 }
   validates :capital_id, presence: true
 
   default_scope -> {

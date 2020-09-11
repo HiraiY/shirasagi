@@ -115,6 +115,10 @@ ja:
         index: 休日カレンダーを選択する
       duty_notices:
         index: タイムカード警告文を選択する
+      special_leaves:
+        index: 特別休暇区分を選択する
+      capitals:
+        index: 緊急時はこちら
     limit: 有効期限
 
   modules:
@@ -137,9 +141,11 @@ ja:
     gws/affair/duty_calendar: 勤務カレンダー
     gws/affair/holiday_calendar: 休日カレンダー
     gws/affair/capital: 原資区分
+    gws/affair/capital_years: 年度別原資区分
     gws/affair/working_time: 勤務表
     gws/affair/shift_calendar: シフト勤務
     gws/affair/duty_notice: タイムカード警告文
+    gws/affair/special_leave: 特別休暇区分
     addons:
       gws/affair/overtime_file: 時間外申請書
       gws/affair/overtime_result: 結果
@@ -157,12 +163,22 @@ ja:
       gws/affair/duty_calendar: 勤務カレンダー
       gws/affair/duty_hour: 勤務体系
       gws/affair/holiday_calendar: 休日カレンダー
+      gws/affair/capital_year: 年度別原資区分
     attributes:
       gws/affair/capital:
         no: 原資区分番号
+        subsection: 款
+        section: 項
+        division: 目
         name: 原資区分名
+        business_code: 事業コード
+        details: 明細
         order: 並び順
         remark: 説明
+        in_file: ファイル
+        year_id: 年度
+        year_code: 西暦
+        year_name: 年度名
       gws/affair/duty_calendar:
         name: タイトル
       gws/affair/shift_record:
@@ -208,6 +224,7 @@ ja:
         end_at: 終了時間
         leave_type: 休暇区分
         reason: 理由
+        special_leave_id: 特別休暇区分
         week_in_compensatory_file_id: 振替申請（同一週内）
         week_out_compensatory_file_id: 振替申請（同一週外）
       gws/affair/overtime_result:
@@ -258,6 +275,17 @@ ja:
         search_term: 期間
         search_group: グループ
         search_user: ユーザー
+      gws/affair/special_leave:
+        code: コード
+        name: 名前
+        order: 並び順
+        staff_category: 職員区分
+        in_file: ファイル
+      gws/affair/capital_year:
+        name: 年度
+        code: 西暦
+        start_date: 開始日
+        close_date: 終了日
     errors:
       models:
         gws/affair/overtime_file:
@@ -266,9 +294,14 @@ ja:
           in_duty_hour: 開始時間〜終了時間が勤務時間内です。
           not_set_week_out_compensatory_minute: は同一週内振替と同時に入力はできません。
           not_match_compensatory_minute_and_hour: と開始時間〜終了時間は同じにしてください。
+          greater_than_end_at: は開始時間の終了日以降にしてください。
         gws/affair/shift_record:
           invalid_affair_start_at: 開始時間が不正です。5分単位での時刻を入力してください。
           invalid_affair_end_at: 終了時間が不正です。5分単位での時刻を入力してください。
+        gws/affair/special_leave:
+          not_found: "%{line_no}: ID %{id}は存在しません。"
+        gws/affair/capital:
+          not_found: "%{line_no}: ID %{id}は存在しません。"
 
   gws_role:
     read_gws_affair_duty_hours: 勤務体系の閲覧
@@ -303,6 +336,12 @@ ja:
     delete_other_gws_affair_shift_calendars: シフト勤務の削除（全て）
     delete_private_gws_affair_shift_calendars: シフト勤務の削除（自所属）
     use_gws_rkk: 会計システム連携機能の利用
+    read_gws_affair_special_leaves: 特別休暇区分の閲覧
+    edit_gws_affair_special_leaves: 特別休暇区分の編集
+    delete_gws_affair_special_leaves: 特別休暇区分の削除
+    read_gws_affair_capitals: 原資区分の閲覧
+    edit_gws_affair_capitals: 原資区分の編集
+    delete_gws_affair_capitals: 原資区分の削除
 
   gws_notification:
     gws/affair/overtime_file:
@@ -322,8 +361,18 @@ ja:
     gws/affair/capital:
       no:
         - 原資区分番号を入力します。
+      subsection:
+        - 款を入力します。
+      section:
+        - 項を入力します。
+      division:
+        - 目を入力します。
       name:
         - 原資区分名を入力します。
+      business_code:
+        - 事業コードを入力します。
+      details:
+        - 明細を入力します。
       order:
         - 並び順を入力します。
       remark:
@@ -362,6 +411,8 @@ ja:
         - 休暇区分を入力します。
       reason:
         - 備考を入力します。
+      special_leave_id:
+        - 特別休暇区分を入力します。
       week_in_compensatory_file_id:
         - 振替申請（同一週内）を設定します。
       week_out_compensatory_file_id:
@@ -400,4 +451,16 @@ ja:
         - 配下のグループに所属しているユーザーの時間外を集計します。
       search_user:
         - 集計対象のユーザーを選択します。
+    gws/affair/special_leave:
+      code: コードを入力します。
+      name: 名前を入力します。
+      order:
+        - フォルダーの並び順を数字で入力します。
+        - 番号の小さい順にフォルダーが表示されます。
+      staff_category: 職員区分を選択します。
+    gws/affair/capital_year:
+      name: 年度名を入力します。（例：令和00年度）
+      code: 西暦を入力します。（例：2020）
+      start_date: 年度の開始日を入力します。（例：2020/04/01）
+      close_date: 年度の終了日を入力します。（例：2021/03/31）
 

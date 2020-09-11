@@ -1,32 +1,25 @@
-class Gws::Affair::Capital
+class Gws::Affair::SpecialLeave
   include SS::Document
   include Gws::Referenceable
   include Gws::Reference::User
   include Gws::Reference::Site
-  include Gws::Affair::CapitalYearly
   include Gws::Addon::GroupPermission
   include Gws::SitePermission
-  include Gws::Addon::Import::Affair::Capital
+  include Gws::Addon::Import::Affair::SpecialLeave
 
-  set_permission_name 'gws_affair_capitals'
+
+  set_permission_name "gws_affair_special_leaves"
 
   seqid :id
-  field :no, type: String
-  field :subsection, type: String
-  field :section, type: String
-  field :division, type: String
+  field :code, type: String
   field :name, type: String
-  field :business_code, type: String
-  field :details, type: String
   field :order, type: Integer, default: 0
-  field :remark, type: String
+  field :staff_category, type: String
 
-  permit_params :no, :subsection, :section, :division, :name, :business_code, :details, :order, :remark
+  permit_params :code, :name, :order, :staff_category
 
-  validates :no, presence: true, length: { maximum: 20 }
   validates :name, presence: true, length: { maximum: 80 }
-
-  scope :site, ->(site) { self.in(group_ids: Gws::Group.site(site).pluck(:id)) }
+  validates :staff_category, presence: true
 
   class << self
     def search(params)
@@ -38,6 +31,9 @@ class Gws::Affair::Capital
       end
       if params[:keyword].present?
         criteria = criteria.keyword_in params[:keyword], :no, :name, :remark
+      end
+      if params[:staff_category].present?
+        criteria = criteria.where(staff_category: params[:staff_category])
       end
       criteria
     end

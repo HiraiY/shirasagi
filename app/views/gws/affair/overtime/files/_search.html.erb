@@ -15,6 +15,8 @@
   month_options = (1..12).map { |m| ["#{m}#{t("datetime.prompts.month")}", m] }
   month_options.unshift([t("datetime.prompts.month"), ""])
 
+  workflow_state_options = %w(draft request approve).map { |k| [I18n.t("ss.state.#{k}"), k] }
+
   if @s[:year].blank? || @s[:month].blank?
     @s[:year] = @s[:month] = ""
   end
@@ -25,6 +27,7 @@
       <%= f.select :capital_id, capital_options, include_blank: t("mongoid.models.gws/affair/capital") %>
       <%= f.select :user_id, user_options %>
     <% end %>
+    <%= f.select :workflow_state, workflow_state_options, include_blank: "承認状態" %>
     <%= f.select :year, year_options %>
     <%= f.select :month, month_options %>
     <input type="submit" value="<%= t('ss.buttons.search') %>" class="btn" />

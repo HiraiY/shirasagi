@@ -1,9 +1,27 @@
 <dl class="see">
+  <dt><%= @model.t :year_id %></dt>
+  <dd><%= @item.year.name %></dd>
+
   <dt><%= @model.t :no %><%= @model.tt :no %></dt>
   <dd><%= f.text_field :no, autofocus: pc_browser? %></dd>
 
+  <dt><%= @model.t :subsection %><%= @model.tt :subsection %></dt>
+  <dd><%= f.number_field :subsection %></dd>
+
+  <dt><%= @model.t :section %><%= @model.tt :section %></dt>
+  <dd><%= f.number_field :section %></dd>
+
+  <dt><%= @model.t :division %><%= @model.tt :division %></dt>
+  <dd><%= f.number_field :division %></dd>
+
   <dt><%= @model.t :name %><%= @model.tt :name %></dt>
   <dd><%= f.text_field :name %></dd>
+
+  <dt><%= @model.t :business_code %><%= @model.tt :business_code %></dt>
+  <dd><%= f.number_field :business_code %></dd>
+
+  <dt><%= @model.t :details %><%= @model.tt :details %></dt>
+  <dd><%= f.number_field :details %></dd>
 
   <dt><%= @model.t :order %><%= @model.tt :order %></dt>
   <dd><%= f.number_field :order %></dd>
