@@ -14,7 +14,7 @@ class Gws::UserCsv::Exporter
         id name kana uid organization_uid email password tel tel_ext title_ids type
         account_start_date account_expiration_date initial_password_warning session_lifetime
         organization_id groups gws_main_group_ids switch_user_id remark
-        ldap_dn gws_roles sys_roles
+        ldap_dn staff_category gws_roles sys_roles
       )
       headers += %w(webmail_roles) if opts[:webmail_support]
       headers.map! { |k| Gws::User.t(k) }
@@ -94,6 +94,7 @@ class Gws::UserCsv::Exporter
     terms << (switch_user ? "#{switch_user.id},#{switch_user.name}" : nil)
     terms << item.remark
     terms << item.ldap_dn
+    terms << item.staff_category
     terms << item_roles(item).map(&:name).join("\n")
     terms << item.sys_roles.and_general.map(&:name).join("\n")
     terms << item.webmail_roles.map(&:name).join("\n") if @webmail_support
