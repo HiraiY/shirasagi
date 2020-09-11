@@ -12,7 +12,7 @@ module Gws::Addon::Import::Affair
 
     module ClassMethods
       def csv_headers
-        %w(id no name business_code details order remark capital_user_ids group_ids user_ids permission_level)
+        %w(id no subsection section division name business_code details order remark group_ids user_ids permission_level)
       end
 
       def to_csv
@@ -22,12 +22,14 @@ module Gws::Addon::Import::Affair
             line = []
             line << item.id
             line << item.no
+            line << item.subsection
+            line << item.section
+            line << item.division
             line << item.name
             line << item.business_code
             line << item.details
             line << item.order
             line << item.remark
-            line << item.capital_users.pluck(:name).join("\n")
             line << item.group_names.join("\n")
             line << item.user_names.join("\n")
             line << item.permission_level
@@ -72,12 +74,14 @@ module Gws::Addon::Import::Affair
     def update_row(row, index)
       id               = row[t("id")].to_s.strip
       no               = row[t("no")].to_s.strip
+      subsection       = row[t("subsection")].to_s.strip
+      section          = row[t("section")].to_s.strip
+      division         = row[t("division")].to_s.strip
       name             = row[t("name")].to_s.strip
       business_code    = row[t("business_code")].to_s.strip
       details          = row[t("details")].to_s.strip
       order            = row[t("order")].to_s.strip
       remark           = row[t("remark")].to_s.strip
-      capital_users    = row[t("capital_user_ids")].to_s.strip.split("\n")
       group_names      = row[t("group_ids")].to_s.strip.split("\n")
       user_names       = row[t("user_ids")].to_s.strip.split("\n")
       permission_level = row[t("permission_level")].to_s.strip
@@ -98,18 +102,25 @@ module Gws::Addon::Import::Affair
         item = self.class.new
       end
 
+      cur_year = Gws::Affair::CapitalYear.site(@cur_site).find(year_id)
+
       item.site              = @cur_site
       item.user              = @cur_user
       item.no                = no
+      item.subsection        = subsection
+      item.section           = section
+      item.division          = division
       item.name              = name
       item.business_code     = business_code
       item.details           = details
       item.order             = order
       item.remark            = remark
-      item.capital_user_ids  = user_names_to_ids(capital_users)
       item.group_ids         = group_names_to_ids(group_names)
       item.user_ids          = user_names_to_ids(user_names)
       item.permission_level  = permission_level
+      item.year              = cur_year
+      item.year_name         = cur_year.name
+      item.year_code         = cur_year.code
 
       if item.save
         @imported += 1

@@ -1,6 +1,18 @@
 <dl class="see">
+  <dt><%= @model.t :year_id %></dt>
+  <dd><%= @item.year.name %></dd>
+
   <dt><%= @model.t :no %></dt>
   <dd><%= @item.no %></dd>
+
+  <dt><%= @model.t :subsection %></dt>
+  <dd><%= @item.subsection %></dd>
+
+  <dt><%= @model.t :section %></dt>
+  <dd><%= @item.section %></dd>
+
+  <dt><%= @model.t :division %></dt>
+  <dd><%= @item.division %></dd>
 
   <dt><%= @model.t :name %></dt>
   <dd><%= @item.name %></dd>
@@ -16,7 +28,4 @@
 
   <dt><%= @model.t :remark %></dt>
   <dd><%=br @item.remark %></dd>
-
-  <dt><%= @model.t :capital_user_ids %></dt>
-  <dd><%=br @item.capital_users.map(&:long_name) %></dd>
 </dl>

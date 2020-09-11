@@ -53,5 +53,9 @@ module Gws::Affair
     Gws::Role.permission :read_gws_affair_capitals, module_name: 'gws/affair'
     Gws::Role.permission :edit_gws_affair_capitals, module_name: 'gws/affair'
     Gws::Role.permission :delete_gws_affair_capitals, module_name: 'gws/affair'
+
+    Gws::Role.permission :read_gws_affair_capital_years, module_name: 'gws/affair'
+    Gws::Role.permission :edit_gws_affair_capital_years, module_name: 'gws/affair'
+    Gws::Role.permission :delete_gws_affair_capital_years, module_name: 'gws/affair'
   end
 end

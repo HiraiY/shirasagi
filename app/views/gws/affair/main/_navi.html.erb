@@ -76,7 +76,7 @@
   <% end %>
 
   <% if Gws::Affair::Capital.allowed?(:read, @cur_user, site: @cur_site) %>
-    <h3><%= link_to t("modules.gws/affair/capital"), gws_affair_capitals_path, class: "management" %></h3>
+    <h3><%= link_to t("modules.gws/affair/capital_years"), gws_affair_capital_years_path, class: "management" %></h3>
   <% end %>
 
   <% if Gws::Affair::SpecialLeave.allowed?(:read, @cur_user, site: @cur_site) %>

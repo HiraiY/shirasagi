@@ -1,0 +1,19 @@
+<dl class="see">
+  <dt><%= @model.t :name %></dt>
+  <dd><%= @item.send :name %></dd>
+
+  <dt><%= @model.t :code %></dt>
+  <dd><%= @item.send :code %></dd>
+
+  <dt><%= @model.t :start_date %></dt>
+  <dd><%= tryb { @item.start_date.strftime("%Y/%m/%d") } %></dd>
+
+  <dt><%= @model.t :close_date %></dt>
+  <dd><%= tryb { @item.close_date.strftime("%Y/%m/%d") } %></dd>
+
+  <dd>
+    <% if Gws::Affair::Capital.allowed?(:read, @cur_user, site: @cur_site) %>
+      <%= link_to t("modules.gws/affair/capital"), gws_affair_capitals_path(year: @item.id) %>
+    <% end %>
+  </dd>
+</dl>

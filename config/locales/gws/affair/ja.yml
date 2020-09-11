@@ -139,6 +139,7 @@ ja:
     gws/affair/duty_calendar: 勤務カレンダー
     gws/affair/holiday_calendar: 休日カレンダー
     gws/affair/capital: 原資区分
+    gws/affair/capital_years: 年度別原資区分
     gws/affair/working_time: 勤務表
     gws/affair/shift_calendar: シフト勤務
     gws/affair/duty_notice: タイムカード警告文
@@ -160,15 +161,22 @@ ja:
       gws/affair/duty_calendar: 勤務カレンダー
       gws/affair/duty_hour: 勤務体系
       gws/affair/holiday_calendar: 休日カレンダー
+      gws/affair/capital_year: 年度別原資区分
     attributes:
       gws/affair/capital:
         no: 原資区分番号
+        subsection: 款
+        section: 項
+        division: 目
         name: 原資区分名
         business_code: 事業コード
         details: 明細
         order: 並び順
         remark: 説明
-        capital_user_ids: ユーザー
+        in_file: ファイル
+        year_id: 年度
+        year_code: 西暦
+        year_name: 年度名
       gws/affair/duty_calendar:
         name: タイトル
       gws/affair/shift_record:
@@ -269,9 +277,12 @@ ja:
         name: 名前
         order: 並び順
         staff_category: 職員区分
-      gws/affair/staff_category:
-        name: 名前
-        order: 並び順
+        in_file: ファイル
+      gws/affair/capital_year:
+        name: 年度
+        code: 西暦
+        start_date: 開始日
+        close_date: 終了日
     errors:
       models:
         gws/affair/overtime_file:
@@ -347,6 +358,12 @@ ja:
     gws/affair/capital:
       no:
         - 原資区分番号を入力します。
+      subsection:
+        - 款を入力します。
+      section:
+        - 項を入力します。
+      division:
+        - 目を入力します。
       name:
         - 原資区分名を入力します。
       business_code:
@@ -357,8 +374,6 @@ ja:
         - 並び順を入力します。
       remark:
         - 説明を入力します。
-      capital_user_ids:
-        - 原資区分を適用するユーザーを設定します。
     gws/affair/overtime_file:
       name:
         - タイトルを入力します。
@@ -440,4 +455,9 @@ ja:
         - フォルダーの並び順を数字で入力します。
         - 番号の小さい順にフォルダーが表示されます。
       staff_category: 職員区分を選択します。
+    gws/affair/capital_year:
+      name: 年度名を入力します。（例：令和00年度）
+      code: 西暦を入力します。（例：2020）
+      start_date: 年度の開始日を入力します。（例：2020/04/01）
+      close_date: 年度の終了日を入力します。（例：2021/03/31）
 

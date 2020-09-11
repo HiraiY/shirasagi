@@ -33,10 +33,11 @@ Rails.application.routes.draw do
   gws "affair" do
     get '/' => redirect { |p, req| "#{req.path}/attendance/time_cards/#{Time.zone.now.strftime('%Y%m')}" }, as: :main
 
-    resources :capitals, concerns: [:deletion, :export]
+    resources :capitals, path: ':year/capitals', concerns: [:deletion, :export]
     resources :duty_calendars, concerns: :deletion
     resources :duty_notices, concerns: :deletion
     resources :special_leaves, concerns: [:deletion, :export]
+    resources :capital_years, concerns: :deletion
 
     namespace "overtime" do
       resources :files, path: 'files/:state', concerns: [:deletion, :workflow]

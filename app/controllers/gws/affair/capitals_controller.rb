@@ -7,24 +7,39 @@ class Gws::Affair::CapitalsController < ApplicationController
   navi_view "gws/affair/main/navi"
   menu_view "gws/affair/main/menu"
 
+  before_action :set_year
+
   private
 
   def set_crumbs
+    @cur_year = Gws::Affair::CapitalYear.site(@cur_site).find(params[:year])
     @crumbs << [@cur_site.menu_affair_label || t('modules.gws/affair'), gws_affair_main_path]
-    @crumbs << [t('modules.gws/affair/capital'), action: :index]
+    @crumbs << [t("mongoid.models.gws/affair/capital_year"), gws_affair_capital_years_path]
+    @crumbs << ["#{@cur_year.name} " + t('modules.gws/affair/capital'), gws_affair_capitals_path]
+  end
+
+  def set_year
+    @cur_year ||= Gws::Affair::CapitalYear.site(@cur_site).find(params[:year])
   end
 
   def fix_params
-    { cur_user: @cur_user, cur_site: @cur_site }
+    { cur_user: @cur_user, cur_site: @cur_site, year_id: @cur_year.id }
   end
 
   def set_items
-    @items = @model.site(@cur_site).
+    @items = @cur_year.yearly_capitals.site(@cur_site).
       allow(:read, @cur_user, site: @cur_site).
       order_by(id: 1)
   end
 
   public
+
+  def index
+    @items = @cur_year.yearly_capitals.site(@cur_site).
+      allow(:read, @cur_user, site: @cur_site).
+      search(params[:s]).
+      page(params[:page]).per(50)
+  end
 
   def download
     raise "403" unless @model.allowed?(:read, @cur_user, site: @cur_site)
