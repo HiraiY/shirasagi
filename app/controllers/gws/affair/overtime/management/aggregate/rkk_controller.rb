@@ -14,6 +14,7 @@ class Gws::Affair::Overtime::Management::Aggregate::RkkController < ApplicationC
 
   def set_query
     @current = Time.zone.now
+    @staff_type = params[:staff_type]
 
     @year = (params.dig(:s, :year).presence || @current.year).to_i
     @month = (params.dig(:s, :month).presence || @current.month).to_i
@@ -54,7 +55,12 @@ class Gws::Affair::Overtime::Management::Aggregate::RkkController < ApplicationC
 
     @items = @model.site(@cur_site).and(cond).user_aggregate
 
-    enum_csv = Gws::Affair::Enumerator::Rkk::RegularUsers.new(@items, @users, @download_params)
+    if @staff_type == "regular"
+      enum_csv = Gws::Affair::Enumerator::Rkk::RegularUsers.new(@items, @users, @download_params)
+    else
+      enum_csv = Gws::Affair::Enumerator::Rkk::FiscalYearAppointmentStaffUsers.new(@items, @users, @download_params)
+    end
+
     send_enum(enum_csv,
       type: "text/csv; charset=#{@download_params.encoding}",
       filename: "aggregate_#{@threshold}_#{Time.zone.now.to_i}.csv"

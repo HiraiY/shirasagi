@@ -1,13 +1,12 @@
 <%= jquery do %>
 var toggleAffairTimeWday = function(ele){
   if($('.toggle-affair-time-wday').prop("checked")) {
-    $(".affair-time-wday").show();
+    $(".affair-time-wday").show("fast");
   } else {
-    $(".affair-time-wday").hide();
+    $(".affair-time-wday").hide("fast");
   }
 };
 $('.toggle-affair-time-wday').on("change", toggleAffairTimeWday);
-toggleAffairTimeWday();
 <% end %>
 
 <%
@@ -30,9 +29,10 @@ toggleAffairTimeWday();
   </label>
 </dd>
 
+<% style = @item.affair_time_wday? ? "" : "display: none;" %>
 <% (0..6).each do |wday| %>
-  <dt class="depth-2 affair-time-wday"><%= t("date.day_names")[wday] %></dt>
-  <dd class="depth-2 affair-time-wday">
+  <dt class="depth-2 affair-time-wday" style="<%= style %>"><%= t("date.day_names")[wday] %></dt>
+  <dd class="depth-2 affair-time-wday" style="<%= style %>">
     <%= f.select "affair_start_at_hour_#{wday}", @item.affair_start_at_hour_options %>
     <%= f.select "affair_start_at_minute_#{wday}", @item.affair_start_at_minute_options %>
     <%= t("ss.wave_dash") %>
@@ -44,6 +44,9 @@ toggleAffairTimeWday();
 <dt><%= @model.t :attendance_time_changed_minute %><%= @model.tt :attendance_time_changed_minute %></dt>
 <dd><%= f.select :in_attendance_time_change_hour, @item.attendance_time_changed_options %></dd>
 
+<dt><%= @model.t :overtime_in_work %><%= @model.tt :overtime_in_work %></dt>
+<dd><%= f.select :overtime_in_work, @item.overtime_in_work_options %></dd>
+
 <dt><%= @model.t :affair_on_duty %><%= @model.tt :affair_on_duty %></dt>
 <dd></dd>
 
@@ -53,6 +56,7 @@ toggleAffairTimeWday();
 <dt class="depth-2"><%= @model.t :affair_on_duty_break_minute %><%= @model.tt :affair_on_duty_break_minute %></dt>
 <dd class="depth-2"><%= f.number_field :affair_on_duty_break_minute %></dd>
 
+<!--
 <dt><%= @model.t :affair_overtime %><%= @model.tt :affair_overtime %></dt>
 <dd></dd>
 
@@ -61,3 +65,4 @@ toggleAffairTimeWday();
 
 <dt class="depth-2"><%= @model.t :affair_overtime_break_minute %><%= @model.tt :affair_overtime_break_minute %></dt>
 <dd class="depth-2"><%= f.number_field :affair_overtime_break_minute %></dd>
+-->
